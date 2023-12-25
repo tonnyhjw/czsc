@@ -113,3 +113,6 @@ venv.bak/
 
 # token
 tk.csv
+
+# static file
+hjw_examples/statics/
