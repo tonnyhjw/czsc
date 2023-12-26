@@ -1,26 +1,21 @@
 import datetime
 
 from czsc.data import TsDataCache
-from czsc import home_path, empty_cache_path, RawBar
+from czsc import home_path
 from czsc.signals.tas import update_macd_cache
 from czsc.analyze import CZSC
 
 
 def play():
     dc = TsDataCache(home_path)
-    bars = dc.pro_bar('000001.SH', start_date="20220401", freq='W', asset="I", adj='qfq', raw_bar=True)
+    bars = dc.pro_bar('603808.SH', start_date="20150101", freq='M', asset="E", adj='qfq', raw_bar=True)
     c = CZSC(bars)
     cache_key = update_macd_cache(c)
     print(c.ubi)
-    last_bi = c.bi_list[-1]
-    print(last_bi)
-    fx_raw_bars = []
-    for fx in c.fx_list:
-        fx_raw_bars += fx.raw_bars
 
-    for x in last_bi.raw_bars:
+    for bi in c.ubi['raw_bars']:
         try:
-            print(x.cache[cache_key])
+            print(f"{bi.dt} {bi.close} {bi.cache[cache_key]['macd']}")
         except Exception as e_msg:
             print(e_msg)
 
