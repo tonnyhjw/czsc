@@ -84,7 +84,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         v1 = '不是下行趋势'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     last_bi = zs3.bis[-1]
-    if zs3.is_valid() and ubi['direction'] == Direction.Down and ubi['low'] > zs3.zg and last_bi.low < zs3.zd:
+    if zs3.is_valid and ubi['direction'] == Direction.Down and ubi['low'] > zs3.zg and last_bi.low < zs3.zd:
         v1 = '多头'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
