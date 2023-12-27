@@ -69,6 +69,22 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     """
     freq = c.freq.value
     k1, k2, k3 = f"{freq}_MACD背驰_UBI观察V230804".split('_')
-
-
+    v1 = '其他'
+    ubi = c.ubi
+    bis = c.bi_list
+    if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
+        v1 = 'K线不合标准'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    zs_seq = get_zs_seq(bis)
+    if len(zs_seq) < 3:
+        v1 = '中枢<3'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    zs1, zs2, zs3 = zs_seq[-3:]
+    if not (zs1.zd > zs2.zg or zs2.zd > zs3.zg):
+        v1 = '不是下行趋势'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    last_bi = zs3.bis[-1]
+    if zs3.is_valid() and ubi['direction'] == Direction.Down and ubi['low'] > zs3.zg and last_bi.low < zs3.zd:
+        v1 = '多头'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
