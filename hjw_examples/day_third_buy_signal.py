@@ -91,7 +91,9 @@ def stock_amount_below_limit(bars: RawBar, days, threshold=100000000):
 
 
 if __name__ == '__main__':
-    output_name = f"statics/3buy_day_result_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
+    script_name = os.path.basename(__file__)
+    output_name = f"statics/{script_name}_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
     # if not os.path.exists(output_name):
     #     empty_cache_path()
     check(output_name)
+

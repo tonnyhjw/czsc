@@ -51,7 +51,8 @@ def check(write_file: str):
 
 
 if __name__ == '__main__':
-    output_name = f"statics/pzbc_month_result_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
+    script_name = os.path.basename(__file__)
+    output_name = f"statics/{script_name}_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
     # if not os.path.exists(output_name):
     #     empty_cache_path()
     check(output_name)
