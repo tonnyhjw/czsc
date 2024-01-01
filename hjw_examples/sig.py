@@ -70,6 +70,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     freq = c.freq.value
     k1, k2, k3 = f"{freq}_趋势反转_UBI观察V230804".split('_')
     v1 = '其他'
+    cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
@@ -90,6 +91,19 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
             and ubi['low'] > zs3.zg
             and last_bi.low < zs3.zd
     ):
-        v1 = '多头'
-        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+        v1, v2 = '多头', '三买'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2)
+    if (zs3.is_valid
+            and ubi['direction'] == Direction.Down
+            and len(ubi['fxs']) > 2
+            and ubi['low'] < zs3.dd
+    ):
+        bi_a = zs2.bis[-1]
+        ubi_dif = min(x.cache[cache_key]['dif'] for x in ubi['raw_bars'])
+        bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
+        ubi_macd_area = sum(macd for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        if 0 > ubi_dif > bi_a_dif and abs(ubi_macd_area) < abs(bi_a_macd_area):
+            v1, v2 = '多头', '一买'
+            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
