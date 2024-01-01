@@ -36,7 +36,7 @@ def check(write_file: str):
             _name = row.get('name')
             _hs = _ts_code.split(".")[-1]
             try:
-                bars = dc.pro_bar(_ts_code, start_date="20150101", freq='D', asset="E", adj='qfq', raw_bar=True)
+                bars = dc.pro_bar(_ts_code, start_date="20180101", freq='D', asset="E", adj='qfq', raw_bar=True)
                 # print(f"{len(_bars)} {_bars[-1]} {dir(_bars[-1])}")
                 c = CZSC(bars)
                 _signals = trend_reverse_ubi(c)
