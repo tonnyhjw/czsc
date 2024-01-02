@@ -20,3 +20,7 @@ def send_email(html_content, subject):
     server.login(sender_email, sender_password)
     server.send_message(message)
     server.quit()
+
+
+if __name__ == '__main__':
+    send_email('hello', 'hello')
