@@ -15,7 +15,7 @@ def send_email(html_content, subject):
 
     message.attach(MIMEText(html_content, "html"))
 
-    server = smtplib.SMTP('smtp.126.com', 465)
+    server = smtplib.SMTP_SSL('smtp.126.com', 465)
     server.starttls()
     server.login(sender_email, sender_password)
     server.send_message(message)

@@ -67,11 +67,11 @@ def process_stock(row, sdt, edt):
 
         for s_value in _signals.values():
             if "多头" in s_value:
+                symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
                 output = {
-                    'symbol': _symbol,
                     'name': _name,
-                    'signals': s_value.split("_")[1],
-                    'link': f"https://xueqiu.com/S/{_hs}{_symbol}"
+                    'symbol': symbol_link,
+                    'signals': s_value.split("_")[1]
                 }
     except Exception as e_msg:
         print(f"{_ts_code} {_name}出现报错，{e_msg}")
