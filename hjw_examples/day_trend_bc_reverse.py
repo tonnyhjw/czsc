@@ -103,6 +103,7 @@ def check(history_file: str):
     # 生成 HTML 表格
     html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False)
     styled_table = daily_email_style(html_table)
+    print(styled_table)
 
     # 发送电子邮件
     send_email(styled_table, "每日选股报告")
