@@ -15,11 +15,9 @@ def send_email(html_content, subject):
 
     message.attach(MIMEText(html_content, "html"))
 
-    server = smtplib.SMTP_SSL('smtp.126.com', 465)
-    server.starttls()
-    server.login(sender_email, sender_password)
-    server.send_message(message)
-    server.quit()
+    with smtplib.SMTP_SSL('smtp.126.com', 465) as smtp:
+        smtp.login(sender_email, sender_password)
+        smtp.send_message(message)
 
 
 if __name__ == '__main__':
