@@ -98,5 +98,5 @@ def check(write_file: str, history_file: str):
 if __name__ == '__main__':
     script_name = os.path.basename(__file__)
     output_name = f"statics/{script_name}_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
-    history_csv = f"statics/{script_name}.csv"
+    history_csv = f"statics/history/{script_name}.csv"
     check(output_name, history_csv)
