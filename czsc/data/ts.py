@@ -75,11 +75,9 @@ class TushareProApi:
 try:
     from tushare.util import upass
     pro = TushareProApi(upass.get_token(), timeout=60)
-except Exception as e:
-    import traceback
-    traceback.print_exc()
+except:
+    print("Tushare Pro 初始化失败")
 
-    print("Tushare Pro 初始化失败:", e)
 
 @deprecated(reason="统一到 ts_connector 中", version='1.0.0')
 def format_kline(kline: pd.DataFrame, freq: Freq) -> List[RawBar]:
