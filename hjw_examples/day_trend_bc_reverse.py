@@ -101,9 +101,8 @@ def check(history_file: str):
     # 将结果转换为 DataFrame
     df_results = pd.DataFrame(results)
     # 生成 HTML 表格
-    html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False)
+    html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
     styled_table = daily_email_style(html_table)
-    print(styled_table)
 
     # 发送电子邮件
     send_email(styled_table, "每日选股报告")

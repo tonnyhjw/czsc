@@ -24,6 +24,7 @@ def daily_email_style(html_table):
             padding: .75rem;
             vertical-align: top;
             border-top: 1px solid #dee2e6;
+            text-align:center;
         }
     </style>
     </head>
