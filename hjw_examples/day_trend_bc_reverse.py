@@ -62,6 +62,7 @@ def process_stock(row, sdt, edt):
     output = {}
     try:
         bars = dc.pro_bar(_ts_code, start_date=sdt, freq='D', asset="E", adj='qfq', raw_bar=True)
+        assert "ST" not in _name, "排除ST股票"
         c = CZSC(bars)
         _signals = trend_reverse_ubi(c)
 
@@ -76,7 +77,8 @@ def process_stock(row, sdt, edt):
                 }
     except Exception as e_msg:
         print(f"{_ts_code} {_name}出现报错，{e_msg}")
-    return output
+    finally:
+        return output
 
 
 def check(history_file: str):
@@ -88,7 +90,10 @@ def check(history_file: str):
         futures = {}
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
-            if not history[(history['ts_code'] == _ts_code) & (history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))].empty:
+            if not history[
+                (history['ts_code'] == _ts_code) & (
+                        history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
+            ].empty:
                 continue
             future = executor.submit(process_stock, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'))
             futures[future] = _ts_code  # 保存future和ts_code的映射
