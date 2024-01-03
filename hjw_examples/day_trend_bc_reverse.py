@@ -71,6 +71,7 @@ def process_stock(row, sdt, edt):
                 output = {
                     'name': _name,
                     'symbol': symbol_link,
+                    'ts_code': _ts_code,
                     'signals': s_value.split("_")[1]
                 }
     except Exception as e_msg:
@@ -96,7 +97,7 @@ def check(history_file: str):
             result = future.result()
             if result:
                 results.append(result)
-                history = update_history(history, result['symbol'], history_file)
+                history = update_history(history, result['_ts_code'], history_file)
 
     # 将结果转换为 DataFrame
     df_results = pd.DataFrame(results)
