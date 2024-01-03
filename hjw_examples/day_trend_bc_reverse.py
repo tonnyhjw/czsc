@@ -97,7 +97,7 @@ def check(history_file: str):
             result = future.result()
             if result:
                 results.append(result)
-                history = update_history(history, result['_ts_code'], history_file)
+                history = update_history(history, result['ts_code'], history_file)
 
     # 将结果转换为 DataFrame
     df_results = pd.DataFrame(results)
@@ -106,7 +106,7 @@ def check(history_file: str):
     styled_table = daily_email_style(html_table)
 
     # 发送电子邮件
-    send_email(styled_table, "[自动盯盘]发现新个股包买点")
+    send_email(styled_table, "[自动盯盘]发现新个股买点")
 
 
 if __name__ == '__main__':
