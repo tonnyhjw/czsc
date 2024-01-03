@@ -80,9 +80,9 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     if len(zs_seq) < 2:
         v1 = '中枢<2'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    zs2, zs3 = zs_seq[-2:]
-    if zs2.zd <= zs3.zg:
-    # if not (zs1.zd > zs2.zg or zs2.zd > zs3.zg):
+    zs1, zs2, zs3 = zs_seq[-3:]
+    # if zs2.zd <= zs3.zg:
+    if not (zs1.zd > zs2.zg or zs2.zd > zs3.zg):
         v1 = '不是下行趋势'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     last_bi = zs3.bis[-1]
