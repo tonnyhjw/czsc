@@ -89,7 +89,7 @@ def check(history_file: str):
             _ts_code = row.get('ts_code')
             if not history[(history['ts_code'] == _ts_code) & (history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))].empty:
                 continue
-            future = executor.submit(process_stock, row, "20180101", datetime.datetime.now().strftime('%Y%m%d'))
+            future = executor.submit(process_stock, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'))
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -105,7 +105,7 @@ def check(history_file: str):
     styled_table = daily_email_style(html_table)
 
     # 发送电子邮件
-    send_email(styled_table, "每日选股报告")
+    send_email(styled_table, "[自动盯盘]发现新个股包买点")
 
 
 if __name__ == '__main__':
