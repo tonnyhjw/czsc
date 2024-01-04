@@ -59,7 +59,8 @@ def process_stock(row, sdt, edt):
     output = {}
     try:
         bars = dc.pro_bar(_ts_code, start_date=sdt, freq='D', asset="E", adj='qfq', raw_bar=True)
-        assert "ST" not in _name, "排除ST股票"
+        if "ST" not in _name:
+            return output
         c = CZSC(bars)
         _signals = trend_reverse_ubi(c)
 
@@ -74,7 +75,7 @@ def process_stock(row, sdt, edt):
                 }
     except Exception as e_msg:
         print(f"{_ts_code} {_name}出现报错，{e_msg}")
-        traceback.print_exc()
+        # traceback.print_exc()
     finally:
         return output
 
