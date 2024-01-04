@@ -58,9 +58,9 @@ def process_stock(row, sdt, edt):
 
     output = {}
     try:
-        bars = dc.pro_bar(_ts_code, start_date=sdt, freq='D', asset="E", adj='qfq', raw_bar=True)
-        if "ST" not in _name:
-            return output
+        bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq='D', asset="E", adj='qfq', raw_bar=True)
+        # if "ST" in _name:
+        #     return output
         c = CZSC(bars)
         _signals = trend_reverse_ubi(c)
 
