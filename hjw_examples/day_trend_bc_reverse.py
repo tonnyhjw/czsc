@@ -73,7 +73,7 @@ def process_stock(row, sdt, edt):
                     'symbol': symbol_link,
                     'ts_code': _ts_code,
                     'signals': s_value.split("_")[1],
-                    'industry':_industry
+                    'industry': _industry
                 }
     except Exception as e_msg:
         print(f"{_ts_code} {_name}出现报错，{e_msg}")
@@ -106,7 +106,7 @@ def check(history_file: str):
                 results.append(result)
                 history = update_history(history, result['ts_code'], history_file)
 
-    if result:
+    if results:
         # 将结果转换为 DataFrame
         df_results = pd.DataFrame(results)
         # 生成 HTML 表格
