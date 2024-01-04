@@ -9,7 +9,6 @@ from concurrent.futures import ProcessPoolExecutor
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
-from flask import Flask, render_template
 from czsc import CZSC, home_path, empty_cache_path, RawBar
 from czsc.data import TsDataCache
 from hjw_examples.sig import trend_reverse_ubi
@@ -108,7 +107,8 @@ def check(history_file: str):
 
     if results:
         # 将结果转换为 DataFrame
-        df_results = pd.DataFrame(results)
+        sorted_results = sorted(results, key=sort_by_industry, reverse=True)
+        df_results = pd.DataFrame(sorted_results)
         # 生成 HTML 表格
         html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
     else:
@@ -118,6 +118,10 @@ def check(history_file: str):
 
     # 发送电子邮件
     send_email(styled_table, "[自动盯盘]发现新个股买点")
+
+
+def sort_by_industry(item_dictionary):
+    return item_dictionary['industry']
 
 
 if __name__ == '__main__':
