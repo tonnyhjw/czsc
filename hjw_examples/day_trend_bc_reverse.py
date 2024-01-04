@@ -3,6 +3,7 @@ import sys
 import datetime
 import pandas as pd
 import concurrent
+import traceback
 from concurrent.futures import ProcessPoolExecutor
 
 
@@ -44,10 +45,6 @@ def update_history(history, ts_code, history_file):
     # 使用 concat 替代 append
     history = pd.concat([history, new_record], ignore_index=True)
 
-    # 保留最近一个月的记录
-    one_month_ago = (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
-    history = history[history['date'] >= one_month_ago]
-
     history.to_csv(history_file, index=False)
     return history
 
@@ -77,6 +74,7 @@ def process_stock(row, sdt, edt):
                 }
     except Exception as e_msg:
         print(f"{_ts_code} {_name}出现报错，{e_msg}")
+        traceback.print_exc()
     finally:
         return output
 
