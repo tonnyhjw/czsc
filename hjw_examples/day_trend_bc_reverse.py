@@ -54,6 +54,7 @@ def process_stock(row, sdt, edt):
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')
     _name = row.get('name')
+    _industry = row.get("industry")
     _hs = _ts_code.split(".")[-1]
 
     output = {}
@@ -71,7 +72,8 @@ def process_stock(row, sdt, edt):
                     'name': _name,
                     'symbol': symbol_link,
                     'ts_code': _ts_code,
-                    'signals': s_value.split("_")[1]
+                    'signals': s_value.split("_")[1],
+                    'industry':_industry
                 }
     except Exception as e_msg:
         print(f"{_ts_code} {_name}出现报错，{e_msg}")
@@ -104,10 +106,14 @@ def check(history_file: str):
                 results.append(result)
                 history = update_history(history, result['ts_code'], history_file)
 
-    # 将结果转换为 DataFrame
-    df_results = pd.DataFrame(results)
-    # 生成 HTML 表格
-    html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
+    if result:
+        # 将结果转换为 DataFrame
+        df_results = pd.DataFrame(results)
+        # 生成 HTML 表格
+        html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
+    else:
+        html_table = "<h1>没有发现买点</h1>"
+
     styled_table = daily_email_style(html_table)
 
     # 发送电子邮件
