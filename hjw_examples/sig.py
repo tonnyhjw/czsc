@@ -87,8 +87,6 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     last_bi = zs3.bis[-1]
     ubi_dif = min(x.cache[cache_key]['dif'] for x in ubi['raw_bars'])
-    ubi_macd_area = sum(macd for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
-    ubi_max_macd = max(abs(macd) for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
     ubi_last_macd = ubi['raw_bars'][-1].cache[cache_key]['macd']
     if (zs3.is_valid
             and ubi['direction'] == Direction.Down
@@ -107,6 +105,8 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         bi_a = zs2.bis[-1]
         bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
         bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        ubi_macd_area = sum(macd for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
+        ubi_max_macd = max(abs(macd) for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
         if (
                 0 > ubi_dif > bi_a_dif and
                 abs(ubi_macd_area) < abs(bi_a_macd_area) and
