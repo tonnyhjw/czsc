@@ -1,9 +1,10 @@
 import os
 import sys
 import datetime
-import pandas as pd
-import concurrent
 import traceback
+import concurrent
+import pandas as pd
+from loguru import logger
 from concurrent.futures import ProcessPoolExecutor
 
 
@@ -16,6 +17,9 @@ from hjw_examples.notify import send_email
 from hjw_examples.templates.email_templates import daily_email_style
 
 idx = 1000
+script_name = os.path.basename(__file__)
+logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="utf-8", enqueue=True, retention="10 days")
+
 
 # ts_code      000001.SZ
 # symbol          000001
@@ -75,8 +79,9 @@ def process_stock(row, sdt, edt):
                     'industry': _industry
                 }
     except Exception as e_msg:
-        print(f"{_ts_code} {_name}出现报错，{e_msg}")
-        # traceback.print_exc()
+        tb = traceback.format_exc()  # 获取 traceback 信息
+        logger.error(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
+
     finally:
         return output
 
@@ -94,7 +99,7 @@ def check(history_file: str):
                 (history['ts_code'] == _ts_code) & (
                         history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
             ].empty:
-                print("30天内出现过买点")
+                logger.info("30天内出现过买点")
                 continue
             future = executor.submit(process_stock, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'))
             futures[future] = _ts_code  # 保存future和ts_code的映射
@@ -105,19 +110,23 @@ def check(history_file: str):
                 results.append(result)
                 history = update_history(history, result['ts_code'], history_file)
 
-    if results:
-        # 将结果转换为 DataFrame
-        sorted_results = sorted(results, key=sort_by_industry, reverse=True)
-        df_results = pd.DataFrame(sorted_results)
-        # 生成 HTML 表格
-        html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
-    else:
-        html_table = "<h1>没有发现买点</h1>"
+    try:
+        if results:
+            # 将结果转换为 DataFrame
+            sorted_results = sorted(results, key=sort_by_industry, reverse=True)
+            df_results = pd.DataFrame(sorted_results)
+            # 生成 HTML 表格
+            html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
+        else:
+            html_table = "<h1>没有发现买点</h1>"
 
-    styled_table = daily_email_style(html_table)
+        styled_table = daily_email_style(html_table)
 
-    # 发送电子邮件
-    send_email(styled_table, "[自动盯盘]发现新个股买点")
+        # 发送电子邮件
+        send_email(styled_table, "[自动盯盘]发现新个股买点")
+    except Exception as e_msg:
+        tb = traceback.format_exc()  # 获取 traceback 信息
+        logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
 def sort_by_industry(item_dictionary):
@@ -125,7 +134,6 @@ def sort_by_industry(item_dictionary):
 
 
 if __name__ == '__main__':
-    script_name = os.path.basename(__file__)
     output_name = f"statics/{script_name}_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
     history_csv = f"statics/history/{script_name}.csv"
     check(history_csv)
