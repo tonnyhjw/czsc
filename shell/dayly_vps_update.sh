@@ -1,6 +1,4 @@
 #!/bin/bash
-source $HOME/.bashrc
-
 cd ~/workspace/czsc/
 source venv/bin/activate
 
