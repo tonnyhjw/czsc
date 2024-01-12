@@ -99,7 +99,7 @@ def check(history_file: str):
                 (history['ts_code'] == _ts_code) & (
                         history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
             ].empty:
-                logger.info("30天内出现过买点")
+                logger.info(f"{row.get('name')} {_ts_code}30天内出现过买点")
                 continue
             future = executor.submit(process_stock, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'))
             futures[future] = _ts_code  # 保存future和ts_code的映射
