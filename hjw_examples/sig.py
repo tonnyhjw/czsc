@@ -104,10 +104,10 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     if (
             zs3.is_valid
-            and zs1.zd < zs2.zg
+            and zs1.zd > zs2.zg
             and ubi['direction'] == Direction.Down
             and len(ubi['fxs']) > 2
-            and ubi['low'] < zs3.dd
+            and ubi['low'] < zs3.zd
     ):
         bi_a = zs2.bis[-1]
         bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
