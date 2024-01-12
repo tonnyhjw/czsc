@@ -77,7 +77,7 @@ def process_stock(row, sdt, edt):
                     'symbol': symbol_link,
                     'ts_code': _ts_code,
                     'signals': s_value_detail[1],
-                    'estimated_profit': "{:.2f}%".format(float(s_value_detail[-1]) * 100),
+                    'expect_profit(%)': round(float(s_value_detail[2]) * 100, 2),
                     'industry': _industry
                 }
     except Exception as e_msg:
@@ -101,7 +101,7 @@ def check(history_file: str):
                 (history['ts_code'] == _ts_code) & (
                         history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
             ].empty:
-                logger.info(f"{row.get('name')} {_ts_code}30天内出现过买点")
+                logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
                 continue
             future = executor.submit(process_stock, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'))
             futures[future] = _ts_code  # 保存future和ts_code的映射
@@ -115,7 +115,7 @@ def check(history_file: str):
     try:
         if results:
             # 将结果转换为 DataFrame
-            sorted_results = sorted(results, key=sort_by_industry, reverse=True)
+            sorted_results = sorted(results, key=sort_by_profit, reverse=True)
             df_results = pd.DataFrame(sorted_results)
             # 生成 HTML 表格
             html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
@@ -133,6 +133,10 @@ def check(history_file: str):
 
 def sort_by_industry(item_dictionary):
     return item_dictionary['industry']
+
+
+def sort_by_profit(item_dictionary):
+    return item_dictionary['expect_profit(%)']
 
 
 if __name__ == '__main__':

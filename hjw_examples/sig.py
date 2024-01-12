@@ -101,7 +101,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     ):
         estimated_profit = (ubi['high'] - cur_price) / cur_price
         v1, v2 = '多头', '三买'
-        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, score=estimated_profit)
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     if (
             zs3.is_valid
             and zs1.zd < zs2.zg
@@ -122,8 +122,8 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 and abs(ubi_macd_area) < abs(bi_a_macd_area)
                 and abs(ubi_last_macd) < ubi_max_macd
                 and ubi_last_macd < 0
-                # and estimated_profit >= 0.5
+                and estimated_profit >= 0.03
         ):
             v1, v2 = '多头', '一买'
-            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, score=estimated_profit)
+            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
