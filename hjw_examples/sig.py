@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from czsc import CZSC
-from czsc.objects import Direction, ZS
+from czsc.objects import Direction
 from czsc.utils import get_sub_elements, create_single_signal
 from czsc.signals.tas import update_macd_cache
 from czsc.utils.sig import get_zs_seq
@@ -89,6 +89,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     ubi_last_dif = ubi['raw_bars'][-1].cache[cache_key]['dif']
     ubi_last_dea = ubi['raw_bars'][-1].cache[cache_key]['dea']
     cur_price = c.bars_raw[-1].close
+    estimated_profit = 0
     if (
             zs3.is_valid
             and ubi['direction'] == Direction.Down
@@ -98,8 +99,9 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
             # and abs(ubi_last_dif) <= 0.05
             # and abs(ubi_last_dea) <= 0.35
     ):
+        estimated_profit = (ubi['high'] - cur_price) / cur_price
         v1, v2 = '多头', '三买'
-        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2)
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, score=estimated_profit)
     if (
             zs3.is_valid
             and zs1.zd < zs2.zg
@@ -123,5 +125,5 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 # and estimated_profit >= 0.5
         ):
             v1, v2 = '多头', '一买'
-            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2)
+            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, score=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)

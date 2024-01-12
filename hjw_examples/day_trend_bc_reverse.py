@@ -70,12 +70,14 @@ def process_stock(row, sdt, edt):
 
         for s_value in _signals.values():
             if "多头" in s_value:
+                s_value_detail = s_value.split("_")
                 symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
                 output = {
                     'name': _name,
                     'symbol': symbol_link,
                     'ts_code': _ts_code,
-                    'signals': s_value.split("_")[1],
+                    'signals': s_value_detail[1],
+                    'estimated_profit': "{:.2f}%".format(float(s_value_detail[-1]) * 100),
                     'industry': _industry
                 }
     except Exception as e_msg:
