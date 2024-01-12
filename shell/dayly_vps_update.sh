@@ -1,5 +1,4 @@
 #!/bin/bash
-
 cd ~/workspace/czsc/
 source venv/bin/activate
 
