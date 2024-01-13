@@ -386,7 +386,7 @@ class ZS:
     @property
     def is_valid(self):
         """中枢是否有效"""
-        if self.zg < self.zd:
+        if self.zg < self.zd or len(self.bis) < 3:
             return False
 
         for bi in self.bis:

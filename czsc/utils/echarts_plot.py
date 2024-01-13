@@ -65,6 +65,7 @@ def kline_pro(kline: List[dict],
               bi: List[dict] = [],
               xd: List[dict] = [],
               bs: List[dict] = [],
+              zs_seq: List = [],
               title: str = "缠中说禅K线分析",
               t_seq: List[int] = [],
               width: str = "1400px",
@@ -175,7 +176,8 @@ def kline_pro(kline: List[dict],
     # ------------------------------------------------------------------------------------------------------------------
     chart_k = Kline()
     chart_k.add_xaxis(xaxis_data=dts)
-    chart_k.add_yaxis(series_name="Kline", y_axis=k_data, itemstyle_opts=k_style_opts)
+    chart_k.add_yaxis(series_name="Kline", y_axis=k_data, itemstyle_opts=k_style_opts,
+                      markline_opts=opts.MarkLineOpts(data=zs_seq, symbol_size=0))  # symbol_size=0 用于隐藏标记点
 
     chart_k.set_global_opts(
         legend_opts=legend_opts,
@@ -185,7 +187,7 @@ def kline_pro(kline: List[dict],
         axispointer_opts=axis_pointer_opts,
         brush_opts=brush_opts,
         title_opts=title_opts,
-        xaxis_opts=grid0_xaxis_opts
+        xaxis_opts=grid0_xaxis_opts,
     )
 
     # 加入买卖点 - 多头操作 - 空头操作
