@@ -129,10 +129,9 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
         bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
 
-        bi_c = zs2.bis[-1]
+        bi_c_raw_bars = zs2.bis[-1].raw_bars
         for _bi in zs3.bis:     # 扩展bi_c
-            bi_c += _bi
-        bi_c_raw_bars = bi_c.raw_bars
+            bi_c_raw_bars += _bi.raw_bars
         if ubi['direction'] == Direction.Down:
             bi_c_raw_bars += ubi['raw_bars']
         bi_c_peak_dif = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
