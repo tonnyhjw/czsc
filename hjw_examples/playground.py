@@ -8,7 +8,7 @@ from hjw_examples.day_trend_bc_reverse import process_stock
 
 
 def play():
-    row = dict(ts_code="002610.sz", symbol="002610", name="爱康科技")
+    row = dict(ts_code="300012.sz", symbol="300012", name="华测检测")
     sdt, edt = "20200101", "20231214"
     result = process_stock(row=row, sdt=sdt, edt=edt)
     print(result)

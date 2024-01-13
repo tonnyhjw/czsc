@@ -1,3 +1,4 @@
+import pprint
 from collections import OrderedDict
 
 from czsc import CZSC
@@ -82,48 +83,86 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     zs1, zs2, zs3 = zs_seq[-3:]
     # if zs2.zd <= zs3.zg:
+    pprint.pprint(zs2.bis)
     if zs1.zd <= zs2.zg or zs2.zd <= zs3.zg:
         v1 = '不是下行趋势'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    last_bi = zs3.bis[-1]
-    ubi_last_dif = ubi['raw_bars'][-1].cache[cache_key]['dif']
-    ubi_last_dea = ubi['raw_bars'][-1].cache[cache_key]['dea']
+
     cur_price = c.bars_raw[-1].close
-    estimated_profit = 0
-    if (
-            zs3.is_valid
-            and ubi['direction'] == Direction.Down
-            and len(ubi['fxs']) < 3
-            and ubi['low'] > zs3.zg
-            # and last_bi.low < zs3.dd
-            # and abs(ubi_last_dif) <= 0.05
-            # and abs(ubi_last_dea) <= 0.35
-    ):
-        estimated_profit = (ubi['high'] - cur_price) / cur_price
-        v1, v2 = '多头', '三买'
-        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
-    if (
-            zs3.is_valid
-            # and zs1.zd > zs2.zg
-            and ubi['direction'] == Direction.Down
-            and len(ubi['fxs']) > 2
-            and ubi['low'] < zs3.zd
-    ):
-        bi_a = zs2.bis[-1]
-        bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
-        ubi_peak_dif = min(x.cache[cache_key]['dif'] for x in ubi['raw_bars'])
-        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-        ubi_macd_area = sum(macd for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
-        ubi_max_macd = max(abs(macd) for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
-        ubi_last_macd = ubi['raw_bars'][-1].cache[cache_key]['macd']
-        estimated_profit = (zs3.dd - cur_price) / cur_price
+    if zs3.is_valid:
         if (
-                0 > ubi_peak_dif > bi_a_dif
-                and abs(ubi_macd_area) < abs(bi_a_macd_area)
-                and abs(ubi_last_macd) < ubi_max_macd
-                and ubi_last_macd < 0
+                ubi['direction'] == Direction.Down
+                and len(ubi['fxs']) < 3
+                and ubi['low'] > zs3.zg
+                # and last_bi.low < zs3.dd
+                # and abs(ubi_last_dif) <= 0.05
+                # and abs(ubi_last_dea) <= 0.35
+        ):
+            estimated_profit = (ubi['high'] - cur_price) / cur_price
+            v1, v2 = '多头', '三买'
+            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+        if (
+                # and zs1.zd > zs2.zg
+                ubi['direction'] == Direction.Down
+                and len(ubi['fxs']) > 2
+                and ubi['low'] < zs3.zd
+        ):
+            bi_a = zs2.bis[-1]
+            bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
+            bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+            ubi_peak_dif = min(x.cache[cache_key]['dif'] for x in ubi['raw_bars'])
+            ubi_macd_area = sum(macd for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
+            ubi_max_macd = max(abs(macd) for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
+            ubi_last_macd = ubi['raw_bars'][-1].cache[cache_key]['macd']
+            estimated_profit = (zs3.dd - cur_price) / cur_price
+            if (
+                    0 > ubi_peak_dif > bi_a_dif
+                    and abs(ubi_macd_area) < abs(bi_a_macd_area)
+                    and abs(ubi_last_macd) < ubi_max_macd
+                    and ubi_last_macd < 0
+                    and estimated_profit >= 0.03
+            ):
+                v1, v2 = '多头', '一买'
+                return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+    elif zs2.is_valid:
+        bi_a = zs1.bis[-1]
+        bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
+        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+
+        bi_c = zs2.bis[-1]
+        for _bi in zs3.bis:     # 扩展bi_c
+            bi_c += _bi
+        bi_c_raw_bars = bi_c.raw_bars
+        if ubi['direction'] == Direction.Down:
+            bi_c_raw_bars += ubi['raw_bars']
+        bi_c_peak_dif = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_c_macd_area = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_c_max_macd = max(abs(macd) for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_c_last_macd = bi_c_raw_bars[-1].cache[cache_key]['macd']
+        estimated_profit = (zs2.dd - cur_price) / cur_price
+        if (
+                0 > bi_c_peak_dif > bi_a_dif
+                and abs(bi_c_macd_area) < abs(bi_a_macd_area)
+                and abs(bi_c_last_macd) < bi_c_max_macd
+                and bi_c_last_macd < 0
                 and estimated_profit >= 0.03
         ):
             v1, v2 = '多头', '一买'
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+
+
+def get_valid_zs_seq(zs_seq: list, valid_count: int = 3):
+    # 假设 zs_seq 是 ZS 对象的列表
+    index = len(zs_seq)
+
+    # 从列表末尾开始反向遍历
+    for zs in reversed(zs_seq):
+        index -= 1
+        if zs.is_valid:
+            valid_count += 1
+        if valid_count >= 3:
+            break
+
+    # 获取子列表
+    return zs_seq[index:]
