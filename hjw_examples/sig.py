@@ -82,10 +82,11 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         v1 = '中枢<3'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     zs1, zs2, zs3 = zs_seq[-3:]
+
     # if zs2.zd <= zs3.zg:
-    if zs1.zd <= zs2.zg or zs2.zd <= zs3.zg:
-        v1 = '不是下行趋势'
-        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    # # if zs1.zd <= zs2.zg or zs2.zd <= zs3.zg:
+    #     v1 = '不是下行趋势'
+    #     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     cur_price = c.bars_raw[-1].close
     if zs3.is_valid:
@@ -93,9 +94,8 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 ubi['direction'] == Direction.Down
                 and len(ubi['fxs']) < 3
                 and ubi['low'] > zs3.zg
-                # and last_bi.low < zs3.dd
-                # and abs(ubi_last_dif) <= 0.05
-                # and abs(ubi_last_dea) <= 0.35
+                and zs1.zd > zs2.zg
+                and zs2.zd > zs3.zg
         ):
             estimated_profit = (ubi['high'] - cur_price) / cur_price
             v1, v2 = '多头', '三买'
@@ -105,6 +105,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 ubi['direction'] == Direction.Down
                 and len(ubi['fxs']) > 2
                 and ubi['low'] < zs3.zd
+                and zs2.zd > zs3.zg
         ):
             bi_a = zs2.bis[-1]
             bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
@@ -145,6 +146,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 and abs(bi_c_last_macd) < bi_c_max_macd
                 and bi_c_last_macd < 0
                 and estimated_profit >= 0.03
+                and zs1.zd > zs2.zg
         ):
             v1, v2 = '多头', '一买'
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
