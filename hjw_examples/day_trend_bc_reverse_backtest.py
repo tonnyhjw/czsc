@@ -1,6 +1,6 @@
 import os
 import sys
-import datetime
+import argparse
 import traceback
 import concurrent
 import pandas as pd
@@ -14,47 +14,30 @@ from czsc import home_path
 from czsc.data import TsDataCache
 from hjw_examples.notify import send_email
 from hjw_examples.formatters import sort_by_profit
-from hjw_examples.history import read_history, update_history
 from hjw_examples.templates.email_templates import daily_email_style
 from hjw_examples.stock_process import trend_reverse_ubi_entry
 
 idx = 1000
 script_name = os.path.basename(__file__)
-logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="utf-8", enqueue=True, retention="10 days")
+logger.add("statics/logs/day_trend_bc_reverse_backtest.log", rotation="50MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-# ts_code      000001.SZ
-# symbol          000001
-# name              平安银行
-# area                深圳
-# industry            银行
-# list_date     19910403
-# Name: 0, dtype: object
-
-
-def check(history_file: str):
+def check(sdt: str = "20200101", edt: str = "20231219"):
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
-    history = read_history(history_file)
     results = []  # 用于存储所有股票的结果
 
     with ProcessPoolExecutor(max_workers=2) as executor:
         futures = {}
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
-            if not history[
-                (history['ts_code'] == _ts_code) & (
-                        history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
-            ].empty:
-                logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
-                continue
-            future = executor.submit(trend_reverse_ubi_entry, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'))
+
+            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
             if result:
                 results.append(result)
-                history = update_history(history, result['ts_code'], history_file)
 
     try:
         if results:
@@ -69,13 +52,18 @@ def check(history_file: str):
         styled_table = daily_email_style(html_table)
 
         # 发送电子邮件
-        send_email(styled_table, "[自动盯盘]发现新个股买点")
+        send_email(styled_table, f"[自动盯盘]回测结果，目标日期：{edt} ")
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
 if __name__ == '__main__':
-    output_name = f"statics/{script_name}_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
-    history_csv = f"statics/history/{script_name}.csv"
-    check(history_csv)
+    parser = argparse.ArgumentParser(description="选股回测脚本，不筛选历史数据。")
+    parser.add_argument("sdt", help="开始日期", default="20200101", type=str)
+    parser.add_argument("edt", help="结束日期", default="20231219", type=str)
+    args = parser.parse_args()
+
+    print(f"开始日期：{args.sdt}")
+    print(f"结束日期：{args.edt}")
+    check(args.sdt, args.edt)
