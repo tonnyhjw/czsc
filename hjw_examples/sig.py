@@ -113,11 +113,17 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
         ):
             bi_a, bi_b = zs2.bis[-1], zs3.bis[-1]
             bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
-            bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
+            print(f"{bi_a_dif=}, {bi_b_dif=}")
+
+            bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+            print(f"{bi_a_macd_area=}, {bi_b_macd_area=}")
+
             bi_b_max_macd = max(abs(macd) for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             bi_b_last_macd = bi_b.raw_bars[-1].cache[cache_key]['macd']
+            print(f"{bi_b_max_macd=}, {bi_b_last_macd=}")
+
             estimated_profit = (zs3.dd - cur_price) / cur_price
             if (
                     0 > bi_b_dif > bi_a_dif
