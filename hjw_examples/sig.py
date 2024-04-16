@@ -125,6 +125,20 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
             print(f"{bi_b_max_macd=}, {bi_b_last_macd=}")
 
             estimated_profit = (zs3.dd - cur_price) / cur_price
+
+            condition1 = 0 > bi_b_dif > bi_a_dif
+            condition2 = abs(bi_b_macd_area) < abs(bi_a_macd_area)
+            condition3 = abs(bi_b_last_macd) < bi_b_max_macd
+            # condition4 = bi_b_last_macd < 0  # 未启用条件
+            condition5 = estimated_profit >= 0.03
+
+            # 打印每个条件的结果
+            print("Condition 1 (0 > bi_b_dif > bi_a_dif):", condition1)
+            print("Condition 2 (abs(bi_b_macd_area) < abs(bi_a_macd_area)):", condition2)
+            print("Condition 3 (abs(bi_b_last_macd) < bi_b_max_macd):", condition3)
+            print("Condition 4 (estimated_profit:", estimated_profit)  # 如果需要启用，取消注释
+            print("Condition 5 (estimated_profit >= 0.03):", condition5)
+
             if (
                     0 > bi_b_dif > bi_a_dif
                     and abs(bi_b_macd_area) < abs(bi_a_macd_area)
