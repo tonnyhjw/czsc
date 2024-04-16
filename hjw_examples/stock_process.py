@@ -22,6 +22,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
         for s_value in _signals.values():
             if "多头" in s_value:
                 s_value_detail = s_value.split("_")
+                print(s_value_detail)
                 symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
                 output = {
                     'name': _name,
@@ -30,7 +31,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
                     'signals': s_value_detail[1],
                     'expect_profit(%)': round(float(s_value_detail[2]) * 100, 2),
                     'industry': _industry,
-                    'fx_strength': s_value_detail[3]
+                    'fx_strength': s_value_detail[2]
                 }
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
