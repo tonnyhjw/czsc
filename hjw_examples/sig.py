@@ -78,7 +78,6 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     bis = c.bi_list
     latest_fx = c.ubi_fxs[-1]       # 最近一个分型
     latest_fx_dt_delta = datetime.datetime.now() - latest_fx.dt    # 最近一个分型是多久之前？
-    pprint.pp(latest_fx)
 
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'

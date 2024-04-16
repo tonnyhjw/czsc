@@ -31,8 +31,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
                     'ts_code': _ts_code,
                     'signals': s_value_detail[1],
                     'expect_profit(%)': round(float(s_value_detail[2]) * 100, 2),
-                    'industry': _industry,
-                    'fx_strength': s_value_detail[2]
+                    'industry': _industry
                 }
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
