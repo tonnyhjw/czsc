@@ -126,10 +126,12 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                     0 > bi_b_dif > bi_a_dif
                     and abs(bi_b_macd_area) < abs(bi_a_macd_area)
                     and abs(bi_b_last_macd) < bi_b_max_macd
-                    # and bi_b_last_macd < 0
                     and estimated_profit >= 0.03
             ):
-                v1, v2 = '多头', '一买'
+                if bi_b.low == zs3.dd:
+                    v1, v2 = '多头', '一买'
+                else:
+                    v1, v2 = '多头', '二买'
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     elif zs2.is_valid:
         bi_a = zs1.bis[-1]
