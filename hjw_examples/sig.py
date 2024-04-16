@@ -96,7 +96,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     if zs3.is_valid:
         if (
                 ubi['direction'] == Direction.Down
-                and len(ubi['fxs']) < 3
+                and len(ubi['fxs']) > 2
                 and ubi['low'] > zs3.zg
                 and zs1.zd > zs2.zg
                 and zs2.zd > zs3.zg
@@ -126,7 +126,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                     and ubi_last_macd < 0
                     and estimated_profit >= 0.03
             ):
-                v1, v2 = '多头', '三买'
+                v1, v2 = '多头', '一买'
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     elif zs2.is_valid:
         bi_a = zs1.bis[-1]
@@ -151,7 +151,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 and estimated_profit >= 0.03
                 and zs1.zd > zs2.zg
         ):
-            v1, v2 = '多头', '三买'
+            v1, v2 = '多头', '一买'
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
