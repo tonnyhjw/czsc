@@ -18,6 +18,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
         #     return output
         c = CZSC(bars)
         _signals = trend_reverse_ubi(c)
+        print(_signals)
 
         for s_value in _signals.values():
             if "多头" in s_value:
