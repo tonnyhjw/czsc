@@ -138,6 +138,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
             print("Condition 3 (abs(bi_b_last_macd) < bi_b_max_macd):", condition3)
             print("Condition 4 (estimated_profit:", estimated_profit)  # 如果需要启用，取消注释
             print("Condition 5 (estimated_profit >= 0.03):", condition5)
+            print("zs3.dd cur_price:", zs3.dd, cur_price)
 
             if (
                     0 > bi_b_dif > bi_a_dif
