@@ -74,6 +74,8 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
+
+    pprint.pprint(c.ubi_fxs)
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
