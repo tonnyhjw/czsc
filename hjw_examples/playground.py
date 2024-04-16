@@ -4,13 +4,13 @@ from czsc.data import TsDataCache
 from czsc import home_path
 from czsc.signals.tas import update_macd_cache
 from czsc.analyze import CZSC
-from hjw_examples.day_trend_bc_reverse import process_stock
+from hjw_examples.stock_process import trend_reverse_ubi_entry
 
 
 def play():
-    row = dict(ts_code="603628.sh", symbol="603628", name="爱康科技")
-    sdt, edt = "20200101", "20231219"
-    result = process_stock(row=row, sdt=sdt, edt=edt)
+    row = dict(ts_code="300122.sz", symbol="300122", name="智飞生物")
+    sdt, edt = "20200101", "20240416"
+    result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt)
     print(result)
 
 
