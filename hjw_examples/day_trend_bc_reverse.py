@@ -41,6 +41,7 @@ def check(history_file: str):
         futures = {}
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
+            logger.info(f"正在分析{_ts_code}")
             if not history[
                 (history['ts_code'] == _ts_code) & (
                         history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
