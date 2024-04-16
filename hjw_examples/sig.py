@@ -1,3 +1,4 @@
+import datetime
 import pprint
 from collections import OrderedDict
 
@@ -75,14 +76,19 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
-    latest_fx = c.ubi_fxs[-1]
+    latest_fx = c.ubi_fxs[-1]       # 最近一个分型
+    latest_fx_dt_delta = datetime.datetime.now() - latest_fx.dt    # 最近一个分型是多久之前？
     pprint.pp(latest_fx.mark)
     pprint.pp(type(latest_fx.dt))
     pprint.pp(latest_fx.power_str)
     pprint.pp(latest_fx.power_volume)
+    pprint.pp(latest_fx_dt_delta.days)
 
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > 5:
+        v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     zs_seq = get_zs_seq(bis)
     if len(zs_seq) < 3:
@@ -98,7 +104,6 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 and ubi['low'] > zs3.zg
                 and zs1.zd > zs2.zg
                 and zs2.zd > zs3.zg
-            and latest_fx.mark
         ):
             estimated_profit = (ubi['high'] - cur_price) / cur_price
             v1, v2 = '多头', '三买'
