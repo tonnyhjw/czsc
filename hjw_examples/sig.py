@@ -106,24 +106,24 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         if (
                 # and zs1.zd > zs2.zg
-                ubi['direction'] == Direction.Down
-                and len(ubi['fxs']) > 2
+                ubi['direction'] == Direction.Up
+                and len(ubi['fxs']) < 2
                 and ubi['low'] < zs3.zd
                 and zs2.zd > zs3.zg
         ):
-            bi_a = zs2.bis[-1]
+            bi_a, bi_b = zs2.bis[-1], zs3.bis[-1]
             bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
             bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-            ubi_peak_dif = min(x.cache[cache_key]['dif'] for x in ubi['raw_bars'])
-            ubi_macd_area = sum(macd for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
-            ubi_max_macd = max(abs(macd) for x in ubi['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
-            ubi_last_macd = ubi['raw_bars'][-1].cache[cache_key]['macd']
+            bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
+            bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+            bi_b_max_macd = max(abs(macd) for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+            bi_b_last_macd = bi_b.raw_bars[-1].cache[cache_key]['macd']
             estimated_profit = (zs3.dd - cur_price) / cur_price
             if (
-                    0 > ubi_peak_dif > bi_a_dif
-                    and abs(ubi_macd_area) < abs(bi_a_macd_area)
-                    and abs(ubi_last_macd) < ubi_max_macd
-                    and ubi_last_macd < 0
+                    0 > bi_b_dif > bi_a_dif
+                    and abs(bi_b_macd_area) < abs(bi_a_macd_area)
+                    and abs(bi_b_last_macd) < bi_b_max_macd
+                    # and bi_b_last_macd < 0
                     and estimated_profit >= 0.03
             ):
                 v1, v2 = '多头', '一买'
