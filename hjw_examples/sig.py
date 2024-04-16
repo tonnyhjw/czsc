@@ -114,31 +114,14 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
             bi_a, bi_b = zs2.bis[-1], zs3.bis[-1]
             bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
             bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
-            print(f"{bi_a_dif=}, {bi_b_dif=}")
 
             bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-            print(f"{bi_a_macd_area=}, {bi_b_macd_area=}")
 
             bi_b_max_macd = max(abs(macd) for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             bi_b_last_macd = bi_b.raw_bars[-1].cache[cache_key]['macd']
-            print(f"{bi_b_max_macd=}, {bi_b_last_macd=}")
 
-            estimated_profit = (zs3.dd - cur_price) / cur_price
-
-            condition1 = 0 > bi_b_dif > bi_a_dif
-            condition2 = abs(bi_b_macd_area) < abs(bi_a_macd_area)
-            condition3 = abs(bi_b_last_macd) < bi_b_max_macd
-            # condition4 = bi_b_last_macd < 0  # 未启用条件
-            condition5 = estimated_profit >= 0.03
-
-            # 打印每个条件的结果
-            print("Condition 1 (0 > bi_b_dif > bi_a_dif):", condition1)
-            print("Condition 2 (abs(bi_b_macd_area) < abs(bi_a_macd_area)):", condition2)
-            print("Condition 3 (abs(bi_b_last_macd) < bi_b_max_macd):", condition3)
-            print("Condition 4 (estimated_profit:", estimated_profit)  # 如果需要启用，取消注释
-            print("Condition 5 (estimated_profit >= 0.03):", condition5)
-            print("zs3.dd cur_price:", zs3.dd, cur_price)
+            estimated_profit = (zs3.zd - cur_price) / cur_price
 
             if (
                     0 > bi_b_dif > bi_a_dif
