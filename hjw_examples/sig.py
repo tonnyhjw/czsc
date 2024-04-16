@@ -72,7 +72,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     """
     freq = c.freq.value
     k1, k2, k3 = f"{freq}_趋势反转_UBI观察V230804".split('_')
-    v1 = '其他'
+    v1 = '无买点'
     cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
