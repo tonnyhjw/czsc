@@ -1,3 +1,5 @@
+import datetime
+
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
 from hjw_examples.sig import trend_reverse_ubi
@@ -10,6 +12,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
     _name = row.get('name')
     _industry = row.get("industry")
     _hs = _ts_code.split(".")[-1]
+    _edt = datetime.datetime.strptime(edt, "%Y%m%d")
 
     output = {}
     try:
@@ -17,7 +20,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
         # if "ST" in _name:
         #     return output
         c = CZSC(bars)
-        _signals = trend_reverse_ubi(c)
+        _signals = trend_reverse_ubi(c, edt=_edt)
         print(_signals)
 
         for s_value in _signals.values():

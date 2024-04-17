@@ -73,11 +73,12 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     freq = c.freq.value
     k1, k2, k3 = f"{freq}_趋势反转_UBI观察V230804".split('_')
     v1 = '无买点'
+    edt = kwargs.get('edt', datetime.datetime.now())
     cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
     latest_fx = c.ubi_fxs[-1]       # 最近一个分型
-    latest_fx_dt_delta = datetime.datetime.now() - latest_fx.dt    # 最近一个分型是多久之前？
+    latest_fx_dt_delta = edt - latest_fx.dt    # 最近一个分型是多久之前？
 
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
