@@ -24,7 +24,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
         print(_signals)
 
         for s_value in _signals.values():
-            if "多头" in s_value:
+            if "买" in s_value:
                 s_value_detail = s_value.split("_")
                 print(s_value_detail)
                 symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
@@ -32,7 +32,8 @@ def trend_reverse_ubi_entry(row, sdt, edt):
                     'name': _name,
                     'symbol': symbol_link,
                     'ts_code': _ts_code,
-                    'signals': s_value_detail[1],
+                    'signals': s_value_detail[0],
+                    'fx_pwr': s_value_detail[1],
                     'expect_profit(%)': round(float(s_value_detail[2]) * 100, 2),
                     'industry': _industry
                 }

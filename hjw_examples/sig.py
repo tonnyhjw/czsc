@@ -72,7 +72,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     """
     freq = c.freq.value
     k1, k2, k3 = f"{freq}_趋势反转_UBI观察V230804".split('_')
-    v1 = '无买点'
+    v1 = '其他'
     edt = kwargs.get('edt', datetime.datetime.now())
     cache_key = update_macd_cache(c)
     ubi = c.ubi
@@ -86,6 +86,8 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > 5:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    else:
+        v2 = latest_fx.power_str
     zs_seq = get_zs_seq(bis)
     if len(zs_seq) < 3:
         v1 = '中枢<3'
@@ -102,7 +104,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 and zs2.zd > zs3.zg
         ):
             estimated_profit = (ubi['high'] - cur_price) / cur_price
-            v1, v2 = '多头', '三买'
+            v1 = '三买'
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         if (
                 # and zs1.zd > zs2.zg
@@ -130,9 +132,9 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                     and estimated_profit >= 0.03
             ):
                 if bi_b.low == zs3.dd:
-                    v1, v2 = '多头', '一买'
+                    v1 = '一买'
                 else:
-                    v1, v2 = '多头', '二买'
+                    v1 = '二买'
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     elif zs2.is_valid:
         bi_a = zs1.bis[-1]
@@ -157,7 +159,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                 and estimated_profit >= 0.03
                 and zs1.zd > zs2.zg
         ):
-            v1, v2 = '多头', '一买'
+            v1 = '一买'
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
