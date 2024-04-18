@@ -4,7 +4,7 @@ from czsc.data import TsDataCache
 from czsc import home_path
 from czsc.signals.tas import update_macd_cache
 from czsc.analyze import CZSC
-from hjw_examples.stock_process import trend_reverse_ubi_entry
+from hjw_examples.stock_process import *
 
 
 def play():
@@ -14,5 +14,12 @@ def play():
     print(result)
 
 
+def fx_reliability_exam():
+    stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
+    for index, row in stock_basic.iterrows():
+        _ts_code = row.get('ts_code')
+        bot_fx_detect(row, "20210501", "20240501")
+
+
 if __name__ == '__main__':
-    play()
+    fx_reliability_exam()

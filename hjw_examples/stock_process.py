@@ -43,3 +43,31 @@ def trend_reverse_ubi_entry(row, sdt, edt):
 
     finally:
         return output
+
+
+def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
+    from czsc.enum import Mark
+
+    dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
+    _ts_code = row.get('ts_code')
+    _symbol = row.get('symbol')
+    _name = row.get('name')
+    _industry = row.get("industry")
+    _hs = _ts_code.split(".")[-1]
+    _edt = datetime.datetime.strptime(edt, "%Y%m%d")
+
+    output = {}
+    try:
+        bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
+        c = CZSC(bars)
+        latest_fx = c.ubi_fxs[-1]
+        latest_fx_dt_delta = edt - latest_fx.dt
+        if latest_fx_dt_delta < 15 and latest_fx.mark == Mark.D and latest_fx.power_str == "强":
+            print(latest_fx)
+
+    except Exception as e_msg:
+        tb = traceback.format_exc()  # 获取 traceback 信息
+        logger.error(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
+
+    finally:
+        return output
