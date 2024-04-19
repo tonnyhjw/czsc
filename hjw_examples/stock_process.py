@@ -62,7 +62,11 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         c = CZSC(bars)
         latest_fx = c.ubi_fxs[-1]
         latest_fx_dt_delta = edt - latest_fx.dt
-        if latest_fx_dt_delta < 15 and latest_fx.mark == Mark.D:
+        delta_cond = latest_fx_dt_delta < 15
+        fx_mark_cond = latest_fx.mark == Mark.D
+        print(f"{delta_cond=} {fx_mark_cond=} {latest_fx.power_str}")
+
+        if delta_cond and fx_mark_cond:
             print(latest_fx)
 
     except Exception as e_msg:
