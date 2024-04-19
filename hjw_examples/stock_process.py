@@ -63,7 +63,6 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
     try:
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
-        pprint.pp(c.ubi)
         latest_fx = c.ubi_fxs[-1]
         pprint.pp(latest_fx)
 
@@ -73,7 +72,7 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         print(f"{delta_cond} {fx_mark_cond} {latest_fx.power_str}")
 
         if delta_cond and fx_mark_cond:
-            logger.info(latest_fx)
+            print(latest_fx)
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
