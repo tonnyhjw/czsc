@@ -18,11 +18,14 @@ def fx_reliability_exam():
     from concurrent.futures import ProcessPoolExecutor
 
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
-    with ProcessPoolExecutor(max_workers=2) as executor:
-
-        for index, row in stock_basic.iterrows():
-            _ts_code = row.get('ts_code')
-            future = executor.submit(bot_fx_detect, row, "20210501", "20240501", "W")
+    for index, row in stock_basic.iterrows():
+        _ts_code = row.get('ts_code')
+        bot_fx_detect(row, "20210501", "20240501", "W")
+    # with ProcessPoolExecutor(max_workers=2) as executor:
+    #
+    #     for index, row in stock_basic.iterrows():
+    #         _ts_code = row.get('ts_code')
+    #         future = executor.submit(bot_fx_detect, row, "20210501", "20240501", "W")
 
 
 if __name__ == '__main__':
