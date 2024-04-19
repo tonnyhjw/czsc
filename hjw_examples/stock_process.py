@@ -69,7 +69,7 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
 
         if fx_mark_cond and delta_dt_cond < 30 and latest_fx.power_str != '弱':
             symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
-            print(f"{symbol_link} {_name} {latest_fx.dt}")
+            print(f"{symbol_link} {_name} {latest_fx.dt} {latest_fx.power_str}")
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
