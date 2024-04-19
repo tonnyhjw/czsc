@@ -1,8 +1,11 @@
 import datetime
+from loguru import logger
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
 from hjw_examples.sig import trend_reverse_ubi
+
+logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
 def trend_reverse_ubi_entry(row, sdt, edt):
@@ -64,10 +67,10 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         latest_fx_dt_delta = edt - latest_fx.dt
         delta_cond = latest_fx_dt_delta < 15
         fx_mark_cond = latest_fx.mark == Mark.D
-        print(f"{delta_cond=} {fx_mark_cond=} {latest_fx.power_str}")
+        logger.info(f"{delta_cond=} {fx_mark_cond=} {latest_fx.power_str}")
 
         if delta_cond and fx_mark_cond:
-            print(latest_fx)
+            logger.info(latest_fx)
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
