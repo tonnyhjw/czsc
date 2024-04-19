@@ -67,7 +67,7 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         fx_mark_cond = latest_fx.mark == Mark.D
         delta_dt_cond = (_edt - latest_fx.dt).days
 
-        if fx_mark_cond and delta_dt_cond < 30:
+        if fx_mark_cond and delta_dt_cond < 30 and latest_fx.power_str != '弱':
             symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
             print(f"{symbol_link} {_name} {latest_fx.dt}")
 
