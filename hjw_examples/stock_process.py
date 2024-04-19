@@ -63,11 +63,13 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         print('bb')
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
+        print(c.ubi)
+        print(c.ubi_fxs)
         latest_fx = c.ubi_fxs[-1]
         latest_fx_dt_delta = edt - latest_fx.dt
         delta_cond = latest_fx_dt_delta < 15
         fx_mark_cond = latest_fx.mark == Mark.D
-        print(f"{delta_cond=} {fx_mark_cond=} {latest_fx.power_str}")
+        print(f"{delta_cond} {fx_mark_cond} {latest_fx.power_str}")
 
         if delta_cond and fx_mark_cond:
             logger.info(latest_fx)
