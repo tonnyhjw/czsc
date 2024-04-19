@@ -43,7 +43,7 @@ def trend_reverse_ubi_entry(row, sdt, edt):
                 }
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
-        logger.error(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
+        logger.critical(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
 
     finally:
         return output
@@ -67,13 +67,14 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         fx_mark_cond = latest_fx.mark == Mark.D
         delta_dt_cond = (_edt - latest_fx.dt).days
 
-        if fx_mark_cond and delta_dt_cond < 15:
-
+        if fx_mark_cond and delta_dt_cond < 30:
+            symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
+            print(f"{symbol_link} {_name} {latest_fx.dt}")
             pprint.pp(latest_fx)
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
-        logger.info(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
+        logger.critical(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
 
     finally:
         return output
