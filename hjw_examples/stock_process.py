@@ -67,9 +67,9 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         fx_mark_cond = latest_fx.mark == Mark.D
         delta_dt_cond = (_edt - latest_fx.dt).days
 
-        if fx_mark_cond and delta_dt_cond < 30:
+        if fx_mark_cond and delta_dt_cond < 15:
 
-            pprint.pp(latest_fx.dt)
+            pprint.pp(latest_fx)
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
