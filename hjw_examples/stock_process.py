@@ -73,7 +73,7 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
-        logger.error(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
+        logger.info(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
 
     finally:
         return output
