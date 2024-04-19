@@ -131,7 +131,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
                     and abs(bi_b_last_macd) < bi_b_max_macd
                     and estimated_profit >= 0.03
             ):
-                if bi_b.low == zs3.dd:
+                if bi_b.low == zs3.dd and v2 != '弱':
                     v1 = '一买'
                 elif v2 == '强':
                     v1 = '二买'
