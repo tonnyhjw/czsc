@@ -1,4 +1,6 @@
 import datetime
+import pprint
+
 from loguru import logger
 
 from czsc import CZSC, home_path
@@ -57,15 +59,14 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
     _industry = row.get("industry")
     _hs = _ts_code.split(".")[-1]
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
-    print('aa')
     output = {}
     try:
-        print('bb')
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
-        print(c.ubi)
-        print(c.ubi_fxs)
+        pprint.pp(c.ubi)
         latest_fx = c.ubi_fxs[-1]
+        pprint.pp(latest_fx)
+
         latest_fx_dt_delta = edt - latest_fx.dt
         delta_cond = latest_fx_dt_delta < 15
         fx_mark_cond = latest_fx.mark == Mark.D
