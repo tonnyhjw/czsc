@@ -66,7 +66,7 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         latest_fx = c.ubi_fxs[-1]
         fx_mark_cond = latest_fx.mark == Mark.D
 
-        if fx_mark_cond and delta_cond:
+        if fx_mark_cond:
             pprint.pp(latest_fx)
 
     except Exception as e_msg:
