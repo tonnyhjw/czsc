@@ -58,9 +58,10 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
     _industry = row.get("industry")
     _hs = _ts_code.split(".")[-1]
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
-
+    print('aa')
     output = {}
     try:
+        print('bb')
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
         latest_fx = c.ubi_fxs[-1]
