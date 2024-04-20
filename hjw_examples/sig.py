@@ -1,5 +1,6 @@
 import pprint
 import datetime
+from loguru import logger
 from collections import OrderedDict
 
 from czsc import CZSC
@@ -8,6 +9,8 @@ from czsc.utils import get_sub_elements, create_single_signal
 from czsc.signals.tas import update_macd_cache
 from czsc.utils.sig import get_zs_seq
 from czsc.enum import Mark
+
+logger.add("statics/logs/sig.log", level="INFO", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
 def macd_pzbc_ubi(c: CZSC, **kwargs) -> OrderedDict:
@@ -170,6 +173,7 @@ def is_strong_bot_fx(c: CZSC, latest_fx: FX, edt: datetime.datetime, **kwargs) -
     fx_power_cond = latest_fx.power_str == '强'
     ubi_dir_cond = c.ubi['direction'] == Direction.Up
     ubi_fx_cnt_cond = len(c.ubi['fxs']) < 2
+    logger.debug(f"{latest_fx.symbol}:{fx_mark_cond=} {delta_dt_cond} {fx_power_cond} {ubi_dir_cond} {ubi_fx_cnt_cond}")
 
     if fx_mark_cond and delta_dt_cond and fx_power_cond and ubi_dir_cond and ubi_fx_cnt_cond:
         return True
