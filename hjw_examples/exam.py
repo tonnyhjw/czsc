@@ -10,7 +10,7 @@ from hjw_examples.stock_process import *
 
 def play():
     row = dict(ts_code="603960.sh", symbol="603960", name="克来机电")
-    sdt, edt = "20240101", "20240202"
+    sdt, edt = "20200501", "20240202"
     result = bot_fx_detect(row=row, sdt=sdt, edt=edt)
     pprint.pprint(result)
 
