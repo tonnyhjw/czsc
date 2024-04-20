@@ -31,7 +31,7 @@ def check():
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             logger.info(f"正在分析{_ts_code}")
-            future = executor.submit(bot_fx_detect, row, "20240101", datetime.datetime.now().strftime('%Y%m%d'), 'W')
+            future = executor.submit(bot_fx_detect, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'), 'W')
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
