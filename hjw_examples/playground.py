@@ -9,7 +9,7 @@ from hjw_examples.stock_process import *
 
 def play():
     row = dict(ts_code="300122.sz", symbol="300122", name="智飞生物")
-    sdt, edt = "20200101", "20240416"
+    sdt, edt = "20200101", "20240412"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt)
     print(result)
 
@@ -25,7 +25,7 @@ def fx_reliability_exam():
 
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
-            future = executor.submit(bot_fx_detect, row, "20230501", "20230716", "W")
+            future = executor.submit(bot_fx_detect, row, "20240101", "20240501", "W")
 
 
 if __name__ == '__main__':
