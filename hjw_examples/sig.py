@@ -166,7 +166,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
 
 def is_strong_bot_fx(c: CZSC, latest_fx: FX, edt: datetime.datetime, **kwargs) -> bool:
     fx_mark_cond = latest_fx.mark == Mark.D
-    delta_dt_cond = (edt - latest_fx.dt).days < 30
+    delta_dt_cond = (edt - latest_fx.dt).days < 20
     fx_power_cond = latest_fx.power_str == '强'
     ubi_dir_cond = c.ubi['direction'] == Direction.Up
     ubi_fx_cnt_cond = len(c.ubi['fxs']) < 2
