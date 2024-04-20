@@ -117,4 +117,4 @@ tk.csv
 # static file
 hjw_examples/statics/
 statics/
-hjw_examples/playground.py
+hjw_examples/exam.py
