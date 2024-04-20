@@ -1,9 +1,9 @@
-import datetime
 import pprint
+import datetime
 from collections import OrderedDict
 
 from czsc import CZSC
-from czsc.objects import Direction
+from czsc.objects import Direction, FX
 from czsc.utils import get_sub_elements, create_single_signal
 from czsc.signals.tas import update_macd_cache
 from czsc.utils.sig import get_zs_seq
@@ -162,6 +162,19 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
             v1 = '一买'
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+
+
+def is_strong_bot_fx(c: CZSC, latest_fx: FX, edt: datetime.datetime, **kwargs) -> bool:
+    fx_mark_cond = latest_fx.mark == Mark.D
+    delta_dt_cond = (edt - latest_fx.dt).days < 30
+    fx_power_cond = latest_fx.power_str == '强'
+    ubi_dir_cond = c.ubi['direction'] == Direction.Up
+    ubi_fx_cnt_cond = len(c.ubi['fxs']) < 2
+
+    if fx_mark_cond and delta_dt_cond and fx_power_cond and ubi_dir_cond and ubi_fx_cnt_cond:
+        return True
+    else:
+        return False
 
 
 def get_valid_zs_seq(zs_seq: list, valid_count: int = 3):

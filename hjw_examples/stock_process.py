@@ -5,7 +5,7 @@ from loguru import logger
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from hjw_examples.sig import trend_reverse_ubi
+from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx
 
 logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
@@ -50,9 +50,6 @@ def trend_reverse_ubi_entry(row, sdt, edt):
 
 
 def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
-    from czsc.enum import Mark
-    from czsc.objects import Direction
-
     dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')
@@ -65,15 +62,13 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
         latest_fx = c.ubi_fxs[-1]
-        fx_mark_cond = latest_fx.mark == Mark.D
-        delta_dt_cond = (_edt - latest_fx.dt).days < 30
-        fx_power_cond = latest_fx.power_str == '强'
-        ubi_dir_cond = c.ubi['direction'] == Direction.Up
-        ubi_fx_cnt_cond = len(c.ubi['fxs']) < 2
-
-        if fx_mark_cond and delta_dt_cond and fx_power_cond and ubi_dir_cond and ubi_fx_cnt_cond:
+        if is_strong_bot_fx(c, latest_fx, _edt):
             symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
-            print(f"{symbol_link} {_name} {latest_fx.dt} {latest_fx.power_str}")
+            output['name'] = _name
+            output['symbol_link'] = symbol_link
+            output['latest_fx_dt'] = latest_fx.dt
+            output['industry'] = _industry
+            logger.info(f"输出：{symbol_link} {_name} {latest_fx.dt} {latest_fx.power_str}底分型")
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
