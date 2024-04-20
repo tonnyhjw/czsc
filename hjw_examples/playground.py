@@ -25,7 +25,7 @@ def fx_reliability_exam():
 
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
-            future = executor.submit(bot_fx_detect, row, "20210501", "20240208", "W")
+            future = executor.submit(bot_fx_detect, row, "20230501", "20230716", "W")
 
 
 if __name__ == '__main__':
