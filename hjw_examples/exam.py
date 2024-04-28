@@ -37,13 +37,13 @@ def fx_reliability_exam():
             if result:
                 results.append(result)
 
-        for _stock in results:
-            if not history[
-                (history['ts_code'] == _stock.get('ts_code')) & (
-                        history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
-            ].empty:
-                logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
-                continue
+    for _stock in results:
+        if not history[
+            (history['ts_code'] == _stock.get('ts_code')) & (
+                    history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
+        ].empty:
+            print(f"{row.get('name')} {_ts_code}，30天内出现过买点")
+            continue
 
 
 if __name__ == '__main__':
