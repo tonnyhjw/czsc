@@ -101,8 +101,8 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     cur_price = c.bars_raw[-1].close
     if zs3.is_valid:
         if (
-                ubi['direction'] == Direction.Up
-                and len(ubi['fxs']) < 2
+                ubi['direction'] == Direction.Down
+                and len(ubi['fxs']) > 2
                 and ubi['low'] > zs3.zg
                 # and zs1.zd > zs2.zg
                 # and zs2.zd > zs3.zg
