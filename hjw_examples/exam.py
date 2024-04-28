@@ -47,4 +47,4 @@ def fx_reliability_exam():
 
 
 if __name__ == '__main__':
-    play()
+    fx_reliability_exam()
