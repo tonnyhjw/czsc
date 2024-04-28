@@ -10,7 +10,7 @@ from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx
 logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def trend_reverse_ubi_entry(row, sdt, edt):
+def trend_reverse_ubi_entry(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5):
     dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')
@@ -21,12 +21,12 @@ def trend_reverse_ubi_entry(row, sdt, edt):
 
     output = {}
     try:
-        bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq='D', asset="E", adj='qfq', raw_bar=True)
+        bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         # if "ST" in _name:
         #     return output
         c = CZSC(bars)
-        _signals = trend_reverse_ubi(c, edt=_edt)
-        print(_signals)
+        _signals = trend_reverse_ubi(c, edt=_edt, fx_dt_limit=fx_dt_limit)
+        logger.debug(_signals)
 
         for s_value in _signals.values():
             if "买" in s_value:

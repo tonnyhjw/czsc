@@ -58,7 +58,7 @@ def macd_pzbc_ubi(c: CZSC, **kwargs) -> OrderedDict:
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
 
-def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
+def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     """盘整背驰，主要针对大级别使用（周以上）
 
     **信号逻辑：**
@@ -70,6 +70,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     主要用于用于探测周、月线盘整背驰
 
     :param c: CZSC对象
+    :param fx_dt_limit: int, 分型时效性限制
     :param kwargs:
     :return: 信号识别结果
     """
@@ -86,7 +87,7 @@ def trend_reverse_ubi(c: CZSC, **kwargs) -> OrderedDict:
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > 5:
+    if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > fx_dt_limit:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
