@@ -18,7 +18,10 @@ def play():
 def fx_reliability_exam():
     import concurrent
     from concurrent.futures import ProcessPoolExecutor
+    from hjw_examples.history import read_history
 
+    history_csv = f"statics/history/day_trend_bc_reverse.csv"
+    history = read_history(history_csv)
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     results = []  # 用于存储所有股票的结果
 
@@ -26,14 +29,21 @@ def fx_reliability_exam():
         futures = {}
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
-            future = executor.submit(bot_fx_detect, row, "20240101", "20240202", 'W')
+            future = executor.submit(bot_fx_detect, row, "20200101", datetime.datetime.now().strftime('%Y%m%d'), 'W')
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
             if result:
                 results.append(result)
-        pprint.pprint(results)
+
+        for _stock in results:
+            if not history[
+                (history['ts_code'] == _stock.get('ts_code')) & (
+                        history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
+            ].empty:
+                logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
+                continue
 
 
 if __name__ == '__main__':
