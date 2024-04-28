@@ -42,9 +42,9 @@ def fx_reliability_exam():
                 (history['ts_code'] == _stock.get('ts_code')) & (
                         history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
             ].empty:
-                logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
+                print(f"{row.get('name')} {_ts_code}，30天内出现过买点")
                 continue
 
 
 if __name__ == '__main__':
-    play()
+    fx_reliability_exam()
