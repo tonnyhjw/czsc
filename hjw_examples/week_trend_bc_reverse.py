@@ -61,7 +61,6 @@ def check():
                     **new_buy_point
                 )
 
-
     try:
         if results:
             # 将结果转换为 DataFrame
@@ -76,13 +75,11 @@ def check():
         styled_table = daily_email_style(html_table)
 
         # 发送电子邮件
-        send_email(styled_table, f"[自动盯盘]发现{len(results)}个周线买点")
+        send_email(styled_table, f"[自动盯盘][周线买点]发现{len(results)}个买点")
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
 if __name__ == '__main__':
-    output_name = f"statics/{script_name}_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
-    history_csv = f"statics/history/{script_name}.csv"
     check()
