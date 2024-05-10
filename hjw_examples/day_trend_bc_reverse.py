@@ -1,3 +1,4 @@
+import copy
 import os
 import sys
 import datetime
@@ -63,7 +64,7 @@ def check(history_file: str):
             if result:
                 results.append(result)
                 # history = update_history(history, result['ts_code'], history_file)
-                new_buy_point = result
+                new_buy_point = copy.deepcopy(result)
                 insert_buy_point(
                     date=datetime.datetime.now(),
                     freq='D',
