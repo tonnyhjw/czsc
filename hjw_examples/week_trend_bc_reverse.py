@@ -1,5 +1,6 @@
 import os
 import sys
+import copy
 import datetime
 import traceback
 import concurrent
@@ -16,6 +17,8 @@ from hjw_examples.notify import send_email
 from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
 from hjw_examples.templates.email_templates import daily_email_style
 from hjw_examples.stock_process import trend_reverse_ubi_entry
+from database.history import insert_buy_point
+
 
 idx = 1000
 script_name = os.path.basename(__file__)
@@ -49,6 +52,15 @@ def check():
             result = future.result()
             if result:
                 results.append(result)
+                new_buy_point = copy.deepcopy(result)
+                new_buy_point['symbol'] = row.get('symbol')
+                insert_buy_point(
+                    date=datetime.datetime.now(),
+                    freq='W',
+                    expect_profit=new_buy_point.pop('expect_profit(%)'),
+                    **new_buy_point
+                )
+
 
     try:
         if results:

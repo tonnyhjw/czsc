@@ -16,7 +16,6 @@ from czsc.data import TsDataCache
 from database.history import check_duplicate, insert_buy_point
 from hjw_examples.notify import send_email
 from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
-from hjw_examples.history import read_history, update_history
 from hjw_examples.templates.email_templates import daily_email_style
 from hjw_examples.stock_process import trend_reverse_ubi_entry
 
@@ -48,12 +47,6 @@ def check(history_file: str):
             if check_duplicate(ts_code=_ts_code, check_date=_today, days=30):
                 logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
                 continue
-            # if not history[
-            #     (history['ts_code'] == _ts_code) & (
-            #             history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
-            # ].empty:
-            #     logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
-            #     continue
             future = executor.submit(trend_reverse_ubi_entry, row,
                                      "20210501", datetime.datetime.now().strftime('%Y%m%d'),
                                      'D', 5)
@@ -63,7 +56,6 @@ def check(history_file: str):
             result = future.result()
             if result:
                 results.append(result)
-                # history = update_history(history, result['ts_code'], history_file)
                 new_buy_point = copy.deepcopy(result)
                 new_buy_point['symbol'] = row.get('symbol')
                 insert_buy_point(
