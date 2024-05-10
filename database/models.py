@@ -22,7 +22,7 @@ class BuyPoint(Model):
     high = FloatField()  # 分型高点
     low = FloatField()  # 分型低点
 
-    date = DateField(null=False, default=datetime.date.today())  # 买点检测到的日期，通常是分型的第三根K线
+    date = DateField(null=False)  # 买点检测到的日期，通常是分型的第三根K线
     reason = TextField(default=None)  # 买点原因
 
     class Meta:
