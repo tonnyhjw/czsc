@@ -1,5 +1,9 @@
+from loguru import logger
+
 from datetime import timedelta, datetime
 from database.models import BuyPoint
+
+logger.add("statics/logs/database.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
 def check_duplicate(ts_code, check_date, days=30):
@@ -48,9 +52,9 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
             reason=reason
         )
         buy_point.save()
-        print(f"插入新买点: {ts_code} {date} {reason}")
+        logger.info(f"插入新买点: {ts_code} {date} {reason}")
     else:
-        print(f"买点已存在: {ts_code} {date}")
+        logger.debug(f"买点已存在: {ts_code} {date}")
 
 
 def demo():

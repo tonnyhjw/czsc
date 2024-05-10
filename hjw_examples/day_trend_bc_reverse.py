@@ -65,13 +65,13 @@ def check(history_file: str):
                 results.append(result)
                 # history = update_history(history, result['ts_code'], history_file)
                 new_buy_point = copy.deepcopy(result)
+                new_buy_point['symbol'] = row.get('symbol')
                 insert_buy_point(
                     date=datetime.datetime.now(),
                     freq='D',
                     expect_profit=new_buy_point.pop('expect_profit(%)'),
                     **new_buy_point
                 )
-
 
     try:
         if results:
