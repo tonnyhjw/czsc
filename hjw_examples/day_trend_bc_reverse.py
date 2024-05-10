@@ -13,6 +13,7 @@ sys.path.insert(0, '..')
 from czsc import home_path
 from czsc.data import TsDataCache
 from czsc.objects import Freq
+from database.history import check_duplicate, insert_buy_point
 from hjw_examples.notify import send_email
 from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
 from hjw_examples.history import read_history, update_history
@@ -35,20 +36,24 @@ logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="u
 
 def check(history_file: str):
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
-    history = read_history(history_file)
+    # history = read_history(history_file)
     results = []  # 用于存储所有股票的结果
 
     with ProcessPoolExecutor(max_workers=2) as executor:
         futures = {}
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
+            _today = datetime.datetime.today()
             logger.info(f"正在分析{_ts_code}")
-            if not history[
-                (history['ts_code'] == _ts_code) & (
-                        history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
-            ].empty:
+            if check_duplicate(ts_code=_ts_code, check_date=_today, days=30):
                 logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
                 continue
+            # if not history[
+            #     (history['ts_code'] == _ts_code) & (
+            #             history['date'] > (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))
+            # ].empty:
+            #     logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
+            #     continue
             future = executor.submit(trend_reverse_ubi_entry, row,
                                      "20210501", datetime.datetime.now().strftime('%Y%m%d'),
                                      Freq.D, 5)
@@ -58,7 +63,14 @@ def check(history_file: str):
             result = future.result()
             if result:
                 results.append(result)
-                history = update_history(history, result['ts_code'], history_file)
+                # history = update_history(history, result['ts_code'], history_file)
+                new_buy_point = result
+                insert_buy_point(
+                    date=datetime.datetime.now(),
+                    expect_profit=new_buy_point.pop('expect_profit(%)'),
+                    **new_buy_point
+                )
+
 
     try:
         if results:
