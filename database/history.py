@@ -2,7 +2,7 @@ from datetime import timedelta, date
 from database.models import BuyPoint
 
 
-def check_duplicate(stock_code, check_date, days=30):
+def check_duplicate(symbol, check_date, days=30):
     """
     检查给定股票代码和日期是否在最近N天内已存在买点记录
     :param stock_code: 股票代码
@@ -12,7 +12,7 @@ def check_duplicate(stock_code, check_date, days=30):
     """
     start_date = check_date - timedelta(days=days)
     exists = BuyPoint.select().where(
-        BuyPoint.stock_code == stock_code,
+        BuyPoint.symbol == symbol,
         BuyPoint.date >= start_date,
         BuyPoint.date <= check_date
     ).exists()

@@ -12,7 +12,7 @@ class BuyPoint(Model):
     """买点信息模型"""
     name = CharField(null=False)  # 股票名称
     symbol = CharField(null=False)  # 股票代码
-    ts_code = CharField()  # 股票ts代码
+    ts_code = CharField(null=False)  # 股票ts代码
     freq = CharField(null=False)  # 级别（日线、周线等）
     signals = CharField()  # 第几类买点
     fx_pwr = CharField()  # 分型强度
