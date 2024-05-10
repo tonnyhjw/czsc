@@ -12,6 +12,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import home_path
 from czsc.data import TsDataCache
+from czsc.objects import Freq
 from hjw_examples.notify import send_email
 from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
 from hjw_examples.history import read_history, update_history
@@ -50,7 +51,7 @@ def check(history_file: str):
                 continue
             future = executor.submit(trend_reverse_ubi_entry, row,
                                      "20210501", datetime.datetime.now().strftime('%Y%m%d'),
-                                     "D", 5)
+                                     Freq.D, 5)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
