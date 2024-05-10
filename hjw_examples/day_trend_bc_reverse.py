@@ -43,7 +43,6 @@ def check(history_file: str):
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
-            _freq = Freq.D
             logger.info(f"正在分析{_ts_code}")
             if check_duplicate(ts_code=_ts_code, check_date=_today, days=30):
                 logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
