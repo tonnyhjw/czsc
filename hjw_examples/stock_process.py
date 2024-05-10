@@ -11,7 +11,7 @@ from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx
 logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def trend_reverse_ubi_entry(row, sdt, edt, freq: Freq = Freq.D, fx_dt_limit: int = 5):
+def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
     dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')

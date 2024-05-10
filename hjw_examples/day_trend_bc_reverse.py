@@ -12,7 +12,6 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import home_path
 from czsc.data import TsDataCache
-from czsc.objects import Freq
 from database.history import check_duplicate, insert_buy_point
 from hjw_examples.notify import send_email
 from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
@@ -44,6 +43,7 @@ def check(history_file: str):
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
+            _freq = Freq.D
             logger.info(f"正在分析{_ts_code}")
             if check_duplicate(ts_code=_ts_code, check_date=_today, days=30):
                 logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
@@ -56,7 +56,7 @@ def check(history_file: str):
             #     continue
             future = executor.submit(trend_reverse_ubi_entry, row,
                                      "20210501", datetime.datetime.now().strftime('%Y%m%d'),
-                                     Freq.D, 5)
+                                     'D', 5)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
