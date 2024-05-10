@@ -118,3 +118,4 @@ tk.csv
 hjw_examples/statics/
 statics/
 hjw_examples/exam.py
+database/configs.py

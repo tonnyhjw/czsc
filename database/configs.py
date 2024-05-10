@@ -1,1 +1,1 @@
-BUY_POINT_PATH = "~/databases/buy_points.db"
+BUY_POINT_PATH = "/home/ubuntu/databases/buy_points.db"
