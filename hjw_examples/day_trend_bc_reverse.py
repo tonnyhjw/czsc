@@ -66,6 +66,7 @@ def check(history_file: str):
                 new_buy_point = result
                 insert_buy_point(
                     date=datetime.datetime.now(),
+                    freq='D',
                     expect_profit=new_buy_point.pop('expect_profit(%)'),
                     **new_buy_point
                 )
