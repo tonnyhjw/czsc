@@ -48,7 +48,7 @@ def check(history_file: str):
                 logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
                 continue
             future = executor.submit(trend_reverse_ubi_entry, row,
-                                     "20210501", datetime.datetime.now().strftime('%Y%m%d'),
+                                     "20180501", datetime.datetime.now().strftime('%Y%m%d'),
                                      'D', 5)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
