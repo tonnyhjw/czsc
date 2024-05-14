@@ -33,9 +33,8 @@ logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="u
 # Name: 0, dtype: object
 
 
-def check(history_file: str):
+def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y%m%d')):
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
-    # history = read_history(history_file)
     results = []  # 用于存储所有股票的结果
 
     with ProcessPoolExecutor(max_workers=2) as executor:
@@ -47,9 +46,7 @@ def check(history_file: str):
             if check_duplicate(ts_code=_ts_code, check_date=_today, days=30):
                 logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
                 continue
-            future = executor.submit(trend_reverse_ubi_entry, row,
-                                     "20180501", datetime.datetime.now().strftime('%Y%m%d'),
-                                     'D', 5)
+            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'D', 5)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -59,7 +56,7 @@ def check(history_file: str):
                 new_buy_point = copy.deepcopy(result)
                 new_buy_point['symbol'] = row.get('symbol')
                 insert_buy_point(
-                    date=datetime.datetime.now(),
+                    date=datetime.datetime.strptime(edt, '%Y%m%d'),
                     freq='D',
                     expect_profit=new_buy_point.pop('expect_profit(%)'),
                     **new_buy_point
@@ -86,6 +83,4 @@ def check(history_file: str):
 
 
 if __name__ == '__main__':
-    output_name = f"statics/{script_name}_{datetime.datetime.today().strftime('%Y-%m-%d')}.txt"
-    history_csv = f"statics/history/{script_name}.csv"
-    check(history_csv)
+    check()
