@@ -34,7 +34,7 @@ logger.add("statics/logs/week_trend_bc_reverse.log", rotation="10MB", encoding="
 # Name: 0, dtype: object
 
 
-def check():
+def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y%m%d')):
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     results = []  # 用于存储所有股票的结果
 
@@ -43,9 +43,7 @@ def check():
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             logger.info(f"正在分析{_ts_code}")
-            future = executor.submit(trend_reverse_ubi_entry, row,
-                                     "20200101", datetime.datetime.now().strftime('%Y%m%d'),
-                                     'W', 15)
+            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'W', 15)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -55,7 +53,7 @@ def check():
                 new_buy_point = copy.deepcopy(result)
                 new_buy_point['symbol'] = row.get('symbol')
                 insert_buy_point(
-                    date=datetime.datetime.now(),
+                    date=datetime.datetime.strptime(edt, '%Y%m%d'),
                     freq='W',
                     expect_profit=new_buy_point.pop('expect_profit(%)'),
                     **new_buy_point
