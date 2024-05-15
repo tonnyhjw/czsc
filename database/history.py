@@ -6,10 +6,10 @@ from database.models import BuyPoint
 logger.add("statics/logs/database.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def check_duplicate(ts_code, check_date, days=30, fx_pwr=None, signals=None):
+def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None):
     """
     检查给定股票代码和日期是否在最近N天内已存在买点记录，并可以根据分型强度过滤。
-    :param ts_code: 股票代码
+    :param symbol: 股票代码
     :param check_date: 需要检查的日期
     :param days: 检查的天数范围，默认30天
     :param fx_pwr: 可选，分型强度过滤
@@ -20,7 +20,7 @@ def check_duplicate(ts_code, check_date, days=30, fx_pwr=None, signals=None):
 
     # 构建基本查询条件
     query = BuyPoint.select().where(
-        (BuyPoint.ts_code == ts_code) &
+        (BuyPoint.symbol == symbol) &
         (BuyPoint.date >= start_date) &
         (BuyPoint.date <= check_date)
     )
@@ -68,6 +68,47 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
         logger.info(f"插入新买点: {ts_code} {date} {reason}")
     else:
         logger.debug(f"买点已存在: {ts_code} {date}")
+
+
+def query_latest_buy_point(symbol, fx_pwr=None, signal=None):
+    """
+    根据股票代码查询最近的买点信息，可根据分型强度和信号过滤。
+    :param symbol: 股票代码
+    :param fx_pwr: 可选，分型强度过滤
+    :param signal: 可选，买入信号过滤
+    :return: 配置好的查询对象
+    """
+    # 构建基本查询
+    query = BuyPoint.select().where(BuyPoint.symbol == symbol)
+
+    # 根据 fx_pwr 添加过滤条件
+    if fx_pwr is not None:
+        query = query.where(BuyPoint.fx_pwr == fx_pwr)
+
+    # 根据 signal 添加过滤条件
+    if signal is not None:
+        query = query.where(BuyPoint.signal == signal)
+
+    # 返回按日期降序排序的查询对象
+    return query.order_by(BuyPoint.date.desc()).first()
+
+
+def buy_point_exists(symbol, check_date, signal):
+    """
+    检查给定股票代码、日期和信号的买点是否已存在。
+
+    :param symbol: 股票代码
+    :param check_date: 检查的日期
+    :param signal: 买入信号
+    :return: 如果存在返回 True，否则返回 False
+    """
+    # 查询条件：股票代码、日期和买入信号都匹配
+    exists = BuyPoint.select().where(
+        (BuyPoint.symbol == symbol) &
+        (BuyPoint.date == check_date) &
+        (BuyPoint.signal == signal)
+    ).exists()
+    return exists
 
 
 def demo():
