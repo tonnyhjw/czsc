@@ -6,20 +6,33 @@ from database.models import BuyPoint
 logger.add("statics/logs/database.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def check_duplicate(ts_code, check_date, days=30):
+def check_duplicate(ts_code, check_date, days=30, fx_pwr=None, signals=None):
     """
-    检查给定股票代码和日期是否在最近N天内已存在买点记录
+    检查给定股票代码和日期是否在最近N天内已存在买点记录，并可以根据分型强度过滤。
     :param ts_code: 股票代码
     :param check_date: 需要检查的日期
-    :param days: 检查的天数范围,默认30天
-    :return: True表示重复,False表示未重复
+    :param days: 检查的天数范围，默认30天
+    :param fx_pwr: 可选，分型强度过滤
+    :param signals: 可选，买点类型过滤
+    :return: True表示重复, False表示未重复
     """
     start_date = check_date - timedelta(days=days)
-    exists = BuyPoint.select().where(
-        BuyPoint.ts_code == ts_code,
-        BuyPoint.date >= start_date,
-        BuyPoint.date <= check_date
-    ).exists()
+
+    # 构建基本查询条件
+    query = BuyPoint.select().where(
+        (BuyPoint.ts_code == ts_code) &
+        (BuyPoint.date >= start_date) &
+        (BuyPoint.date <= check_date)
+    )
+
+    # 如果提供了fx_pwr，则添加到查询条件中
+    if fx_pwr is not None:
+        query = query.where(BuyPoint.fx_pwr == fx_pwr)
+    # 如果提供了fx_pwr，则添加到查询条件中
+    if signals is not None:
+        query = query.where(BuyPoint.signals == signals)
+
+    exists = query.exists()
     return exists
 
 
