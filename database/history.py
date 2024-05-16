@@ -70,12 +70,12 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
         logger.debug(f"买点已存在: {ts_code} {date}")
 
 
-def query_latest_buy_point(symbol, fx_pwr=None, signal=None):
+def query_latest_buy_point(symbol, fx_pwr=None, signals=None):
     """
     根据股票代码查询最近的买点信息，可根据分型强度和信号过滤。
     :param symbol: 股票代码
     :param fx_pwr: 可选，分型强度过滤
-    :param signal: 可选，买入信号过滤
+    :param signals: 可选，买入信号过滤
     :return: 配置好的查询对象
     """
     # 构建基本查询
@@ -85,34 +85,33 @@ def query_latest_buy_point(symbol, fx_pwr=None, signal=None):
     if fx_pwr is not None:
         query = query.where(BuyPoint.fx_pwr == fx_pwr)
 
-    # 根据 signal 添加过滤条件
-    if signal is not None:
-        query = query.where(BuyPoint.signal == signal)
+    # 根据 signals 添加过滤条件
+    if signals is not None:
+        query = query.where(BuyPoint.signals == signals)
 
     # 返回按日期降序排序的查询对象
     return query.order_by(BuyPoint.date.desc()).first()
 
 
-def buy_point_exists(symbol, check_date, freq, signal=None):
+def buy_point_exists(symbol, check_date, freq, signals=None):
     """
     检查给定股票代码、日期和信号的买点是否已存在。
 
     :param symbol: 股票代码
     :param check_date: 检查的日期
     :param freq: K线图级别
-    :param signal: 可选，买入信号
+    :param signals: 可选，买入信号
     :return: 如果存在返回 True，否则返回 False
     """
     # 查询条件：股票代码、日期和买入信号都匹配
     query = BuyPoint.select().where(
         (BuyPoint.symbol == symbol) &
         (BuyPoint.date == check_date) &
-        (BuyPoint.freq == freq) &
-        (BuyPoint.signal == signal)
+        (BuyPoint.freq == freq)
     )
-    # 根据 signal 添加过滤条件
-    if signal is not None:
-        query = query.where(BuyPoint.signal == signal)
+    # 根据 signals 添加过滤条件
+    if signals is not None:
+        query = query.where(BuyPoint.signals == signals)
     return query.exists()
 
 
