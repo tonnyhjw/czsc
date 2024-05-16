@@ -42,7 +42,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
-            logger.info(f"正在分析{_ts_code}")
+            logger.info(f"正在分析{_ts_code}在{edt}的走势")
             future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'D', 5)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     today = datetime.datetime.now()
 
     # 生成日期范围，从2024年1月1日到今天
-    date_range = pd.date_range(start='2024-02-19', end=today, freq='B')
+    date_range = pd.date_range(start='2024-03-19', end=today, freq='B')
 
     # 将日期格式化为'%Y%m%d'
     formatted_dates = date_range.strftime('%Y%m%d').tolist()

@@ -292,8 +292,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             0 < len(zs_seq_after_1st_buy) < 3
             and ubi['direction'] == Direction.Up
             and len(ubi['fxs']) < 2
-            and bis[-1].cache[cache_key]['dif'] > 0
-            and bis[-1].cache[cache_key]['dea'] > 0
+            and bis[-1].raw_bars[-1].cache[cache_key]['dif'] > 0
+            and bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0
             and latest_fx.power_str != "弱"
         ):
             zs1_after_1st_buy = zs_seq_after_1st_buy[0]
