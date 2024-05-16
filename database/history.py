@@ -1,4 +1,5 @@
 from loguru import logger
+import pandas as pd
 
 from datetime import timedelta, datetime
 from database.models import BuyPoint
@@ -16,6 +17,10 @@ def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None):
     :param signals: 可选，买点类型过滤
     :return: True表示重复, False表示未重复
     """
+    # 将 pandas.Timestamp 转换为 datetime 对象
+    if isinstance(check_date, pd.Timestamp):
+        check_date = check_date.to_pydatetime()
+
     start_date = check_date - timedelta(days=days)
 
     # 构建基本查询条件
@@ -51,6 +56,10 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
     :param date: 买点日期
     :param reason: 买点原因
     """
+    # 将 pandas.Timestamp 转换为 datetime 对象
+    if isinstance(date, pd.Timestamp):
+        date = date.to_pydatetime()
+
     if not check_duplicate(ts_code, date):
         buy_point = BuyPoint.create(
             name=name,
@@ -103,6 +112,10 @@ def buy_point_exists(symbol, check_date, freq, signals=None):
     :param signals: 可选，买入信号
     :return: 如果存在返回 True，否则返回 False
     """
+    # 将 pandas.Timestamp 转换为 datetime 对象
+    if isinstance(check_date, pd.Timestamp):
+        check_date = check_date.to_pydatetime()
+
     # 查询条件：股票代码、日期和买入信号都匹配
     query = BuyPoint.select().where(
         (BuyPoint.symbol == symbol) &

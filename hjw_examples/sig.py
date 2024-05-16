@@ -198,6 +198,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     latest_fx = c.ubi_fxs[-1]       # 最近一个分型
     latest_fx_dt_delta = edt - latest_fx.dt    # 最近一个分型是多久之前？
 
+    print(f"{type(c.symbol)}, {type(latest_fx.dt)}, {type(freq)}")
+
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
@@ -283,7 +285,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
     if history.check_duplicate(c.symbol, edt, days=30 * 6, signals='一买'):
-        latest_1st_buy_point = history.query_latest_buy_point(c.symbol, signal='一买')
+        latest_1st_buy_point = history.query_latest_buy_point(c.symbol, signals='一买')
 
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
