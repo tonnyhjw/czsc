@@ -81,5 +81,5 @@ if __name__ == '__main__':
     # 将日期格式化为'%Y%m%d'
     formatted_dates = date_range.strftime('%Y%m%d').tolist()
     for business_date in formatted_dates:
-        print(business_date)
-        # check(edt=business_date)
+        print(f"测试日期:{business_date}")
+        check(edt=business_date)
