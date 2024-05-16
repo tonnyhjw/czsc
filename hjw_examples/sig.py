@@ -207,7 +207,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     elif history.buy_point_exists(c.symbol, latest_fx.dt, freq):
-        v1 = '已存在买点'
+        v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
         v2 = latest_fx.power_str
