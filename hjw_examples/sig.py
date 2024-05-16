@@ -198,8 +198,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     latest_fx = c.ubi_fxs[-1]       # 最近一个分型
     latest_fx_dt_delta = edt - latest_fx.dt    # 最近一个分型是多久之前？
 
-    print(f"{type(c.symbol)}, {type(latest_fx.dt)}, {type(freq)}")
-
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)

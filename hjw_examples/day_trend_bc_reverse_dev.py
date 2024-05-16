@@ -76,7 +76,7 @@ if __name__ == '__main__':
     today = datetime.datetime.now()
 
     # 生成日期范围，从2024年1月1日到今天
-    date_range = pd.date_range(start='2024-01-01', end=today, freq='B')
+    date_range = pd.date_range(start='2024-02-19', end=today, freq='B')
 
     # 将日期格式化为'%Y%m%d'
     formatted_dates = date_range.strftime('%Y%m%d').tolist()
