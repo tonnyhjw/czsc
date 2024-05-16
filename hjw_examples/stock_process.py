@@ -5,7 +5,7 @@ import traceback
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx
+from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx, trend_reverse_ubi_dev
 
 logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
@@ -25,7 +25,7 @@ def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
         # if "ST" in _name:
         #     return output
         c = CZSC(bars)
-        _signals = trend_reverse_ubi(c, edt=_edt, fx_dt_limit=fx_dt_limit)
+        _signals = trend_reverse_ubi_dev(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
         logger.debug(_signals)
 
         for s_value in _signals.values():

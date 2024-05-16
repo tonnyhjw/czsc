@@ -15,7 +15,7 @@ def play():
     pprint.pprint(result)
 
 
-def fx_reliability_exam():
+def fx_reliability_exam(sdt, edt):
     import concurrent
     from concurrent.futures import ProcessPoolExecutor
     from hjw_examples.history import read_history
@@ -29,7 +29,7 @@ def fx_reliability_exam():
         futures = {}
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
-            future = executor.submit(bot_fx_detect, row, "20200101", "20240427", 'W')
+            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'D', 5)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):

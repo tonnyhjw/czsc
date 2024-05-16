@@ -93,22 +93,27 @@ def query_latest_buy_point(symbol, fx_pwr=None, signal=None):
     return query.order_by(BuyPoint.date.desc()).first()
 
 
-def buy_point_exists(symbol, check_date, signal):
+def buy_point_exists(symbol, check_date, freq, signal=None):
     """
     检查给定股票代码、日期和信号的买点是否已存在。
 
     :param symbol: 股票代码
     :param check_date: 检查的日期
-    :param signal: 买入信号
+    :param freq: K线图级别
+    :param signal: 可选，买入信号
     :return: 如果存在返回 True，否则返回 False
     """
     # 查询条件：股票代码、日期和买入信号都匹配
-    exists = BuyPoint.select().where(
+    query = BuyPoint.select().where(
         (BuyPoint.symbol == symbol) &
         (BuyPoint.date == check_date) &
+        (BuyPoint.freq == freq) &
         (BuyPoint.signal == signal)
-    ).exists()
-    return exists
+    )
+    # 根据 signal 添加过滤条件
+    if signal is not None:
+        query = query.where(BuyPoint.signal == signal)
+    return query.exists()
 
 
 def demo():
