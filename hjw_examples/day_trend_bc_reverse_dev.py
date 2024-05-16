@@ -65,7 +65,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
         styled_table = daily_email_style(html_table)
 
         # 发送电子邮件
-        send_email(styled_table, f"[自动盯盘][日线买点][A股]{edt}发现{len(results)}个买点")
+        send_email(styled_table, f"[测试][日线买点][A股]{edt}发现{len(results)}个买点")
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
@@ -81,4 +81,5 @@ if __name__ == '__main__':
     # 将日期格式化为'%Y%m%d'
     formatted_dates = date_range.strftime('%Y%m%d').tolist()
     for business_date in formatted_dates:
-        check(edt=business_date)
+        print(business_date)
+        # check(edt=business_date)
