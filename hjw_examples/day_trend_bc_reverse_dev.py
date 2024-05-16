@@ -72,4 +72,13 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
 
 
 if __name__ == '__main__':
-    check()
+    # 获取当前日期
+    today = datetime.datetime.now()
+
+    # 生成日期范围，从2024年1月1日到今天
+    date_range = pd.date_range(start='2024-01-01', end=today, freq='B')
+
+    # 将日期格式化为'%Y%m%d'
+    formatted_dates = date_range.strftime('%Y%m%d').tolist()
+    for business_date in formatted_dates:
+        check(edt=business_date)
