@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 from czsc import CZSC
 from czsc.objects import Direction, FX
-from czsc.utils import get_sub_elements, create_single_signal, fast_slow_cross
+from czsc.utils import get_sub_elements, create_single_signal
 from czsc.signals.tas import update_macd_cache
 from czsc.utils.sig import get_zs_seq
 from czsc.enum import Mark
@@ -202,7 +202,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > fx_dt_limit:
+    if latest_fx.mark != Mark.D or date_exceed_rawbars(c.bars_raw, latest_fx.dt, fx_dt_limit):
+    # if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > fx_dt_limit:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     elif history.buy_point_exists(symbol, latest_fx.dt, freq):
@@ -340,17 +341,32 @@ def is_strong_bot_fx(c: CZSC, latest_fx: FX, edt: datetime.datetime, **kwargs) -
         return False
 
 
-def get_valid_zs_seq(zs_seq: list, valid_count: int = 3):
-    # 假设 zs_seq 是 ZS 对象的列表
-    index = len(zs_seq)
+def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars: int = 5) -> bool:
+    """
+    检查特定日期的 RawBar 是否距离今天超过指定数量的 RawBar。
 
-    # 从列表末尾开始反向遍历
-    for zs in reversed(zs_seq):
-        index -= 1
-        if zs.is_valid:
-            valid_count += 1
-        if valid_count >= 3:
-            break
+    :param bars_raw: raw_bars列表
+    :param edt: 目标日期
+    :param fx_dt: 分型日期
+    :param lookback_bars: 要检查的 RawBar 数量，默认为5
+    :return: 如果超过指定数量的 RawBar 则返回 True，否则返回 False
+    """
 
-    # 获取子列表
-    return zs_seq[index:]
+    # 找到今天和目标日期的索引
+    edt_index = None
+    fx_dt_index = None
+
+    for i, bar in enumerate(bars_raw):
+        if bar.dt.date() == edt:
+            edt_index = i
+        if bar.dt.date() == fx_dt.date():
+            fx_dt_index = i
+
+    # 检查是否找到对应的索引
+    if edt_index is None or fx_dt_index is None:
+        raise ValueError("Could not find the RawBar for today or the target date.")
+
+    # 计算索引差异
+    index_difference = edt_index - fx_dt_index
+
+    return index_difference > lookback_bars
