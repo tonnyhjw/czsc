@@ -202,7 +202,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    print(latest_fx.mark, date_exceed_rawbars(c.bars_raw, edt, latest_fx.dt, fx_dt_limit))
     if latest_fx.mark != Mark.D or date_exceed_rawbars(c.bars_raw, edt, latest_fx.dt, fx_dt_limit):
     # if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > fx_dt_limit:
         v1 = '没有底分型'
@@ -365,7 +364,7 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     fx_dt_index = None
 
     for i, bar in enumerate(bars_raw):
-        print(i, bar, fx_dt)
+        print(type(bar.dt), type(fx_dt), type(edt))
         if bar.dt.date() == edt:
             edt_index = i
         if bar.dt.date() == fx_dt.date():
