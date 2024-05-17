@@ -203,9 +203,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    print(latest_fx.mark, fx_is_exceed)
     if latest_fx.mark != Mark.D or fx_is_exceed:
-    # if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > fx_dt_limit:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     elif history.buy_point_exists(symbol, latest_fx.dt, freq):
@@ -237,8 +235,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
 
-            bi_b_max_macd = max(abs(macd) for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-            bi_b_last_macd = bi_b.raw_bars[-1].cache[cache_key]['macd']
+            # bi_b_max_macd = max(abs(macd) for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+            # bi_b_last_macd = bi_b.raw_bars[-1].cache[cache_key]['macd']
 
             estimated_profit = (zs3.zd - cur_price) / cur_price
 
@@ -254,19 +252,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
                     history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                              industry, latest_fx.dt)
                     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
-                # elif v2 == '强':
-                #     v1 = '二买'
-                #     # 插入数据库
-                #     history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                #                              industry, latest_fx.dt)
-                #     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
-            else:
-                print("At least one condition failed:")
-                print(f"Condition 1 ({bi_b_dif} > {bi_a_dif}): {0 > bi_b_dif > bi_a_dif}")
-                print(
-                    f"Condition 2 {abs(bi_b_macd_area)} < {abs(bi_a_macd_area)}: {abs(bi_b_macd_area) < abs(bi_a_macd_area)}")
-                print(f"Condition 3 {abs(bi_b_last_macd)} < {bi_b_max_macd}: {abs(bi_b_last_macd) < bi_b_max_macd}")
-                print(f"Condition 4 {estimated_profit}: {estimated_profit >= 0.03}")
 
     elif zs2.is_valid:
         bi_a = zs1.bis[-1]
@@ -377,6 +362,5 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
 
     # 计算索引差异
     index_difference = edt_index - fx_dt_index
-    print(f"{edt_index} - {fx_dt_index}={edt_index - fx_dt_index}")
 
     return index_difference > lookback_bars
