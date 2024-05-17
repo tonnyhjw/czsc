@@ -366,9 +366,9 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
 
     for i, bar in enumerate(bars_raw):
         print(type(bar.dt), type(fx_dt), type(edt))
-        if bar.dt.date() == edt:
+        if bar.dt.to_pydatetime().date() == edt:
             edt_index = i
-        if bar.dt.date() == fx_dt.date():
+        if bar.dt.to_pydatetime().date() == fx_dt.to_pydatetime().date():
             fx_dt_index = i
 
     # 检查是否找到对应的索引
