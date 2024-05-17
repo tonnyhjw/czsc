@@ -316,7 +316,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
 
             # 判断三买
             zs2_after_1st_buy = zs_seq_after_1st_buy[1]
-            if latest_fx.low > zs1_after_1st_buy.zg and not zs2_after_1st_buy.is_valid():
+            if latest_fx.low > zs1_after_1st_buy.zg and len(zs2_after_1st_buy.bis) < 3:
                 v1 = '三买'
                 estimated_profit = zs2_after_1st_buy.zg - cur_price
                 # 插入数据库
