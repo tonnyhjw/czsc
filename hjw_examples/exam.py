@@ -9,9 +9,9 @@ from hjw_examples.stock_process import *
 
 
 def play():
-    row = dict(ts_code="603960.sh", symbol="603960", name="克来机电")
-    sdt, edt = "20200501", "20240202"
-    result = bot_fx_detect(row=row, sdt=sdt, edt=edt)
+    row = dict(ts_code="603713.sh", symbol="603713", name="密尔克卫", industry="仓储物流")
+    sdt, edt = "20180501", "20240329"
+    result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D")
     pprint.pprint(result)
 
 
@@ -45,4 +45,5 @@ def fx_reliability_exam(sdt, edt):
 
 
 if __name__ == '__main__':
-    fx_reliability_exam()
+    # fx_reliability_exam("20180501", "20240329")
+    play()
