@@ -190,7 +190,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     k1, k2, k3 = f"{freq}_趋势反转_UBI观察V230804".split('_')
     v1 = '其他'
     edt = kwargs.get('edt', datetime.datetime.now())
-    name, ts_code, industry, freq = kwargs.get('name'), kwargs.get('ts_code'), kwargs.get('industry'), kwargs.get('freq')
+    name, ts_code, symbol = kwargs.get('name'), kwargs.get('ts_code'), kwargs.get('symbol')
+    industry, freq = kwargs.get('industry'), kwargs.get('freq')
     cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
@@ -204,7 +205,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     if latest_fx.mark != Mark.D or abs(latest_fx_dt_delta.days) > fx_dt_limit:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif history.buy_point_exists(c.symbol, latest_fx.dt, freq):
+    elif history.buy_point_exists(symbol, latest_fx.dt, freq):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
@@ -249,7 +250,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
                 elif v2 == '强':
                     v1 = '二买'
                 # 插入数据库
-                history.insert_buy_point(name, c.symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt)
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     elif zs2.is_valid:
@@ -277,13 +278,13 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         ):
             v1 = '一买'
             # 插入数据库
-            history.insert_buy_point(name, c.symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+            history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                      industry, latest_fx.dt)
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
-    if history.check_duplicate(c.symbol, edt, days=30 * 6, signals='一买'):
-        latest_1st_buy_point = history.query_latest_buy_point(c.symbol, signals='一买')
+    if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买'):
+        latest_1st_buy_point = history.query_latest_buy_point(symbol, signals='一买')
 
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
@@ -302,7 +303,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
                 v1 = '二买'
                 estimated_profit = zs1_after_1st_buy.zg - cur_price
                 # 插入数据库
-                history.insert_buy_point(name, c.symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt)
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
@@ -312,7 +313,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
                 v1 = '三买'
                 estimated_profit = zs2_after_1st_buy.zg - cur_price
                 # 插入数据库
-                history.insert_buy_point(name, c.symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt)
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
