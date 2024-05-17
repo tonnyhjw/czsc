@@ -42,10 +42,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
-            logger.info(f"正在分析{_ts_code}")
-            if check_duplicate(ts_code=_ts_code, check_date=_today, days=30):
-                logger.info(f"{row.get('name')} {_ts_code}，30天内出现过买点")
-                continue
+            logger.info(f"正在分析{_ts_code}在{edt}的走势")
             future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'D', 5)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
@@ -53,15 +50,6 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             result = future.result()
             if result:
                 results.append(result)
-                new_buy_point = copy.deepcopy(result)
-                new_buy_point['symbol'] = row.get('symbol')
-                insert_buy_point(
-                    date=datetime.datetime.strptime(edt, '%Y%m%d'),
-                    freq='D',
-                    expect_profit=new_buy_point.pop('expect_profit(%)'),
-                    **new_buy_point
-                )
-
     try:
         if results:
             # 将结果转换为 DataFrame
