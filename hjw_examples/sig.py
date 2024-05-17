@@ -247,12 +247,17 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             ):
                 if bi_b.low == zs3.dd and v2 != '弱':
                     v1 = '一买'
+                    # 插入数据库
+                    history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                                             industry, latest_fx.dt)
+                    return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
                 elif v2 == '强':
                     v1 = '二买'
-                # 插入数据库
-                history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                         industry, latest_fx.dt)
-                return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+                    # 插入数据库
+                    history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                                             industry, latest_fx.dt)
+                    return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+
     elif zs2.is_valid:
         bi_a = zs1.bis[-1]
         bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
@@ -289,6 +294,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
+        pprint.pprint(bis_after_1st_buy)
+        pprint.pp(zs_seq_after_1st_buy)
         if (
             0 < len(zs_seq_after_1st_buy) < 3
             and ubi['direction'] == Direction.Up
