@@ -9,8 +9,8 @@ from hjw_examples.stock_process import *
 
 
 def play():
-    row = dict(ts_code="603713.sh", symbol="603713", name="密尔克卫", industry="仓储物流")
-    sdt, edt = "20180501", "20240430"
+    row = dict(ts_code="688065.sh", symbol="688065", name="凯赛生物", industry="化工原料")
+    sdt, edt = "20180501", "20240416"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D")
     pprint.pprint(result)
 
