@@ -245,7 +245,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             if (
                 0 > bi_b_dif > bi_a_dif
                 and abs(bi_b_macd_area) < abs(bi_a_macd_area)
-                and abs(bi_b_last_macd) < bi_b_max_macd
+                # and abs(bi_b_last_macd) < bi_b_max_macd
                 and estimated_profit >= 0.03
             ):
                 if bi_b.low == zs3.dd and v2 != '弱':
