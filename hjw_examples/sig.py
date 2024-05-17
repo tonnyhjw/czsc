@@ -251,12 +251,12 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
                     history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                              industry, latest_fx.dt)
                     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
-                elif v2 == '强':
-                    v1 = '二买'
-                    # 插入数据库
-                    history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                             industry, latest_fx.dt)
-                    return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+                # elif v2 == '强':
+                #     v1 = '二买'
+                #     # 插入数据库
+                #     history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                #                              industry, latest_fx.dt)
+                #     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
     elif zs2.is_valid:
         bi_a = zs1.bis[-1]
