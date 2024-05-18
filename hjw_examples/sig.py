@@ -218,6 +218,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     zs1, zs2, zs3 = zs_seq[-3:]
+    estimated_profit = (zs3.zd - cur_price) / cur_price
 
     # 是否一买
     if zs3.is_valid:
@@ -238,7 +239,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             # bi_b_max_macd = max(abs(macd) for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             # bi_b_last_macd = bi_b.raw_bars[-1].cache[cache_key]['macd']
 
-            estimated_profit = (zs3.zd - cur_price) / cur_price
 
             if (
                 0 > bi_b_dif > bi_a_dif
@@ -302,7 +302,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             # 判断二买
             if latest_fx.low < zs1_after_1st_buy.zg and len(zs_seq_after_1st_buy) == 1:
                 v1 = '二买'
-                estimated_profit = zs1_after_1st_buy.zg - cur_price
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt)
@@ -312,7 +311,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             zs2_after_1st_buy = zs_seq_after_1st_buy[1]
             if latest_fx.low > zs1_after_1st_buy.zg and len(zs2_after_1st_buy.bis) < 3:
                 v1 = '三买'
-                estimated_profit = zs2_after_1st_buy.zg - cur_price
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt)
