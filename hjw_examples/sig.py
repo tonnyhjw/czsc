@@ -263,7 +263,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             bi_c_raw_bars += _bi.raw_bars
         if ubi['direction'] == Direction.Down:
             bi_c_raw_bars += ubi['raw_bars']
-        bi_c_peak_dif = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)  # todo 有bug
+        bi_c_peak_dif = min(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['dif']) < 0)  # todo 有bug
         bi_c_macd_area = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
         # bi_c_max_macd = max(abs(macd) for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
         # bi_c_last_macd = bi_c_raw_bars[-1].cache[cache_key]['macd']
