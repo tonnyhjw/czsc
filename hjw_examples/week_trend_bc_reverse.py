@@ -44,7 +44,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
             logger.info(f"正在分析{_ts_code}在{edt}的走势")
-            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'W', 5)
+            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'W', 25)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
