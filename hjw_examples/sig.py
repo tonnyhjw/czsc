@@ -274,8 +274,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
                 # and abs(bi_c_last_macd) < bi_c_max_macd
                 # and bi_c_last_macd < 0
                 and estimated_profit >= 0.03
-                and zs1.zd > zs2.zg
-                and zs2.zd > zs3.zg
+                and zs1.dd > zs2.gg
+                and zs2.dd > zs3.gg
         ):
             v1 = '一买'
             # 插入数据库
