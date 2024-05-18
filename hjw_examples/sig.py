@@ -358,7 +358,7 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
 
     # 检查是否找到对应的索引
     if edt_index is None or fx_dt_index is None:
-        raise ValueError("Could not find the RawBar for today or the target date.")
+        raise ValueError(f"Could not find the RawBar for today or the target date. {edt_index=} {fx_dt_index=}")
 
     # 计算索引差异
     index_difference = edt_index - fx_dt_index
