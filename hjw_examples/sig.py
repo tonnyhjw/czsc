@@ -152,7 +152,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             bi_c_raw_bars += _bi.raw_bars
         if ubi['direction'] == Direction.Down:
             bi_c_raw_bars += ubi['raw_bars']
-        bi_c_peak_dif = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_c_peak_dif = min(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['dif']) < 0)
         bi_c_macd_area = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
         bi_c_max_macd = max(abs(macd) for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
         bi_c_last_macd = bi_c_raw_bars[-1].cache[cache_key]['macd']
@@ -160,10 +160,11 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         if (
                 0 > bi_c_peak_dif > bi_a_dif
                 and abs(bi_c_macd_area) < abs(bi_a_macd_area)
-                and abs(bi_c_last_macd) < bi_c_max_macd
-                and bi_c_last_macd < 0
+                # and abs(bi_c_last_macd) < bi_c_max_macd
+                # and bi_c_last_macd < 0
                 and estimated_profit >= 0.03
                 and zs1.zd > zs2.zg
+                and zs2.zd > zs3.zg
         ):
             v1 = '一买'
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
@@ -197,7 +198,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     bis = c.bi_list
     cur_price = c.bars_raw[-1].close
     latest_fx = c.ubi_fxs[-1]       # 最近一个分型
-    latest_fx_dt_delta = edt - latest_fx.dt    # 最近一个分型是多久之前？
     fx_is_exceed = date_exceed_rawbars(c.bars_raw, edt, latest_fx.dt, fx_dt_limit)
 
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
@@ -265,16 +265,17 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             bi_c_raw_bars += ubi['raw_bars']
         bi_c_peak_dif = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)  # todo 有bug
         bi_c_macd_area = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-        bi_c_max_macd = max(abs(macd) for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-        bi_c_last_macd = bi_c_raw_bars[-1].cache[cache_key]['macd']
-        estimated_profit = (zs2.dd - cur_price) / cur_price
+        # bi_c_max_macd = max(abs(macd) for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        # bi_c_last_macd = bi_c_raw_bars[-1].cache[cache_key]['macd']
+        estimated_profit = (zs2.zd - cur_price) / cur_price
         if (
                 0 > bi_c_peak_dif > bi_a_dif
                 and abs(bi_c_macd_area) < abs(bi_a_macd_area)
-                and abs(bi_c_last_macd) < bi_c_max_macd
-                and bi_c_last_macd < 0
+                # and abs(bi_c_last_macd) < bi_c_max_macd
+                # and bi_c_last_macd < 0
                 and estimated_profit >= 0.03
                 and zs1.zd > zs2.zg
+                and zs2.zd > zs3.zg
         ):
             v1 = '一买'
             # 插入数据库
