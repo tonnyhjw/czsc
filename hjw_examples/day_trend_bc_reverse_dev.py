@@ -15,7 +15,7 @@ from czsc import home_path
 from czsc.data import TsDataCache
 from database.history import check_duplicate, insert_buy_point
 from hjw_examples.notify import send_email
-from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
+from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr, sort_by_signals
 from hjw_examples.templates.email_templates import daily_email_style
 from hjw_examples.stock_process import trend_reverse_ubi_entry
 
@@ -56,6 +56,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             # 将结果转换为 DataFrame
             sorted_results = sorted(results, key=sort_by_profit, reverse=True)
             sorted_results = sorted(sorted_results, key=sort_by_fx_pwr, reverse=True)
+            sorted_results = sorted(sorted_results, key=sort_by_signals)
             df_results = pd.DataFrame(sorted_results)
             # 生成 HTML 表格
             html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
