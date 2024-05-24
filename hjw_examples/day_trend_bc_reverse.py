@@ -33,7 +33,7 @@ logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="u
 # Name: 0, dtype: object
 
 
-def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y%m%d')):
+def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d')):
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     results = []  # 用于存储所有股票的结果
 
