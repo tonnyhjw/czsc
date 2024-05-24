@@ -60,13 +60,14 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             df_results = pd.DataFrame(sorted_results)
             # 生成 HTML 表格
             html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
+            styled_table = daily_email_style(html_table)
+
+            # 发送电子邮件
+            send_email(styled_table, f"[测试][日线买点][A股]{edt}发现{len(results)}个买点")
         else:
-            html_table = "<h1>没有发现买点</h1>"
+            html_table = f"<h1>{edt}没有发现买点</h1>"
+            logger.info(html_table)
 
-        styled_table = daily_email_style(html_table)
-
-        # 发送电子邮件
-        send_email(styled_table, f"[测试][日线买点][A股]{edt}发现{len(results)}个买点")
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
@@ -77,10 +78,10 @@ if __name__ == '__main__':
     today = datetime.datetime.now()
 
     # 生成日期范围，从2024年1月1日到今天
-    date_range = pd.date_range(start='2023-09-01', end="2023-12-31", freq='B')
+    date_range = pd.date_range(start='2024-01-22', end=today, freq='B')
 
     # 将日期格式化为'%Y%m%d'
     formatted_dates = date_range.strftime('%Y%m%d').tolist()
     for business_date in formatted_dates:
-        print(f"测试日期:{business_date}")
-        # check(edt=business_date)
+        logger.info(f"测试日期:{business_date}")
+        check(edt=business_date)
