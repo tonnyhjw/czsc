@@ -192,6 +192,8 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     edt = kwargs.get('edt', datetime.datetime.now())
     name, ts_code, symbol = kwargs.get('name'), kwargs.get('ts_code'), kwargs.get('symbol')
     k1, k2, k3 = freq, symbol, edt
+    print(f'{k1} {k2} {k3}')
+    print(f'{type(k1)} {type(k2)} {type(k3)}')
     industry, freq = kwargs.get('industry'), kwargs.get('freq')
 
     cache_key = update_macd_cache(c)
