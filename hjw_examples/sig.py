@@ -296,7 +296,10 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             0 < len(zs_seq_after_1st_buy) < 3
             and ubi['direction'] == Direction.Up
             and len(ubi['fxs']) < 2
-            and bis[-1].raw_bars[-1].cache[cache_key]['dif'] > bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0
+            and bis[-1].raw_bars[-1].cache[cache_key]['macd'] > bis[-1].raw_bars[-2].cache[cache_key]['macd']
+            and bis[-1].raw_bars[-1].cache[cache_key]['dif'] > 0
+            and bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0
+            # and bis[-1].raw_bars[-1].cache[cache_key]['dif'] > bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0
             # and bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0
             # and latest_fx.power_str != "弱"
         ):
@@ -349,12 +352,23 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     # 找到今天和目标日期的索引
     edt_index = None
     fx_dt_index = None
+    n = len(bars_raw)
 
     for i, bar in enumerate(bars_raw):
         if bar.dt.to_pydatetime().date() == edt.date():
             edt_index = i
         if bar.dt.to_pydatetime().date() == fx_dt.to_pydatetime().date():
             fx_dt_index = i
+
+    for i in range(n - 1, -1, -1):
+        bar = bars_raw[i]
+        if bar.dt.to_pydatetime().date() == edt and edt_index is None:
+            today_index = i
+        if bar.dt.to_pydatetime().date() == fx_dt.date() and fx_dt_index is None:
+            target_index = i
+        # 如果两个索引都找到了，可以提前结束遍历
+        if edt_index is not None and fx_dt_index is not None:
+            break
 
     # 检查是否找到对应的索引
     if edt_index is None or fx_dt_index is None:
