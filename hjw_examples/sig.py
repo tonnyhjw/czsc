@@ -355,11 +355,11 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     fx_dt_index = None
     n = len(bars_raw)
 
-    for i, bar in enumerate(bars_raw):
-        if bar.dt.to_pydatetime().date() == edt.date():
-            edt_index = i
-        if bar.dt.to_pydatetime().date() == fx_dt.to_pydatetime().date():
-            fx_dt_index = i
+    # for i, bar in enumerate(bars_raw):
+    #     if bar.dt.to_pydatetime().date() == edt.date():
+    #         edt_index = i
+    #     if bar.dt.to_pydatetime().date() == fx_dt.to_pydatetime().date():
+    #         fx_dt_index = i
 
     for i in range(n - 1, -1, -1):
         bar = bars_raw[i]
@@ -378,5 +378,6 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     # 计算索引差异
     index_difference = edt_index - fx_dt_index
     print(edt_index, fx_dt_index)
+    print(edt, fx_dt)
 
     return index_difference > lookback_bars
