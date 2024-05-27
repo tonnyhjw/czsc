@@ -7,9 +7,9 @@
 [![PyPI](https://img.shields.io/pypi/v/czsc.svg)](https://pypi.org/project/czsc/)
 [![Documentation Status](https://readthedocs.org/projects/czsc/badge/?version=latest)](https://czsc.readthedocs.io/en/latest/?badge=latest)
 
-**[API文档](https://czsc.readthedocs.io/en/latest/modules.html)** | 
-**[项目文档](https://s0cqcxuy3p.feishu.cn/wiki/wikcn3gB1MKl3ClpLnboHM1QgKf)** | 
-**[投研数据共享](https://s0cqcxuy3p.feishu.cn/wiki/wikcnzuPawXtBB7Cj7mqlYZxpDh)** | 
+**[API文档](https://czsc.readthedocs.io/en/latest/modules.html)** |
+**[项目文档](https://s0cqcxuy3p.feishu.cn/wiki/wikcn3gB1MKl3ClpLnboHM1QgKf)** |
+**[投研数据共享](https://s0cqcxuy3p.feishu.cn/wiki/wikcnzuPawXtBB7Cj7mqlYZxpDh)** |
 **[信号函数编写规范](https://s0cqcxuy3p.feishu.cn/wiki/wikcnCFLLTNGbr2THqo7KtWfBkd)**
 
 >源于[缠中说缠博客](http://blog.sina.com.cn/chzhshch)，原始博客中的内容不太完整，且没有评论，以下是网友整理的原文备份
@@ -19,8 +19,25 @@
 
 * 已经开始用czsc库进行量化研究的朋友，欢迎[加入飞书群](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=0bak668e-7617-452c-b935-94d2c209e6cf)，快点击加入吧！
 * [B站视频教程合集（持续更新...）](https://space.bilibili.com/243682308/channel/series)
-* [CZSC策略圈介绍](https://s0cqcxuy3p.feishu.cn/wiki/D12bwh4SriW1Lgk23HUchFKFnpe)
-* [CZSC代码库QA](https://zbczsc.streamlit.app/)
+
+> 最近在考虑使用 vue + rust + tauri 为 CZSC 开发一个桌面应用，欢迎有兴趣的朋友一起参与。
+> 如果你碰巧熟悉 vue、tauri、rust 的使用，欢迎加入我们的开发组，一起为 CZSC 开发一个更好的桌面应用。
+> 有意愿的朋友请联系我，微信号：**zengbin93**，备注：**桌面应用开发**。
+> 我们将为你提供一个更好的量化交易学习和交流平台。
+
+## 知识星球
+
+* [CZSC小圈子（缠论、量化、专享案例）](https://s0cqcxuy3p.feishu.cn/wiki/wikcnwXSk9mWnki1b6URPhLA2Hc)
+
+* 链接：https://wx.zsxq.com/dweb2/index/group/88851448582512
+* 加入：https://t.zsxq.com/0aMSAqcgO
+* 费用：100元
+
+> **知识星球【CZSC小圈子】的定位是什么？**
+> - 为仔细研读过禅师原文并且愿意使用 CZSC 库进行量化投研的朋友提供一个深入交流的平台。
+> - 寻找一群有能力、有兴趣、有主见的朋友共同进行量化策略研究讨论交流。
+> - 对于刚接触缠论和量化交易的新朋友，给出一些力所能及的帮助（可以在圈子中提问，必回复）。
+> - 2024年，小圈子将提供一些专享内容，主要是使用 czsc 构建量化策略的优质案例。
 
 
 ## 项目贡献
@@ -33,14 +50,18 @@
 * 基于 Tushare 数据的择时、选股策略回测研究流程
 
 
-
 ## 安装使用
 
-**注意:** python 版本必须大于等于 3.7 
+**注意:** python 版本必须大于等于 3.7
 
 直接从github安装：
 ```
 pip install git@github.com:waditu/czsc.git -U
+```
+
+直接从github指定分支安装最新版：
+```
+pip install git+https://github.com/waditu/czsc.git@V0.9.46 -U
 ```
 
 从`pypi`安装：
@@ -65,16 +86,6 @@ pip install czsc -U -i https://pypi.python.org/simple
 * 目前开发完成度不高，**API会有比较大的变动，谨慎升级版本**，暂时不准备写文档，没有能力看懂源码的，不建议现在使用。
 * 免责声明：项目开源仅用于技术交流！
 * 如果你发现了项目中的 Bug，可以先读一下《[如何有效地报告 Bug](https://www.chiark.greenend.org.uk/~sgtatham/bugs-cn.html)》，然后在 [issues](https://github.com/waditu/czsc/issues) 中报告 Bug
-
-
-## 使用案例
-
->案例中主要使用了 Tushare 的数据，开通相应的数据权限可以[点击联系](https://tushare.pro/document/2?doc_id=244)，备注：**CZSC用户**，1500元可以开通CZSC项目目前用到的全部数据权限。
->掘金终端主要用于交易策略的实盘跟踪，[点击了解](https://www.myquant.cn/)。
-
-* `examples/ts_plates_sensor.py` 同花顺概念板块轮动策略回测
-* `examples/ts_check_signal_acc.py` 验证信号计算的准确性，信号是否符合定义
-* `examples/ts_stocks_sensors.py` 日线选股策略回测
 
 
 ## 原文整理

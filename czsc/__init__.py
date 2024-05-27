@@ -14,7 +14,7 @@ from czsc.analyze import CZSC
 from czsc.objects import Freq, Operate, Direction, Signal, Factor, Event, RawBar, NewBar, Position, ZS
 from czsc.strategies import CzscStrategyBase, CzscJsonStrategy
 from czsc.sensors import holds_concepts_effect, CTAResearch, EventMatchSensor
-from czsc.sensors.feature import FixedNumberSelector, FeatureAnalyzeBase
+from czsc.sensors.feature import FixedNumberSelector
 from czsc.traders import (
     CzscTrader,
     CzscSignals,
@@ -29,14 +29,26 @@ from czsc.traders import (
     SignalsParser,
     get_signals_config,
     get_signals_freqs,
+
     WeightBacktest,
+    stoploss_by_direction,
     get_ensemble_weight,
     long_short_equity,
+
     RedisWeightsClient,
+    get_strategy_mates,
+    get_heartbeat_time,
+    clear_strategy,
+    get_strategy_weights,
+
     OpensOptimize,
     ExitsOptimize,
 )
 from czsc.utils import (
+    overlap,
+
+    format_standard_kline,
+
     KlineChart,
     WordWriter,
     BarGenerator,
@@ -59,7 +71,7 @@ from czsc.utils import (
     cal_trade_price,
     update_bbars,
     update_tbars,
-    update_nbars,
+    update_nxb,
     risk_free_returns,
     resample_to_daily,
 
@@ -69,9 +81,18 @@ from czsc.utils import (
     SignalAnalyzer,
     SignalPerformance,
     daily_performance,
+    rolling_daily_performance,
+    weekly_performance,
+    holds_performance,
     net_value_stats,
     subtract_fee,
+    top_drawdowns,
+    psi,
+
     home_path,
+    DiskCache,
+    disk_cache,
+    clear_cache,
     get_dir_size,
     empty_cache_path,
     print_df_sample,
@@ -81,6 +102,9 @@ from czsc.utils import (
     DataClient,
     set_url_token,
     get_url_token,
+
+    optuna_study,
+    optuna_good_params,
 )
 
 # 交易日历工具
@@ -94,12 +118,28 @@ from czsc.utils.calendar import (
 # streamlit 量化分析组件
 from czsc.utils.st_components import (
     show_daily_return,
+    show_yearly_stats,
+    show_splited_daily,
+    show_monthly_return,
     show_correlation,
     show_sectional_ic,
     show_factor_returns,
     show_factor_layering,
     show_symbol_factor_layering,
     show_weight_backtest,
+    show_ts_rolling_corr,
+    show_ts_self_corr,
+    show_stoploss_by_direction,
+    show_cointegration,
+    show_out_in_compare,
+    show_optuna_study,
+    show_drawdowns,
+    show_rolling_daily_performance,
+    show_event_return,
+    show_psi,
+    show_strategies_symbol,
+    show_strategies_dailys,
+    show_holds_backtest,
 )
 
 from czsc.utils.bi_info import (
@@ -111,16 +151,36 @@ from czsc.utils.features import (
     normalize_feature,
     normalize_ts_feature,
     feture_cross_layering,
-    rolling_rank,
-    rolling_norm,
-    rolling_qcut,
     find_most_similarity,
 )
 
-__version__ = "0.9.39"
+from czsc.features.utils import (
+    is_event_feature,
+    rolling_corr,
+    rolling_rank,
+    rolling_norm,
+    rolling_qcut,
+    rolling_compare,
+    rolling_scale,
+    rolling_slope,
+    rolling_tanh,
+    feature_adjust,
+    normalize_corr,
+)
+
+
+from czsc.utils.kline_quality import (
+    check_high_low,
+    check_price_gap,
+    check_abnormal_volume,
+    check_zero_volume,
+)
+
+
+__version__ = "0.9.51"
 __author__ = "zengbin93"
 __email__ = "zeng_bin8888@163.com"
-__date__ = "20231212"
+__date__ = "20240512"
 
 
 def welcome():
@@ -140,4 +200,4 @@ if envs.get_welcome():
 
 
 if get_dir_size(home_path) > pow(1024, 3):
-    print(f"{home_path} 目录缓存超过1GB，请适当清理。调用 czsc.empty_cache_path 可以直接清空缓存")
+    print(f"{home_path} 目录缓存超过1GB，请适当清理。调用 czsc.empty_cache_path() 可以直接清空缓存")
