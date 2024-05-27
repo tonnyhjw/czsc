@@ -188,11 +188,13 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     :return: 信号识别结果
     """
     freq = c.freq.value
-    k1, k2, k3 = f"{freq}_趋势反转_UBI观察V230804".split('_')
     v1 = '其他'
     edt = kwargs.get('edt', datetime.datetime.now())
     name, ts_code, symbol = kwargs.get('name'), kwargs.get('ts_code'), kwargs.get('symbol')
+    k1, k2, k3 = freq, symbol, edt
     industry, freq = kwargs.get('industry'), kwargs.get('freq')
+
+
     cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
