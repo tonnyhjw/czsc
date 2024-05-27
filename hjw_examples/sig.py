@@ -194,7 +194,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     k1, k2, k3 = freq, symbol, edt
     industry, freq = kwargs.get('industry'), kwargs.get('freq')
 
-
     cache_key = update_macd_cache(c)
     ubi = c.ubi
     bis = c.bi_list
