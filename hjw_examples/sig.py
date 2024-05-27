@@ -377,5 +377,6 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
 
     # 计算索引差异
     index_difference = edt_index - fx_dt_index
+    print(edt_index, fx_dt_index)
 
     return index_difference > lookback_bars
