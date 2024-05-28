@@ -269,14 +269,9 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
             bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
             bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
 
-            # bi_b_max_macd = max(abs(macd) for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-            # bi_b_last_macd = bi_b.raw_bars[-1].cache[cache_key]['macd']
-
-
             if (
                 0 > bi_b_dif > bi_a_dif
                 and abs(bi_b_macd_area) < abs(bi_a_macd_area)
-                # and abs(bi_b_last_macd) < bi_b_max_macd
                 and estimated_profit >= 0.03
             ):
                 if bi_b.low == zs3.dd:
@@ -324,6 +319,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
+
 
         if (
             0 < len(zs_seq_after_1st_buy) < 3
