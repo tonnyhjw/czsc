@@ -351,6 +351,8 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     """
 
     # 找到今天和目标日期的索引
+    print(edt, fx_dt)
+
     edt_index = None
     fx_dt_index = None
     n = len(bars_raw)
@@ -378,6 +380,5 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     # 计算索引差异
     index_difference = edt_index - fx_dt_index
     print(edt_index, fx_dt_index)
-    print(edt, fx_dt)
 
     return index_difference > lookback_bars
