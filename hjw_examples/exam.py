@@ -10,7 +10,7 @@ from hjw_examples.stock_process import *
 
 def play():
     row = dict(ts_code="002455.sz", symbol="002455", name="百川股份", industry="化工原料")
-    sdt, edt = "20180101", "20240208"
+    sdt, edt = "20180101", "20240219"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
