@@ -43,7 +43,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     bis = c.bi_list
     cur_price = c.bars_raw[-1].close
     latest_fx = c.ubi_fxs[-1]  # 最近一个分型
-    fx_is_exceed = date_exceed_rawbars(c.bars_raw, edt, latest_fx.dt, fx_dt_limit)
+    fx_is_exceed = date_exceed_rawbars(c.bars_raw, latest_fx.dt, fx_dt_limit)
 
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
@@ -70,11 +70,6 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
     bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-
-    # print(zs2)
-    # print(ubi)
-    # print(zs2.bis[0])
-    # print(zs2.bis[-1])
 
     if (
             zs2.is_valid and
@@ -236,7 +231,7 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     bis = c.bi_list
     cur_price = c.bars_raw[-1].close
     latest_fx = c.ubi_fxs[-1]       # 最近一个分型
-    fx_is_exceed = date_exceed_rawbars(c.bars_raw, edt, latest_fx.dt, fx_dt_limit)
+    fx_is_exceed = date_exceed_rawbars(c.bars_raw, latest_fx.dt, fx_dt_limit)
 
     if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
@@ -376,7 +371,7 @@ def is_strong_bot_fx(c: CZSC, latest_fx: FX, edt: datetime.datetime, **kwargs) -
         return False
 
 
-def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars: int = 5) -> bool:
+def date_exceed_rawbars(bars_raw, fx_dt: datetime, lookback_bars: int = 5) -> bool:
     """
     检查特定日期的 RawBar 是否距离今天超过指定数量的 RawBar。
 
@@ -388,18 +383,16 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     """
 
     # 找到今天和目标日期的索引
-    edt_index = None
-    fx_dt_index = None
     n = len(bars_raw)
+    edt_index = n-1
+    fx_dt_index = None
 
-    for i in range(n - 1, -1, -1):
+    for i in range(edt_index, -1, -1):
         bar = bars_raw[i]
-        if bar.dt.to_pydatetime().date() == edt.date() and edt_index is None:
-            edt_index = i
         if bar.dt.to_pydatetime().date() == fx_dt.date() and fx_dt_index is None:
             fx_dt_index = i
         # 如果两个索引都找到了，可以提前结束遍历
-        if edt_index is not None and fx_dt_index is not None:
+        if fx_dt_index is not None:
             break
 
     # 检查是否找到对应的索引
