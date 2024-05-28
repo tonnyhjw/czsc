@@ -24,15 +24,6 @@ script_name = os.path.basename(__file__)
 logger.add("statics/logs/week_trend_bc_reverse.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-# ts_code      000001.SZ
-# symbol          000001
-# name              平安银行
-# area                深圳
-# industry            银行
-# list_date     19910403
-# Name: 0, dtype: object
-
-
 def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y%m%d')):
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     results = []  # 用于存储所有股票的结果
