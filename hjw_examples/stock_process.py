@@ -78,7 +78,7 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
         return output
 
 
-def bottom_pzbc(row, sdt, edt, freq: str = 'W'):
+def bottom_pzbc(row, sdt, edt, freq: str = 'W', fx_dt_limit: int = 30):
     dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')
@@ -90,7 +90,7 @@ def bottom_pzbc(row, sdt, edt, freq: str = 'W'):
     try:
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
-        _signals = macd_pzbc_ubi(c)
+        _signals = macd_pzbc_ubi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
         logger.debug(_signals)
 
     except Exception as e_msg:
