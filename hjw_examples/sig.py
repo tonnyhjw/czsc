@@ -84,8 +84,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     print(zs2.edir == Direction.Down)
     print(zs2.dd == bi_b.low)
     print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
-    print(estimated_profit >= 0.03)
-    print(estimated_profit)
+
 
     if (
             zs2.is_valid and
@@ -95,7 +94,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
             zs2.edir == Direction.Down and
             zs2.dd == bi_b.low and
             (0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area)) > abs(bi_b_macd_area) and
-            estimated_profit >= 0.03
+            # estimated_profit >= 0.03
     ):
         v1 = '一买'
         # 插入数据库
