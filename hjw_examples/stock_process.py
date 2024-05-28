@@ -5,7 +5,7 @@ import traceback
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx, trend_reverse_ubi_dev
+from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx, trend_reverse_ubi_dev, macd_pzbc_ubi
 
 logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
@@ -69,6 +69,29 @@ def bot_fx_detect(row, sdt, edt, freq: str = 'W'):
             output['latest_fx_dt'] = latest_fx.dt
             output['industry'] = _industry
             logger.info(f"输出：{symbol_link} {_name} {latest_fx.dt} {latest_fx.power_str}底分型")
+
+    except Exception as e_msg:
+        tb = traceback.format_exc()  # 获取 traceback 信息
+        logger.critical(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
+
+    finally:
+        return output
+
+
+def bottom_pzbc(row, sdt, edt, freq: str = 'W'):
+    dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
+    _ts_code = row.get('ts_code')
+    _symbol = row.get('symbol')
+    _name = row.get('name')
+    _industry = row.get("industry")
+    _hs = _ts_code.split(".")[-1]
+    _edt = datetime.datetime.strptime(edt, "%Y%m%d")
+    output = {}
+    try:
+        bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
+        c = CZSC(bars)
+        _signals = macd_pzbc_ubi(c)
+        logger.debug(_signals)
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息

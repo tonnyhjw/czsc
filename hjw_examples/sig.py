@@ -15,7 +15,7 @@ from database import history
 logger.add("statics/logs/sig.log", level="INFO", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def macd_pzbc_ubi(c: CZSC, **kwargs) -> OrderedDict:
+def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     """盘整背驰，主要针对大级别使用（周以上）
 
     **信号逻辑：**
@@ -27,35 +27,56 @@ def macd_pzbc_ubi(c: CZSC, **kwargs) -> OrderedDict:
     主要用于用于探测周、月线盘整背驰
 
     :param c: CZSC对象
+    :param fx_dt_limit: int, 分型时效性限制
     :param kwargs:
     :return: 信号识别结果
     """
     freq = c.freq.value
-    k1, k2, k3 = f"{freq}_MACD背驰_UBI观察V230804".split('_')
     v1 = '其他'
+    edt = kwargs.get('edt', datetime.datetime.now())
+    name, ts_code, symbol = kwargs.get('name'), kwargs.get('ts_code'), kwargs.get('symbol')
+    k1, k2, k3 = freq, symbol, edt.strftime("%Y%m%d")
+    industry, freq = kwargs.get('industry'), kwargs.get('freq')
+
     cache_key = update_macd_cache(c)
-    bi_c = c.ubi
-    if len(c.bi_list) < 3 or not bi_c or len(bi_c['raw_bars']) < 7:
+    ubi = c.ubi
+    bis = c.bi_list
+    cur_price = c.bars_raw[-1].close
+    latest_fx = c.ubi_fxs[-1]  # 最近一个分型
+    fx_is_exceed = date_exceed_rawbars(c.bars_raw, edt, latest_fx.dt, fx_dt_limit)
+
+    if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
+        v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    bis = get_sub_elements(c.bi_list, di=1, n=2)
-    bi_a, bi_b = bis[-2:]
+    if latest_fx.mark != Mark.D or fx_is_exceed:
+        v1 = '没有底分型'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    elif history.buy_point_exists(symbol, latest_fx.dt, freq):
+        v1 = '已存在'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    else:
+        v2 = latest_fx.power_str
 
-    if bi_c['direction'] == Direction.Up and bi_c['high'] > bi_a.high:
-        bi_c_dif = max(x.cache[cache_key]['dif'] for x in bi_c['raw_bars'])
-        bi_a_dif = max(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
-        bi_c_macd_area = sum(macd for x in bi_c['raw_bars'] if (macd := x.cache[cache_key]['macd']) > 0)
-        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) > 0)
+    zs_seq = get_zs_seq(bis)
+    if len(zs_seq) < 3:
+        v1 = '中枢<3'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
-        if 0 < bi_c_dif < bi_a_dif and abs(bi_c_macd_area) < abs(bi_a_macd_area):
-            v1 = '空头'
+    zs1, zs2 = zs_seq[-2:]
+    estimated_profit = (zs2.zd - cur_price) / cur_price
 
-    if bi_c['direction'] == Direction.Down and bi_c['low'] < bi_a.low:
-        bi_c_dif = min(x.cache[cache_key]['dif'] for x in bi_c['raw_bars'])
-        bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
-        bi_c_macd_area = sum(macd for x in bi_c['raw_bars'] if (macd := x.cache[cache_key]['macd']) < 0)
-        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-        if 0 > bi_c_dif > bi_a_dif and abs(bi_c_macd_area) < abs(bi_a_macd_area):
-            v1 = '多头'
+    print(zs2)
+    print(ubi)
+    print(zs2.bis[0])
+    print(zs2.bis[-1])
+
+    # if (
+    #         zs2.is_valid and
+    #         zs2.sdir == Direction.Down and
+    #         zs2.edir == Direction.Down and
+    #
+    # ):
+
 
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
