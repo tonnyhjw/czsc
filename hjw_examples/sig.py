@@ -370,7 +370,7 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     :param lookback_bars: 要检查的 RawBar 数量，默认为5
     :return: 如果超过指定数量的 RawBar 则返回 True，否则返回 False
     """
-    logger.debug(edt, fx_dt)
+    print(edt, fx_dt)
 
     # 找到今天和目标日期的索引
     edt_index = None
@@ -379,7 +379,7 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
 
     for i in range(n - 1, -1, -1):
         bar = bars_raw[i]
-        logger.debug(bar.dt.to_pydatetime().date())
+        print(bar.dt.to_pydatetime().date())
         if bar.dt.to_pydatetime().date() == edt.date() and edt_index is None:
             edt_index = i
         if bar.dt.to_pydatetime().date() == fx_dt.date() and fx_dt_index is None:
