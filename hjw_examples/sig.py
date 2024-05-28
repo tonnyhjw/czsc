@@ -64,19 +64,32 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     zs1, zs2 = zs_seq[-2:]
     estimated_profit = (zs2.zd - cur_price) / cur_price
+    bi_a, bi_b = zs2.bis[0], zs2.bis[-1]
+    bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
+    bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
+
+    bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+    bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
 
     print(zs2)
     print(ubi)
     print(zs2.bis[0])
     print(zs2.bis[-1])
 
-    # if (
-    #         zs2.is_valid and
-    #         zs2.sdir == Direction.Down and
-    #         zs2.edir == Direction.Down and
-    #
-    # ):
-
+    if (
+            zs2.is_valid and
+            ubi['direction'] == Direction.Up and
+            len(ubi['fxs']) < 2 and
+            zs2.sdir == Direction.Down and
+            zs2.edir == Direction.Down and
+            zs2.gg == bi_a.high and
+            zs2.dd == bi_b.low and
+            0 > bi_b_dif > bi_a_dif and
+            abs(bi_b_macd_area) < abs(bi_a_macd_area) and
+            estimated_profit >= 0.03
+    ):
+        v1 = '一买'
+        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
@@ -370,7 +383,6 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     :param lookback_bars: 要检查的 RawBar 数量，默认为5
     :return: 如果超过指定数量的 RawBar 则返回 True，否则返回 False
     """
-    print(edt, fx_dt)
 
     # 找到今天和目标日期的索引
     edt_index = None
@@ -379,7 +391,6 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
 
     for i in range(n - 1, -1, -1):
         bar = bars_raw[i]
-        print(bar.dt.to_pydatetime().date())
         if bar.dt.to_pydatetime().date() == edt.date() and edt_index is None:
             edt_index = i
         if bar.dt.to_pydatetime().date() == fx_dt.date() and fx_dt_index is None:
