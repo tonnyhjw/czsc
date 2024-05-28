@@ -16,8 +16,7 @@ from czsc.data import TsDataCache
 from hjw_examples.notify import send_email
 from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
 from hjw_examples.templates.email_templates import daily_email_style
-from hjw_examples.stock_process import trend_reverse_ubi_entry
-from database.history import insert_buy_point
+from hjw_examples.stock_process import trend_reverse_ubi_entry, bottom_pzbc
 
 
 idx = 1000
@@ -44,7 +43,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
             logger.info(f"正在分析{_ts_code}在{edt}的走势")
-            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'W', 25)
+            future = executor.submit(bottom_pzbc, row, sdt, edt, 'W', 30)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
