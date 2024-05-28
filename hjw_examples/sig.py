@@ -62,7 +62,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         v1 = '无中枢'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
-    zs1, zs2 = zs_seq[-2:]
+    zs2 = zs_seq[-1]
     estimated_profit = (zs2.zd - cur_price) / cur_price
     bi_a, bi_b = zs2.bis[0], zs2.bis[-1]
     bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
