@@ -58,8 +58,8 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         v2 = latest_fx.power_str
 
     zs_seq = get_zs_seq(bis)
-    if len(zs_seq) < 2:
-        v1 = '中枢<2'
+    if len(zs_seq) == 0:
+        v1 = '无中枢'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     zs1, zs2 = zs_seq[-2:]
