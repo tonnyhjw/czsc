@@ -366,9 +366,9 @@ def date_exceed_rawbars(bars_raw, edt: datetime, fx_dt: datetime, lookback_bars:
     for i in range(n - 1, -1, -1):
         bar = bars_raw[i]
         if bar.dt.to_pydatetime().date() == edt and edt_index is None:
-            today_index = i
+            edt_index = i
         if bar.dt.to_pydatetime().date() == fx_dt.date() and fx_dt_index is None:
-            target_index = i
+            fx_dt_index = i
         # 如果两个索引都找到了，可以提前结束遍历
         if edt_index is not None and fx_dt_index is not None:
             break
