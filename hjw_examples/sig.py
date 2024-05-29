@@ -65,7 +65,6 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     zs1 = zs_seq[-1]
     # 当最后的中枢少于3笔，就将最后的中枢和倒数第二个中枢合并再计算
-    pprint.pprint(zs_seq)
     if not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq) > 1:
         zs1 = ZS(zs_seq[-2].bis + zs1.bis)
     # 查找 BI.high 等于 zs2 的 gg 那一笔，并切片
