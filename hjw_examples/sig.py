@@ -5,7 +5,7 @@ from typing import Optional
 from collections import OrderedDict
 
 from czsc import CZSC
-from czsc.objects import Direction, FX, BI
+from czsc.objects import Direction, FX, BI, ZS
 from czsc.utils import get_sub_elements, create_single_signal
 from czsc.signals.tas import update_macd_cache
 from czsc.utils.sig import get_zs_seq
@@ -63,10 +63,15 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         v1 = '无中枢'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
-    zs2 = zs_seq[-1]
-    estimated_profit = (zs2.zd - cur_price) / cur_price
+    zs1 = zs_seq[-1]
     # 查找 BI.high 等于 zs2 的 gg 那一笔
-    bi_a: Optional[BI] = next((bi for bi in zs2.bis if bi.high == zs2.gg and bi.direction == Direction.Down), None)
+    # bi_a: Optional[BI] = next((bi for bi in zs2.bis if bi.high == zs2.gg and bi.direction == Direction.Down), None)
+    bi_a_index = next((i for i, bi in enumerate(bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
+    remaining_bis = zs1.bis[bi_a_index:]
+    zs2 = ZS(remaining_bis)
+    estimated_profit = (zs2.zd - cur_price) / cur_price
+
+    bi_a = zs2.bis[0]
     bi_b = zs2.bis[-1]
     bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
     bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
