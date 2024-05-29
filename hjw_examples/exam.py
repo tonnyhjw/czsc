@@ -45,7 +45,7 @@ def fx_reliability_exam(sdt, edt):
 
 
 def play_pzbc():
-    row = dict(ts_code="300069.sz", symbol="300069", name="海源复材", industry="金利华电")
+    row = dict(ts_code="300069.sz", symbol="300069", name="金利华电", industry="金利华电")
     sdt, edt = "20180101", "20240301"
     result = bottom_pzbc(row, sdt, edt)
     pprint.pprint(result)
