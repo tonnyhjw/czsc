@@ -67,7 +67,6 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     # 当最后的中枢少于3笔，就将最后的中枢和倒数第二个中枢合并再计算
     pprint.pprint(zs_seq)
     if not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq) > 1:
-        print("zs_seq[-2]", zs_seq[-2])
         zs1 = ZS(zs_seq[-2].bis + zs1.bis)
     # 查找 BI.high 等于 zs2 的 gg 那一笔，并切片
     bi_a_index = next((i for i, bi in enumerate(zs1.bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
@@ -86,13 +85,13 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     # print(bi_a)
     # print(bi_b)
     # print(bi_a_macd_area, bi_b_macd_area)
-    print(zs2.is_valid)
-    print(ubi['direction'] == Direction.Up)
-    print(len(ubi['fxs']) < 2)
-    print(zs2.sdir == Direction.Down)
-    print(zs2.edir == Direction.Down)
-    print(zs2.dd == bi_b.low)
-    print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
+    # print(zs2.is_valid)
+    # print(ubi['direction'] == Direction.Up)
+    # print(len(ubi['fxs']) < 2)
+    # print(zs2.sdir == Direction.Down)
+    # print(zs2.edir == Direction.Down)
+    # print(zs2.dd == bi_b.low)
+    # print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
 
     if (
             zs2.is_valid and
