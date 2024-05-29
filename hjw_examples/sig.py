@@ -66,7 +66,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     zs1 = zs_seq[-1]
     # 查找 BI.high 等于 zs2 的 gg 那一笔
     # bi_a: Optional[BI] = next((bi for bi in zs2.bis if bi.high == zs2.gg and bi.direction == Direction.Down), None)
-    bi_a_index = next((i for i, bi in enumerate(bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
+    bi_a_index = next((i for i, bi in enumerate(zs1.bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
     remaining_bis = zs1.bis[bi_a_index:]
     zs2 = ZS(remaining_bis)
     estimated_profit = (zs2.zd - cur_price) / cur_price
