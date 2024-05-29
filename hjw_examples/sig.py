@@ -92,6 +92,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     print(zs2.edir == Direction.Down)
     print(zs2.dd == bi_b.low)
     print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
+    print(v2)
 
     if (
             zs2.is_valid and
