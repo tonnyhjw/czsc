@@ -50,6 +50,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     if latest_fx.mark != Mark.D or fx_is_exceed:
+        print(latest_fx)
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     elif history.buy_point_exists(symbol, latest_fx.dt, freq):
@@ -80,17 +81,17 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
     bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-    # print(zs2)
-    # print(bi_a)
-    # print(bi_b)
-    # print(bi_a_macd_area, bi_b_macd_area)
-    # print(zs2.is_valid)
-    # print(ubi['direction'] == Direction.Up)
-    # print(len(ubi['fxs']) < 2)
-    # print(zs2.sdir == Direction.Down)
-    # print(zs2.edir == Direction.Down)
-    # print(zs2.dd == bi_b.low)
-    # print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
+    print(zs2)
+    print(bi_a)
+    print(bi_b)
+    print(bi_a_macd_area, bi_b_macd_area)
+    print(zs2.is_valid)
+    print(ubi['direction'] == Direction.Up)
+    print(len(ubi['fxs']) < 2)
+    print(zs2.sdir == Direction.Down)
+    print(zs2.edir == Direction.Down)
+    print(zs2.dd == bi_b.low)
+    print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
 
     if (
             zs2.is_valid and
@@ -338,7 +339,6 @@ def trend_reverse_ubi_dev(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
-
 
         if (
             0 < len(zs_seq_after_1st_buy) < 3
