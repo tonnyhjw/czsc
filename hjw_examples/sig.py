@@ -64,8 +64,11 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     zs1 = zs_seq[-1]
-    # 查找 BI.high 等于 zs2 的 gg 那一笔
-    # bi_a: Optional[BI] = next((bi for bi in zs2.bis if bi.high == zs2.gg and bi.direction == Direction.Down), None)
+    # 当最后的中枢少于3笔，就将最后的中枢和倒数第二个中枢合并再计算
+    if not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq) > 1:
+        print(zs_seq[-2])
+        zs1 = ZS(zs_seq[-2].bis + zs1.bis)
+    # 查找 BI.high 等于 zs2 的 gg 那一笔，并切片
     bi_a_index = next((i for i, bi in enumerate(zs1.bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
     remaining_bis = zs1.bis[bi_a_index:]
     zs2 = ZS(remaining_bis)
@@ -78,17 +81,17 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
     bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-    # print(zs2)
-    # print(bi_a)
-    # print(bi_b)
-    # print(bi_a_macd_area, bi_b_macd_area)
-    # print(zs2.is_valid)
-    # print(ubi['direction'] == Direction.Up)
-    # print(len(ubi['fxs']) < 2)
-    # print(zs2.sdir == Direction.Down)
-    # print(zs2.edir == Direction.Down)
-    # print(zs2.dd == bi_b.low)
-    # print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
+    print(zs2)
+    print(bi_a)
+    print(bi_b)
+    print(bi_a_macd_area, bi_b_macd_area)
+    print(zs2.is_valid)
+    print(ubi['direction'] == Direction.Up)
+    print(len(ubi['fxs']) < 2)
+    print(zs2.sdir == Direction.Down)
+    print(zs2.edir == Direction.Down)
+    print(zs2.dd == bi_b.low)
+    print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
 
     if (
             zs2.is_valid and
