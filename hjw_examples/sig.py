@@ -85,6 +85,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     print(bi_a)
     print(bi_b)
     print(bi_a_macd_area, bi_b_macd_area)
+    print(bi_b_dif, bi_a_dif)
     print(zs2.is_valid)
     print(ubi['direction'] == Direction.Up)
     print(len(ubi['fxs']) < 2)
@@ -93,13 +94,6 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     print(zs2.dd == bi_b.low)
     print((0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area)) > abs(bi_b_macd_area))
     print(v2)
-    print(zs2.is_valid and
-            ubi['direction'] == Direction.Up and
-            len(ubi['fxs']) < 2 and
-            zs2.sdir == Direction.Down and
-            zs2.edir == Direction.Down and
-            zs2.dd == bi_b.low and
-            (0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area)) > abs(bi_b_macd_area))
 
     if (
             zs2.is_valid and
