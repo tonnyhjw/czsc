@@ -78,17 +78,17 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
     bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-    print(zs2)
-    print(bi_a)
-    print(bi_b)
-    print(bi_a_macd_area, bi_b_macd_area)
-    print(zs2.is_valid)
-    print(ubi['direction'] == Direction.Up)
-    print(len(ubi['fxs']) < 2)
-    print(zs2.sdir == Direction.Down)
-    print(zs2.edir == Direction.Down)
-    print(zs2.dd == bi_b.low)
-    print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
+    # print(zs2)
+    # print(bi_a)
+    # print(bi_b)
+    # print(bi_a_macd_area, bi_b_macd_area)
+    # print(zs2.is_valid)
+    # print(ubi['direction'] == Direction.Up)
+    # print(len(ubi['fxs']) < 2)
+    # print(zs2.sdir == Direction.Down)
+    # print(zs2.edir == Direction.Down)
+    # print(zs2.dd == bi_b.low)
+    # print((0 > bi_b_dif > bi_a_dif or abs(bi_b_macd_area) < abs(bi_a_macd_area)))
 
     if (
             zs2.is_valid and
@@ -103,7 +103,8 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         # 插入数据库
         history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                  industry, latest_fx.dt)
-        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+        if v2 != '弱':
+            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
