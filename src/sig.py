@@ -13,7 +13,7 @@ from czsc.enum import Mark
 from database import history
 
 
-logger.add("statics/logs/sig.log", level="INFO", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
+logger.add("../hjw_examples/statics/logs/sig.log", level="INFO", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
 def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:

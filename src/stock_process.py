@@ -1,13 +1,12 @@
 import datetime
-import pprint
 from loguru import logger
 import traceback
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from hjw_examples.sig import trend_reverse_ubi, is_strong_bot_fx, trend_reverse_ubi_dev, macd_pzbc_ubi
+from src.sig import is_strong_bot_fx, trend_reverse_ubi_dev, macd_pzbc_ubi
 
-logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
+logger.add("../hjw_examples/statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
 def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
