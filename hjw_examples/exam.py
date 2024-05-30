@@ -4,7 +4,7 @@ from src.stock_process import *
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="002508.sz", symbol="002508", name="老板电器", industry="电气设备")
+    row = dict(ts_code="603726.sh", symbol="603726", name="朗迪集团", industry="家用电器")
     sdt, edt = "20180101", "20240401"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
