@@ -4,8 +4,8 @@ from src.stock_process import *
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="688058.sh", symbol="688058", name="宝兰德", industry="软件服务")
-    sdt, edt = "20180101", "20240401"
+    row = dict(ts_code="601009.sh", symbol="601009", name="南京银行", industry="银行")
+    sdt, edt = "20180101", "20240322"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
