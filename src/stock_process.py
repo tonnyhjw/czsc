@@ -6,7 +6,7 @@ from czsc import CZSC, home_path
 from czsc.data import TsDataCache
 from src.sig import is_strong_bot_fx, trend_reverse_ubi, macd_pzbc_ubi
 
-logger.add("../hjw_examples/statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
+logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
 def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
