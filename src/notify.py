@@ -29,8 +29,7 @@ def send_email(html_content, subject):
         smtp.send_message(message)
 
 
-def notify_buy_points(results: list, edt: str, notify_empty: bool = True):
-    email_subject = f"[自动盯盘][周线买点][A股]{edt}发现{len(results)}个买点"
+def notify_buy_points(results: list, email_subject: str, notify_empty: bool = True):
     html_table = "<h1>没有发现买点</h1>"
 
     def send_buy_point_style_email(raw_html):

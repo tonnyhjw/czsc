@@ -37,7 +37,8 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             if result:
                 results.append(result)
 
-    notify_buy_points(results=results, edt=edt, notify_empty=True)
+    email_subject = f"[自动盯盘][周线买点][A股]{edt}发现{len(results)}个买点"
+    notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
 
 
 if __name__ == '__main__':
