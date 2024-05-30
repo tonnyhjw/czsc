@@ -1,4 +1,5 @@
 import os
+import pprint
 import sys
 import datetime
 import concurrent
@@ -50,14 +51,17 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
 
 
 if __name__ == '__main__':
-    # 获取当前日期
-    today = datetime.datetime.now()
+    # # 获取当前日期
+    # today = datetime.datetime.now()
+    #
+    # # 生成日期范围，从2024年1月1日到今天
+    # date_range = pd.date_range(start='2024-01-17', end=today, freq='B')
+    # formatted_dates = date_range.strftime('%Y%m%d').tolist()
 
-    # 生成日期范围，从2024年1月1日到今天
-    date_range = pd.date_range(start='2024-05-23', end=today, freq='B')
+    today = datetime.datetime.now().strftime("%Y%m%d")
+    trade_dates = TsDataCache(home_path).get_dates_span('2024-01-17', today, is_open=True)
 
     # 将日期格式化为'%Y%m%d'
-    formatted_dates = date_range.strftime('%Y%m%d').tolist()
-    for business_date in formatted_dates:
+    for business_date in trade_dates:
         logger.info(f"测试日期:{business_date}")
         check(edt=business_date)
