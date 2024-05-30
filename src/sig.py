@@ -229,6 +229,14 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
+        pprint.pp(zs_seq_after_1st_buy[-1])
+        pprint.pp(bis[-1])
+        print(ubi['direction'] == Direction.Up)
+        print(len(ubi['fxs']) < 2)
+        print(bis[-1].raw_bars[-1].cache[cache_key]['macd'] > bis[-1].raw_bars[-2].cache[cache_key]['macd'])
+        print(bis[-1].raw_bars[-1].cache[cache_key]['dif'] > 0)
+        print(bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0)
+        print(bis[-1].raw_bars[-1].cache[cache_key]['dif'] > bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0)
 
         if (
             0 < len(zs_seq_after_1st_buy) < 3
