@@ -11,12 +11,12 @@ def play_day_trend_reverse():
 
 
 def play_pzbc():
-    row = dict(ts_code="300069.sz", symbol="300069", name="金利华电", industry="金利华电")
-    sdt, edt = "20180101", "20240301"
+    row = dict(ts_code="300956.sz", symbol="300956", name="英力股份", industry="光伏")
+    sdt, edt = "20180101", "20240223"
     result = bottom_pzbc(row, sdt, edt)
     pprint.pprint(result)
 
 
 if __name__ == '__main__':
-    play_day_trend_reverse()
-    # play_pzbc()
+    # play_day_trend_reverse()
+    play_pzbc()
