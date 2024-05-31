@@ -63,6 +63,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     zs1 = zs_seq[-1]
+    print(not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq))
     # 当最后的中枢少于3笔，就将最后的中枢和倒数第二个中枢合并再计算
     if not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq) > 1:
         zs1 = ZS(zs_seq[-2].bis + zs1.bis)
