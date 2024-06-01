@@ -192,35 +192,35 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                     if v2 != '弱':
                         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
-    elif zs2.is_valid:
-        bi_a = zs1.bis[-1]
-        bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
-        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-
-        bi_c_raw_bars = zs2.bis[-1].raw_bars
-        for _bi in zs3.bis:     # 扩展bi_c
-            bi_c_raw_bars += _bi.raw_bars
-        if ubi['direction'] == Direction.Down:
-            bi_c_raw_bars += ubi['raw_bars']
-        bi_c_peak_dif = min(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['dif']) < 0)  # todo 有bug
-        bi_c_macd_area = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-        # bi_c_max_macd = max(abs(macd) for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-        # bi_c_last_macd = bi_c_raw_bars[-1].cache[cache_key]['macd']
-        estimated_profit = (zs2.zd - cur_price) / cur_price
-        if (
-                0 > bi_c_peak_dif > bi_a_dif
-                and abs(bi_c_macd_area) < abs(bi_a_macd_area)
-                # and abs(bi_c_last_macd) < bi_c_max_macd
-                # and bi_c_last_macd < 0
-                and estimated_profit >= 0.03
-                and zs1.dd > zs2.gg
-                and zs2.dd > zs3.gg
-        ):
-            v1 = '一买'
-            # 插入数据库
-            history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                     industry, latest_fx.dt)
-            return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+    # elif zs2.is_valid:
+    #     bi_a = zs1.bis[-1]
+    #     bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
+    #     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+    #
+    #     bi_c_raw_bars = zs2.bis[-1].raw_bars
+    #     for _bi in zs3.bis:     # 扩展bi_c
+    #         bi_c_raw_bars += _bi.raw_bars
+    #     if ubi['direction'] == Direction.Down:
+    #         bi_c_raw_bars += ubi['raw_bars']
+    #     bi_c_peak_dif = min(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['dif']) < 0)  # todo 有bug
+    #     bi_c_macd_area = sum(macd for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+    #     # bi_c_max_macd = max(abs(macd) for x in bi_c_raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+    #     # bi_c_last_macd = bi_c_raw_bars[-1].cache[cache_key]['macd']
+    #     estimated_profit = (zs2.zd - cur_price) / cur_price
+    #     if (
+    #             0 > bi_c_peak_dif > bi_a_dif
+    #             and abs(bi_c_macd_area) < abs(bi_a_macd_area)
+    #             # and abs(bi_c_last_macd) < bi_c_max_macd
+    #             # and bi_c_last_macd < 0
+    #             and estimated_profit >= 0.03
+    #             and zs1.dd > zs2.gg
+    #             and zs2.dd > zs3.gg
+    #     ):
+    #         v1 = '一买'
+    #         # 插入数据库
+    #         history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+    #                                  industry, latest_fx.dt)
+    #         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
     if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买'):
