@@ -245,7 +245,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             and ubi['direction'] == Direction.Up
             and len(ubi['fxs']) < 2
             and abs(bis[-1].raw_bars[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3
-            # and bis[-1].raw_bars[-1].cache[cache_key]['macd'] > bis[-1].raw_bars[-2].cache[cache_key]['macd']
+            and bis[-1].raw_bars[-1].cache[cache_key]['macd'] > bis[-1].raw_bars[-2].cache[cache_key]['macd']
             and bis[-1].raw_bars[-1].cache[cache_key]['dif'] > 0
             and bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0
         ):
