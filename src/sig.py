@@ -235,21 +235,19 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         pprint.pp(bis[-1])
         print(ubi['direction'] == Direction.Up)
         print(len(ubi['fxs']) < 2)
-        print(abs(bis[-1].raw_bars[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3)
-        print(bis[-1].raw_bars[-1].cache[cache_key]['macd'] > bis[-1].raw_bars[-2].cache[cache_key]['macd'])
-        print(bis[-1].raw_bars[-1].cache[cache_key]['dif'] > 0)
-        print(bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0)
-        print(c.bars_raw[-1].dt, c.bars_raw[-2].dt)
-        print(c.bars_raw[-1].cache[cache_key]['macd'], c.bars_raw[-2].cache[cache_key]['macd'])
+        print(abs(c.bars_raw[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3)
+        print(c.bars_raw[-1].cache[cache_key]['macd'] > c.bars_raw[-2].cache[cache_key]['macd'])
+        print(c.bars_raw[-1].cache[cache_key]['dif'] > 0)
+        print(c.bars_raw[-1].cache[cache_key]['dea'] > 0)
 
         if (
             0 < len(zs_seq_after_1st_buy) < 3
             and ubi['direction'] == Direction.Up
             and len(ubi['fxs']) < 2
-            and abs(bis[-1].raw_bars[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3
-            and bis[-1].raw_bars[-1].cache[cache_key]['macd'] > bis[-1].raw_bars[-2].cache[cache_key]['macd']
-            and bis[-1].raw_bars[-1].cache[cache_key]['dif'] > 0
-            and bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0
+            and abs(c.bars_raw[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3
+            and c.bars_raw[-1].cache[cache_key]['macd'] > c.bars_raw[-2].cache[cache_key]['macd']
+            and c.bars_raw[-1].cache[cache_key]['dif'] > 0
+            and c.bars_raw[-1].cache[cache_key]['dea'] > 0
         ):
             zs1_after_1st_buy = zs_seq_after_1st_buy[0]
             # 判断二买
