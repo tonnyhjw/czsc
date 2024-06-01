@@ -239,9 +239,8 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         print(bis[-1].raw_bars[-1].cache[cache_key]['macd'] > bis[-1].raw_bars[-2].cache[cache_key]['macd'])
         print(bis[-1].raw_bars[-1].cache[cache_key]['dif'] > 0)
         print(bis[-1].raw_bars[-1].cache[cache_key]['dea'] > 0)
-        print(bis[-1].raw_bars[-1].dt, bis[-1].raw_bars[-2].dt)
-        print(bis[-1].raw_bars[-1].cache[cache_key]['macd'], bis[-1].raw_bars[-2].cache[cache_key]['macd'])
-        pprint.pp(latest_fx.elements)
+        print(c.bars_raw[-1].dt, c.bars_raw[-2].dt)
+        print(c.bars_raw[-1].cache[cache_key]['macd'], c.bars_raw[-2].cache[cache_key]['macd'])
 
         if (
             0 < len(zs_seq_after_1st_buy) < 3
