@@ -8,8 +8,8 @@ import time
 ts.set_token('your_tushare_token')
 pro = ts.pro_api()
 
-# 获取数据
-df = pro.daily(ts_code='000001.SZ', start_date='20200101', end_date='20231231')
+# 获取更多数据
+df = pro.daily(ts_code='000001.SZ', start_date='20000101', end_date='20231231')
 df['trade_date'] = pd.to_datetime(df['trade_date'])
 df.set_index('trade_date', inplace=True)
 df = df.sort_index()
@@ -26,7 +26,10 @@ def run_vectorbt():
     exits = close < fast_ma.ma
 
     start_time = time.time()
-    portfolio = vbt.Portfolio.from_signals(close, entries, exits, init_cash=100000, fees=0.001)
+    portfolio = vbt.Portfolio.from_signals(
+        close, entries, exits, init_cash=100000, fees=0.001,
+        freq='D', slippage=0.001  # 增加频率和滑点设置
+    )
     end_time = time.time()
 
     print(f"VectorBT 回测执行时间: {end_time - start_time} 秒")
