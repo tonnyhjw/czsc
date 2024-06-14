@@ -4,26 +4,23 @@ import backtrader as bt
 import pandas as pd
 import time
 
-from czsc import home_path
-from czsc.data import TsDataCache
-
-
 # 设置Tushare的token
 ts.set_token('your_tushare_token')
 pro = ts.pro_api()
 
 # 获取数据
-dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
-# df = dc.pro_bar('000001.SH', start_date='20200101', end_date='20231231', freq="D", asset="E", adj='qfq', raw_bar=True)
-df = pro.daily(ts_code='000001.SH', start_date='20200101', end_date='20231231')
+df = pro.daily(ts_code='000001.SZ', start_date='20200101', end_date='20231231')
 df['trade_date'] = pd.to_datetime(df['trade_date'])
 df.set_index('trade_date', inplace=True)
 df = df.sort_index()
 
+# 确保数据格式正确
+df = df[['close']]
+df.columns = ['Close']
 
 # 向量化回测 (VectorBT)
 def run_vectorbt():
-    close = df['close']
+    close = df['Close']
     fast_ma = vbt.MA.run(close, window=15)
     entries = close > fast_ma.ma
     exits = close < fast_ma.ma
@@ -34,7 +31,6 @@ def run_vectorbt():
 
     print(f"VectorBT 回测执行时间: {end_time - start_time} 秒")
     return portfolio
-
 
 # 定义Backtrader策略
 class MyStrategy(bt.Strategy):
@@ -47,7 +43,6 @@ class MyStrategy(bt.Strategy):
                 self.buy(size=100)
         elif self.data.close < self.sma:
             self.sell(size=100)
-
 
 # 逐条数据处理回测 (Backtrader)
 def run_backtrader():
@@ -66,7 +61,6 @@ def run_backtrader():
     end_time = time.time()
 
     print(f"Backtrader 回测执行时间: {end_time - start_time} 秒")
-
 
 if __name__ == '__main__':
     print("运行 VectorBT 回测...")
