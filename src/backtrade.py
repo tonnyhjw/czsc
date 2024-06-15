@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import backtrader as bt
 from datetime import datetime
+from pprint import pprint
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
@@ -139,12 +140,10 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
 
     # 打印分析器结果
     print('Trade Analysis Results:')
-    for key, value in trade_analyzer.items():
-        print(f'{key}: {value}')
+    pprint(trade_analyzer)
 
     print('Sharpe Ratio Analysis:')
-    for key, value in sharpe_ratio.items():
-        print(f'{key}: {value}')
+    pprint(sharpe_ratio)
 
     # 绘图并保存到文件
     fig = cerebro.plot(style='candlestick')[0][0]
