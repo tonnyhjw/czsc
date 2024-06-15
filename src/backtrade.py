@@ -129,8 +129,8 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     print('Ending Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
     # 获取分析器结果
-    trade_analyzer = result[0].analyzers.trade_analyzer.get_analysis()
-    sharpe_ratio = result[0].analyzers.sharpe_ratio.get_analysis()
+    trade_analyzer = result[0].analyzers.getbyname('trade_analyzer').get_analysis()
+    sharpe_ratio = result[0].analyzers.getbyname('sharpe_ratio').get_analysis()
 
     # 打印分析器结果
     print('Trade Analysis Results:')
