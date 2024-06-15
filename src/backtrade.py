@@ -30,6 +30,7 @@ class MyStrategy(bt.Strategy):
         for buy_point in self.params.buy_points:
             if (current_date - buy_point.date).days == 2 and self.position.size == 0:
                 self.buy_signal = True
+                print("set buy signal")
 
         # 检查是否有卖出信号
         if self.position.size > 0:
@@ -42,6 +43,7 @@ class MyStrategy(bt.Strategy):
 
         # 执行买入操作
         if self.buy_signal:
+            print("execute buy")
             self.order = self.buy(size=self.broker.get_cash() / self.data.close[0])
             self.buy_dates.append(current_date)
             self.buy_signal = False
@@ -106,6 +108,7 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
     result = cerebro.run()
     print('Ending Portfolio Value: %.2f' % cerebro.broker.getvalue())
+    print(result)
 
     # 绘图
     cerebro.plot(style='candlestick')
