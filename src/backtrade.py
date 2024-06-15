@@ -44,20 +44,25 @@ class MyStrategy(bt.Strategy):
                     break
 
         # 执行买入操作
-        if self.buy_signal:
-            print("execute buy")
-            print(self.broker.get_cash(), self.data.close[0])
-            print(self.broker.get_cash() / self.data.close[0])
-            self.order = self.buy(size=self.broker.get_cash() / self.data.close[0])
-            print(f"{self.position.size}")
-            self.buy_dates.append(current_date)
+        if self.buy_signal and self.order is None:
+            available_cash = self.broker.get_cash()
+            buy_size = int(available_cash / self.data.close[0])
+            if buy_size > 0:
+                self.order = self.buy(size=buy_size)
+                self.buy_dates.append(current_date)
+                print(f'BUY ORDER CREATED: {buy_size} shares at {self.data.close[0]} on {current_date}')
+            else:
+                print('Insufficient cash to create buy order')
             self.buy_signal = False
 
         # 执行卖出操作
-        if self.sell_signal:
-            print("execute sell")
-            self.order = self.sell(size=self.position.size)
-            self.sell_dates.append(current_date)
+        if self.sell_signal and self.order is None:
+            if self.position.size > 0:
+                self.order = self.sell(size=self.position.size)
+                self.sell_dates.append(current_date)
+                print(f'SELL ORDER CREATED: {self.position.size} shares at {self.data.close[0]} on {current_date}')
+            else:
+                print('No position to sell')
             self.sell_signal = False
 
     def notify_order(self, order):
