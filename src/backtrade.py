@@ -143,4 +143,4 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
 
     # 绘图并保存到文件
     fig = cerebro.plot(style='candlestick')[0][0]
-    fig.savefig('backtest_result.png', dpi=100, bbox_inches='tight')
+    fig.savefig(f'statics/bt_imgs/{ts_code}_{freq}_{sdt}-{edt}.png')
