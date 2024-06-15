@@ -6,6 +6,7 @@ from datetime import datetime
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
 from czsc.data.ts import format_kline
+from czsc.enum import Mark
 
 
 class MyStrategy(bt.Strategy):
@@ -34,7 +35,7 @@ class MyStrategy(bt.Strategy):
         # 检查是否有卖出信号
         if self.position.size > 0:
             for idx, fx in enumerate(self.params.fxs):
-                if fx.dt == current_date:
+                if fx.dt == current_date and fx.mark == Mark.G:
                     self.sell_signal = True
                     # 截断fxs列表，只保留未处理部分
                     self.params.fxs = self.params.fxs[idx + 1:]
