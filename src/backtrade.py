@@ -35,7 +35,8 @@ class MyStrategy(bt.Strategy):
         # 检查是否有卖出信号
         if self.position.size > 0:
             for idx, fx in enumerate(self.params.fxs):
-                if fx.date == current_date:
+                print(fx.date)
+                if fx.date == current_date and fx.mark == "顶分型":
                     self.sell_signal = True
                     print(f"{current_date}set sell signal")
                     # 截断fxs列表，只保留未处理部分
