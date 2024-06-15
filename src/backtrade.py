@@ -118,6 +118,10 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     # 创建策略实例并传递参数
     cerebro.addstrategy(MyStrategy, buy_points=buy_points, fxs=fxs)
 
+    # Analyzer
+    cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='mytradeanalyzer')
+    cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='mysharpe')
+
     # 设置初始现金
     cerebro.broker.set_cash(100000.0)
 
@@ -125,21 +129,22 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     cerebro.broker.setcommission(commission=0.001)
 
     print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
-    result = cerebro.run()
+    results = cerebro.run()
+    result = results[0]
     print('Ending Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
-    # # 获取分析器结果
-    # trade_analyzer = result[0].analyzers.getbyname('trade_analyzer').get_analysis()
-    # sharpe_ratio = result[0].analyzers.getbyname('sharpe_ratio').get_analysis()
-    #
-    # # 打印分析器结果
-    # print('Trade Analysis Results:')
-    # for key, value in trade_analyzer.items():
-    #     print(f'{key}: {value}')
-    #
-    # print('Sharpe Ratio Analysis:')
-    # for key, value in sharpe_ratio.items():
-    #     print(f'{key}: {value}')
+    # 获取分析器结果
+    trade_analyzer = result.analyzers.mytradeanalyzer.get_analysis()
+    sharpe_ratio = result.analyzers.mysharpe.get_analysis()
+
+    # 打印分析器结果
+    print('Trade Analysis Results:')
+    for key, value in trade_analyzer.items():
+        print(f'{key}: {value}')
+
+    print('Sharpe Ratio Analysis:')
+    for key, value in sharpe_ratio.items():
+        print(f'{key}: {value}')
 
     # 绘图并保存到文件
     fig = cerebro.plot(style='candlestick')[0][0]
