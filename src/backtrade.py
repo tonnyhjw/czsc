@@ -24,7 +24,7 @@ class MyStrategy(bt.Strategy):
         self.sell_dates = []
 
     def next(self):
-        current_date = self.datas[0].datetime.date(0)
+        current_date = bt.num2date(self.datas[0].datetime[0])  # 将当前时间转换为datetime对象
 
         # 检查是否有买入信号
         for buy_point in self.params.buy_points:
