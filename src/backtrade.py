@@ -30,13 +30,14 @@ class MyStrategy(bt.Strategy):
         for buy_point in self.params.buy_points:
             if (current_date - buy_point.date).days == 2 and self.position.size == 0:
                 self.buy_signal = True
-                print("set buy signal")
+                print(f"{current_date}set buy signal")
 
         # 检查是否有卖出信号
         if self.position.size > 0:
             for idx, fx in enumerate(self.params.fxs):
                 if fx.date == current_date:
                     self.sell_signal = True
+                    print(f"{current_date}set sell signal")
                     # 截断fxs列表，只保留未处理部分
                     self.params.fxs = self.params.fxs[idx + 1:]
                     break
@@ -50,6 +51,7 @@ class MyStrategy(bt.Strategy):
 
         # 执行卖出操作
         if self.sell_signal:
+            print("execute sell")
             self.order = self.sell(size=self.position.size)
             self.sell_dates.append(current_date)
             self.sell_signal = False
