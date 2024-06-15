@@ -5,7 +5,7 @@ from datetime import datetime
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from czsc.connectors.ts_connector import format_kline
+from czsc.data.ts import format_kline
 
 
 class MyStrategy(bt.Strategy):
