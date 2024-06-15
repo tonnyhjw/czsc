@@ -128,18 +128,18 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     result = cerebro.run()
     print('Ending Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
-    # 获取分析器结果
-    trade_analyzer = result[0].analyzers.getbyname('trade_analyzer').get_analysis()
-    sharpe_ratio = result[0].analyzers.getbyname('sharpe_ratio').get_analysis()
-
-    # 打印分析器结果
-    print('Trade Analysis Results:')
-    for key, value in trade_analyzer.items():
-        print(f'{key}: {value}')
-
-    print('Sharpe Ratio Analysis:')
-    for key, value in sharpe_ratio.items():
-        print(f'{key}: {value}')
+    # # 获取分析器结果
+    # trade_analyzer = result[0].analyzers.getbyname('trade_analyzer').get_analysis()
+    # sharpe_ratio = result[0].analyzers.getbyname('sharpe_ratio').get_analysis()
+    #
+    # # 打印分析器结果
+    # print('Trade Analysis Results:')
+    # for key, value in trade_analyzer.items():
+    #     print(f'{key}: {value}')
+    #
+    # print('Sharpe Ratio Analysis:')
+    # for key, value in sharpe_ratio.items():
+    #     print(f'{key}: {value}')
 
     # 绘图并保存到文件
     fig = cerebro.plot(style='candlestick')[0][0]
