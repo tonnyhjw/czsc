@@ -130,5 +130,5 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     print(result)
 
     # 绘图
-    cerebro.plot(style='candlestick')
-
+    # 绘图并保存到文件
+    cerebro.plot(style='candlestick', savefig=dict(fname='backtest_result.png', dpi=100, bbox_inches='tight'))
