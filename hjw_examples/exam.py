@@ -1,6 +1,7 @@
 import pprint
 
 from src.stock_process import *
+from src.backtrade import run_demo
 
 
 def play_day_trend_reverse():
@@ -18,5 +19,6 @@ def play_pzbc():
 
 
 if __name__ == '__main__':
-    play_day_trend_reverse()
+    # play_day_trend_reverse()
     # play_pzbc()
+    run_demo(ts_code='000415.SZ', edt='20240614', freq="D")
