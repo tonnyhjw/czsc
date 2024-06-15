@@ -79,7 +79,7 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     symbol = ts_code.split(".")[0]
 
     # 设置策略参数
-    buy_points = query_all_buy_point(symbol, fx_pwr="强", signals="一买")
+    buy_points = list(query_all_buy_point(symbol, fx_pwr="强", signals="一买"))
     if not buy_points:
         return
     sdt = buy_points[0].date.strftime('%Y%m%d')
