@@ -3,9 +3,9 @@ import pandas as pd
 import backtrader as bt
 from datetime import datetime
 
-from czsc import CZSC, home_path, format_standard_kline
+from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from czsc.connectors import ts_connector
+from czsc.connectors.ts_connector import format_kline
 
 
 class MyStrategy(bt.Strategy):
@@ -85,7 +85,7 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     sdt = buy_points[0].date.strftime('%Y%m%d')
     tdc = TsDataCache(home_path)
     df = tdc.pro_bar(ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=False)
-    bars = ts_connector.format_kline(df, tdc.freq_map(freq))
+    bars = format_kline(df, tdc.freq_map(freq))
     bt_data = get_bt_data(df)
 
     c = CZSC(bars)
