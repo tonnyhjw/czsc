@@ -85,7 +85,9 @@ def run_demo(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), 
     sdt = buy_points[0].date.strftime('%Y%m%d')
     tdc = TsDataCache(home_path)
     df = tdc.pro_bar(ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=False)
-    bars = format_kline(df, tdc.freq_map(freq))
+    _freq = tdc.freq_map(freq)
+    print(_freq)
+    bars = format_kline(df, _freq)
     bt_data = get_bt_data(df)
 
     c = CZSC(bars)
