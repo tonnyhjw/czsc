@@ -46,7 +46,10 @@ class MyStrategy(bt.Strategy):
         # 执行买入操作
         if self.buy_signal:
             print("execute buy")
+            print(self.broker.get_cash(), self.data.close[0])
+            print(self.broker.get_cash() / self.data.close[0])
             self.order = self.buy(size=self.broker.get_cash() / self.data.close[0])
+            print(f"{self.position.size}")
             self.buy_dates.append(current_date)
             self.buy_signal = False
 
@@ -58,11 +61,19 @@ class MyStrategy(bt.Strategy):
             self.sell_signal = False
 
     def notify_order(self, order):
+        if order.status in [order.Submitted, order.Accepted]:
+            return  # 等待订单被处理
+
         if order.status in [order.Completed]:
             if order.isbuy():
                 print(f'BUY EXECUTED, {order.executed.price}')
             elif order.issell():
                 print(f'SELL EXECUTED, {order.executed.price}')
+
+        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
+            print('Order Canceled/Margin/Rejected')
+
+        # 订单完成后，将self.order重置为None
         self.order = None
 
 
