@@ -30,15 +30,12 @@ class MyStrategy(bt.Strategy):
         for buy_point in self.params.buy_points:
             if (current_date - buy_point.date).days == 2 and self.position.size == 0:
                 self.buy_signal = True
-                print(f"{current_date}set buy signal")
 
         # 检查是否有卖出信号
         if self.position.size > 0:
             for idx, fx in enumerate(self.params.fxs):
-                print(fx.date)
-                if fx.date == current_date and fx.mark == "顶分型":
+                if fx.date == current_date:
                     self.sell_signal = True
-                    print(f"{current_date}set sell signal")
                     # 截断fxs列表，只保留未处理部分
                     self.params.fxs = self.params.fxs[idx + 1:]
                     break
@@ -47,7 +44,7 @@ class MyStrategy(bt.Strategy):
         if self.buy_signal and self.order is None:
             available_cash = self.broker.get_cash()
             price = self.data.close[0]
-            commission = self.broker.getcommissioninfo(self.data).getcommission(price * 1)
+            commission = self.broker.getcommissioninfo(self.data).getcommission(price, 1)
             buy_size = int(available_cash / (price + commission))
             if buy_size > 0:
                 self.order = self.buy(size=buy_size)
@@ -78,7 +75,7 @@ class MyStrategy(bt.Strategy):
                 print(f'SELL EXECUTED, {order.executed.price}')
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            print('Order Canceled/Margin/Rejected')
+            print(f'Order Canceled/Margin/Rejected: {order.info}')
 
         # 订单完成后，将self.order重置为None
         self.order = None
