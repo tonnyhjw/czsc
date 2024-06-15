@@ -46,11 +46,13 @@ class MyStrategy(bt.Strategy):
         # 执行买入操作
         if self.buy_signal and self.order is None:
             available_cash = self.broker.get_cash()
-            buy_size = int(available_cash / self.data.close[0])
+            price = self.data.close[0]
+            commission = self.broker.getcommissioninfo(self.data).getcommission(price * 1)
+            buy_size = int(available_cash / (price + commission))
             if buy_size > 0:
                 self.order = self.buy(size=buy_size)
                 self.buy_dates.append(current_date)
-                print(f'BUY ORDER CREATED: {buy_size} shares at {self.data.close[0]} on {current_date}')
+                print(f'BUY ORDER CREATED: {buy_size} shares at {price} on {current_date}')
             else:
                 print('Insufficient cash to create buy order')
             self.buy_signal = False
