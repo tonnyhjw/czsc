@@ -9,11 +9,11 @@ from czsc.data import TsDataCache
 from src.backtrade import run_single_stock_backtest
 
 
-def run_all_stocks_backtest(stocks, edt: str = datetime.now().strftime('%Y%m%d'), freq="D"):
+def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'), freq="D"):
     all_trade_analyzers = []
     all_sharpe_ratios = []
 
-    for index, row in stock_basic.iterrows():
+    for index, row in stock.iterrows():
         ts_code = row.get('ts_code')
         print(f'Running backtest for {ts_code}')
         trade_analyzer, sharpe_ratio = run_single_stock_backtest(ts_code, edt, freq)
