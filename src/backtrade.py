@@ -105,10 +105,34 @@ class MyStrategy(bt.Strategy):
 
 
 def get_bt_data(df):
+    # 确保日期列是datetime类型并且设置为索引
     df['trade_date'] = pd.to_datetime(df['trade_date'])
     df.set_index('trade_date', inplace=True)
     df = df.sort_index()
-    data = bt.feeds.PandasDirectData(dataname=df, datetime=None, open='open', high='high', low='low', close='close', volume='vol', openinterest=None)
+
+    # 确保列名符合backtrader期望的格式
+    df.rename(columns={
+        'open': 'open',
+        'high': 'high',
+        'low': 'low',
+        'close': 'close',
+        'vol': 'volume'
+    }, inplace=True)
+
+    # 确保数据类型正确
+    df = df[['open', 'high', 'low', 'close', 'volume']].astype(float)
+
+    # 使用backtrader的PandasDirectData数据源
+    data = bt.feeds.PandasDirectData(
+        dataname=df,
+        datetime=None,
+        open='open',
+        high='high',
+        low='low',
+        close='close',
+        volume='volume',
+        openinterest=None
+    )
     return data
 
 
@@ -180,6 +204,8 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     tdc = TsDataCache(home_path)
     df = tdc.pro_bar(ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=False)
     bars = format_kline(df, tdc.freq_map[freq])
+
+    # 获取格式化后的backtrader数据
     bt_data = get_bt_data(df)
 
     c = CZSC(bars)
