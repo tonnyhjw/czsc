@@ -48,7 +48,6 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 def combine_trade_analyzers(analyzers):
     combined = bt.AutoOrderedDict()
     for analyzer in analyzers:
-        pprint(analyzer)
         try:
             analyzer_data = analyzer.get_analysis()
         except (AttributeError, KeyError):

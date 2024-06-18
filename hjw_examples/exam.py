@@ -24,3 +24,4 @@ if __name__ == '__main__':
     trade_analyzer, sharpe_ratio = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     pprint.pp(trade_analyzer)
     pprint.pp(sharpe_ratio)
+    print(trade_analyzer.get('pnl'))
