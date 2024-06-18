@@ -1,6 +1,7 @@
 # all_stocks_backtest.py
 
 import os
+import traceback
 from pprint import pprint
 from datetime import datetime
 
@@ -16,10 +17,15 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
     for index, row in stock.iterrows():
         ts_code = row.get('ts_code')
         print(f'Running backtest for {ts_code}')
-        trade_analyzer, sharpe_ratio = run_single_stock_backtest(ts_code, edt, freq)
-        if trade_analyzer and sharpe_ratio:
-            all_trade_analyzers.append(trade_analyzer)
-            all_sharpe_ratios.append(sharpe_ratio)
+        try:
+            trade_analyzer, sharpe_ratio = run_single_stock_backtest(ts_code, edt, freq)
+            if trade_analyzer and sharpe_ratio:
+                all_trade_analyzers.append(trade_analyzer)
+                all_sharpe_ratios.append(sharpe_ratio)
+        except Exception as e_msg:
+            tb_msg = traceback.format_exc()  # 获取 traceback 信息
+            print(e_msg)
+            print(tb_msg)
 
     # 汇总分析结果
     combined_trade_analyzer = combine_trade_analyzers(all_trade_analyzers)
