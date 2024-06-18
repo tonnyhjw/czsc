@@ -54,37 +54,33 @@ def combine_trade_analyzers(analyzers):
             continue
         if not analyzer_data:
             continue
-        for key, value in analyzer_data.items():
-            if key in combined:
-                combined[key] = combine_dicts(combined[key], value)
-            else:
-                combined[key] = value
-    return combined
 
+        # 合并总体盈亏金额
+        if 'pnl' in analyzer_data:
+            pnl_data = analyzer_data['pnl']
+            for key in ['gross', 'net']:
+                if key in pnl_data:
+                    pnl_value = pnl_data[key]['total']
+                    if 'pnl' not in combined:
+                        combined['pnl'] = bt.AutoOrderedDict()
+                    if key not in combined['pnl']:
+                        combined['pnl'][key] = bt.AutoOrderedDict()
+                    if 'total' not in combined['pnl'][key]:
+                        combined['pnl'][key]['total'] = 0
+                    combined['pnl'][key]['total'] += pnl_value
 
-def combine_dicts(dict1, dict2):
-    combined = dict1.copy()
-    for key, value in dict2.items():
-        if key in combined:
-            if isinstance(value, bt.AutoOrderedDict):
-                combined[key] = combine_dicts(combined[key], value)
-            else:
-                if isinstance(combined[key], bt.AutoOrderedDict):
-                    combined[key] = add_dicts(combined[key], {key: value})
-                else:
-                    combined[key] += value
-        else:
-            combined[key] = value
-    return combined
+        # 合并总体盈亏比例
+        for side in ['won', 'lost']:
+            if side in analyzer_data:
+                side_data = analyzer_data[side]
+                if 'total' in side_data:
+                    total_value = side_data['total']
+                    if side not in combined:
+                        combined[side] = bt.AutoOrderedDict()
+                    if 'total' not in combined[side]:
+                        combined[side]['total'] = 0
+                    combined[side]['total'] += total_value
 
-
-def add_dicts(dict1, dict2):
-    combined = dict1.copy()
-    for key, value in dict2.items():
-        if key in combined:
-            combined[key] += value
-        else:
-            combined[key] = value
     return combined
 
 
