@@ -126,18 +126,10 @@ def get_bt_data(df):
     print("Renamed DataFrame head:\n", df.head())
     print("Renamed DataFrame columns:\n", df.columns)
 
-    # 使用backtrader的PandasDirectData数据源
-    data = bt.feeds.PandasDirectData(
-        dataname=df,
-        datetime=None,
-        open='open',
-        high='high',
-        low='low',
-        close='close',
-        volume='volume',
-        openinterest=None
-    )
+    # 使用backtrader的PandasData数据源
+    data = bt.feeds.PandasData(dataname=df)
     return data
+
 
 
 def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), freq="D"):
