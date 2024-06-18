@@ -1,17 +1,20 @@
 # all_stocks_backtest.py
 
 import os
-from datetime import datetime
-from src.backtrade import run_single_stock_backtest
-from czsc.data import TsDataCache
 from pprint import pprint
+from datetime import datetime
+
+from czsc import home_path
+from czsc.data import TsDataCache
+from src.backtrade import run_single_stock_backtest
 
 
 def run_all_stocks_backtest(stocks, edt: str = datetime.now().strftime('%Y%m%d'), freq="D"):
     all_trade_analyzers = []
     all_sharpe_ratios = []
 
-    for ts_code in stocks:
+    for index, row in stock_basic.iterrows():
+        ts_code = row.get('ts_code')
         print(f'Running backtest for {ts_code}')
         trade_analyzer, sharpe_ratio = run_single_stock_backtest(ts_code, edt, freq)
         if trade_analyzer and sharpe_ratio:
@@ -53,5 +56,6 @@ def combine_sharpe_ratios(ratios):
 
 
 if __name__ == '__main__':
-    stocks = ['000001.SZ', '000002.SZ', '000003.SZ']  # 示例个股列表
-    run_all_stocks_backtest(stocks)
+    stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
+    run_all_stocks_backtest(stock_basic)
+
