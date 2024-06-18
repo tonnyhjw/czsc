@@ -131,7 +131,6 @@ def get_bt_data(df):
     return data
 
 
-
 def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'), freq="D"):
     cerebro = bt.Cerebro()
 
@@ -141,7 +140,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     buy_points = list(query_all_buy_point(symbol, fx_pwr="强", signals="一买"))
     if not buy_points:
         print(f"No buy points for {ts_code}")
-        return
+        return None, None
     sdt = buy_points[0].date.strftime('%Y%m%d')
     tdc = TsDataCache(home_path)
     df = tdc.pro_bar(ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=False)
