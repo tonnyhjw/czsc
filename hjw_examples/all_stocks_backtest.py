@@ -160,6 +160,6 @@ def generate_email_body(analysis):
 
 if __name__ == '__main__':
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
-    stock_basic = stock_basic.head(100)
+    # stock_basic = stock_basic.head(100)
     run_all_stocks_backtest(stock_basic)
 
