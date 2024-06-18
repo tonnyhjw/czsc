@@ -122,42 +122,6 @@ def get_bt_data(df):
     # 确保数据类型正确
     df = df[['open', 'high', 'low', 'close', 'volume']].astype(float)
 
-    # 使用backtrader的PandasDirectData数据源
-    data = bt.feeds.PandasDirectData(
-        dataname=df,
-        datetime=None,
-        open='open',
-        high='high',
-        low='low',
-        close='close',
-        volume='volume',
-        openinterest=None
-    )
-    return data
-
-
-def get_bt_data(df):
-    # 确保日期列是datetime类型并且设置为索引
-    df['trade_date'] = pd.to_datetime(df['trade_date'])
-    df.set_index('trade_date', inplace=True)
-    df = df.sort_index()
-
-    # 打印调试信息
-    print("DataFrame head:\n", df.head())
-    print("DataFrame columns:\n", df.columns)
-
-    # 确保列名符合backtrader期望的格式
-    df.rename(columns={
-        'open': 'open',
-        'high': 'high',
-        'low': 'low',
-        'close': 'close',
-        'vol': 'volume'
-    }, inplace=True)
-
-    # 确保数据类型正确
-    df = df[['open', 'high', 'low', 'close', 'volume']].astype(float)
-
     # 打印调试信息
     print("Renamed DataFrame head:\n", df.head())
     print("Renamed DataFrame columns:\n", df.columns)
