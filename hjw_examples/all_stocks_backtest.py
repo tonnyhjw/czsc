@@ -91,8 +91,7 @@ def add_dicts(dict1, dict2):
 def combine_sharpe_ratios(ratios):
     combined = bt.AutoOrderedDict()
     for ratio in ratios:
-        ratio_data = ratio.get_analysis()
-        for key, value in ratio_data.items():
+        for key, value in ratio.items():
             if key in combined:
                 combined[key] = (combined[key] + value) / 2  # 计算平均值
             else:
