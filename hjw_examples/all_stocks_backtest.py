@@ -48,7 +48,16 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 def combine_trade_analyzers(analyzers):
     combined = bt.AutoOrderedDict()
     for analyzer in analyzers:
-        analyzer_data = analyzer.get_analysis()
+        try:
+            analyzer_data = analyzer.get_analysis()
+        except (AttributeError, KeyError):
+            # 如果分析器没有 get_analysis 方法或者结果为空,则跳过该分析器
+            continue
+
+        if not analyzer_data:
+            # 如果分析器结果为空字典,则跳过该分析器
+            continue
+
         for key, value in analyzer_data.items():
             if key in combined:
                 if isinstance(value, dict):
@@ -61,19 +70,6 @@ def combine_trade_analyzers(analyzers):
                 combined[key] = value
     return combined
 
-
-def combine_sharpe_ratios(ratios):
-    combined = bt.AutoOrderedDict()
-    for ratio in ratios:
-        ratio_data = ratio.get_analysis()
-        for key, value in ratio_data.items():
-            if key in combined:
-                combined[key] = (combined[key] + value) / 2  # 计算平均值
-            else:
-                combined[key] = value
-    return combined
-
-
 def combine_dicts(dict1, dict2):
     combined = dict1.copy()
     for key, value in dict2.items():
@@ -84,6 +80,17 @@ def combine_dicts(dict1, dict2):
                 combined[key] += value
         else:
             combined[key] = value
+    return combined
+
+def combine_sharpe_ratios(ratios):
+    combined = bt.AutoOrderedDict()
+    for ratio in ratios:
+        ratio_data = ratio.get_analysis()
+        for key, value in ratio_data.items():
+            if key in combined:
+                combined[key] = (combined[key] + value) / 2  # 计算平均值
+            else:
+                combined[key] = value
     return combined
 
 
