@@ -1,7 +1,7 @@
 import pprint
 
 from src.stock_process import *
-from src.backtrade import run_demo
+from src.backtrade import run_single_stock_backtest
 
 
 def play_day_trend_reverse():
@@ -21,4 +21,6 @@ def play_pzbc():
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
-    run_demo(ts_code='000415.SZ', edt='20240614', freq="D")
+    trade_analyzer, sharpe_ratio = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
+    pprint.pp(trade_analyzer)
+    pprint.pp(sharpe_ratio)
