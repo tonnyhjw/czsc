@@ -51,36 +51,42 @@ def combine_trade_analyzers(analyzers):
         try:
             analyzer_data = analyzer.get_analysis()
         except (AttributeError, KeyError):
-            # 如果分析器没有 get_analysis 方法或者结果为空,则跳过该分析器
             continue
-
         if not analyzer_data:
-            # 如果分析器结果为空字典,则跳过该分析器
             continue
-
         for key, value in analyzer_data.items():
             if key in combined:
-                if isinstance(value, dict):
-                    # 如果该键对应的值是字典,则递归合并
-                    combined[key] = combine_dicts(combined[key], value)
-                else:
-                    # 否则直接累加
-                    combined[key] += value
+                combined[key] = combine_dicts(combined[key], value)
             else:
                 combined[key] = value
     return combined
+
 
 def combine_dicts(dict1, dict2):
     combined = dict1.copy()
     for key, value in dict2.items():
         if key in combined:
-            if isinstance(value, dict):
+            if isinstance(value, bt.AutoOrderedDict):
                 combined[key] = combine_dicts(combined[key], value)
             else:
-                combined[key] += value
+                if isinstance(combined[key], bt.AutoOrderedDict):
+                    combined[key] = add_dicts(combined[key], {key: value})
+                else:
+                    combined[key] += value
         else:
             combined[key] = value
     return combined
+
+
+def add_dicts(dict1, dict2):
+    combined = dict1.copy()
+    for key, value in dict2.items():
+        if key in combined:
+            combined[key] += value
+        else:
+            combined[key] = value
+    return combined
+
 
 def combine_sharpe_ratios(ratios):
     combined = bt.AutoOrderedDict()
