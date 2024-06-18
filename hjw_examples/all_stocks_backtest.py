@@ -10,6 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 from czsc import home_path
 from czsc.data import TsDataCache
+from src.notify import notify_buy_backtrader
 from src.backtrade import run_single_stock_backtest
 
 
@@ -43,6 +44,9 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 
     print('Combined Sharpe Ratio Analysis:')
     pprint(combined_sharpe_ratio)
+    email_content = f"{combined_trade_analyzer} \n\n {combined_sharpe_ratio}"
+    email_subject = f"[测试][回测]回测结果"
+    notify_buy_backtrader(email_content, email_subject)
 
 
 # def combine_trade_analyzers(analyzers):

@@ -60,5 +60,18 @@ def notify_buy_points(results: list, email_subject: str, notify_empty: bool = Tr
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
+def notify_buy_backtrader(results: str, email_subject: str, notify_empty: bool = True):
+    html_table = "<h1>没有发现买点</h1>"
+
+    try:
+        if results:
+            # 发送电子邮件
+            send_email(results, email_subject)
+
+    except Exception as e_msg:
+        tb = traceback.format_exc()  # 获取 traceback 信息
+        logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
+
+
 if __name__ == '__main__':
     send_email('hello', 'hello')
