@@ -44,9 +44,8 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 
     print('Combined Sharpe Ratio Analysis:')
     pprint(combined_sharpe_ratio)
-    email_content = generate_email_body(combined_trade_analyzer)
     email_subject = f"[测试][回测]回测结果"
-    notify_buy_backtrader(email_content, email_subject, email_subject)
+    notify_buy_backtrader(combined_trade_analyzer, combined_sharpe_ratio, email_subject)
 
 
 # def combine_trade_analyzers(analyzers):
