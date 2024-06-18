@@ -122,9 +122,9 @@ def get_bt_data(df):
     # 确保数据类型正确
     df = df[['open', 'high', 'low', 'close', 'volume']].astype(float)
 
-    # 打印调试信息
-    print("Renamed DataFrame head:\n", df.head())
-    print("Renamed DataFrame columns:\n", df.columns)
+    # # 打印调试信息
+    # print("Renamed DataFrame head:\n", df.head())
+    # print("Renamed DataFrame columns:\n", df.columns)
 
     # 使用backtrader的PandasData数据源
     data = bt.feeds.PandasData(dataname=df)
@@ -177,12 +177,12 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
 
-    # 打印分析器结果
-    print(f'Trade Analysis Results for {ts_code}:')
-    pprint(trade_analyzer)
-
-    print(f'Sharpe Ratio Analysis for {ts_code}:')
-    pprint(sharpe_ratio)
+    # # 打印分析器结果
+    # print(f'Trade Analysis Results for {ts_code}:')
+    # pprint(trade_analyzer)
+    #
+    # print(f'Sharpe Ratio Analysis for {ts_code}:')
+    # pprint(sharpe_ratio)
 
     # 绘图并保存到文件
     fig = cerebro.plot(style='candlestick')[0][0]
