@@ -21,7 +21,8 @@ def play_pzbc():
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
-    trade_analyzer, sharpe_ratio = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
+    result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
+    trade_analyzer, sharpe_ratio = result.get("trade_analyzer"), result.get("sharpe_ratio")
     pprint.pp(trade_analyzer)
     pprint.pp(sharpe_ratio)
     print(trade_analyzer.get('pnl'))

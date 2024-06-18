@@ -57,7 +57,7 @@ def combine_trade_analyzers(analyzers):
 
         # 合并总体盈亏金额
         if 'pnl' in analyzer_data:
-            pnl_data = analyzer_data['pnl']
+            pnl_data = vim ['pnl']
             for key in ['gross', 'net']:
                 if key in pnl_data:
                     pnl_value = pnl_data[key]['total']
