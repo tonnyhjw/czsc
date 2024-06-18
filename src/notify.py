@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from src.formatters import *
-from src.templates.email_templates import daily_email_style
+from src.templates.email_templates import daily_email_style, backtrader_email_body
 
 
 logger.add("statics/logs/notify.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
@@ -60,13 +60,12 @@ def notify_buy_points(results: list, email_subject: str, notify_empty: bool = Tr
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
-def notify_buy_backtrader(results: str, email_subject: str, notify_empty: bool = True):
-    html_table = "<h1>没有发现买点</h1>"
-
+def notify_buy_backtrader(trade_analysis, sharpe_ratio, email_subject: str):
     try:
-        if results:
+        if trade_analysis and sharpe_ratio:
+            email_content = backtrader_email_body(trade_analysis, sharpe_ratio)
             # 发送电子邮件
-            send_email(results, email_subject)
+            send_email(email_content, email_subject)
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
