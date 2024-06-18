@@ -71,7 +71,7 @@ class MyStrategy(bt.Strategy):
         # 检查是否有卖出信号
         if self.position.size > 0:
             for idx, fx in enumerate(self.params.fxs):
-                if fx.date == current_date:
+                if fx.dt == current_date:
                     self.sell_signal = True
                     # 截断fxs列表，只保留未处理部分
                     self.params.fxs = self.params.fxs[idx + 1:]
