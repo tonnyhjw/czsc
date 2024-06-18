@@ -18,11 +18,15 @@ def play_pzbc():
     pprint.pprint(result)
 
 
+def view_fxs():
+    row = dict(ts_code="603713.sh", symbol="603713", name="密尔克卫", industry="仓储物流")
+    sdt, edt = "20180101", "20240429"
+    c = row_2_czsc(row, sdt, edt)
+    pprint.pprint(c.bi_list)
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
-    result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
-    trade_analyzer, sharpe_ratio = result.get("trade_analyzer"), result.get("sharpe_ratio")
-    pprint.pp(trade_analyzer)
-    pprint.pp(sharpe_ratio)
-    print(trade_analyzer.get('pnl'))
+    # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
+    view_fxs()

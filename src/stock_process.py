@@ -110,3 +110,15 @@ def bottom_pzbc(row, sdt, edt, freq: str = 'W', fx_dt_limit: int = 30):
 
     finally:
         return output
+
+
+def row_2_czsc(row, sdt, edt, freq: str = 'W'):
+    _ts_code = row.get('ts_code')
+    _symbol = row.get('symbol')
+    _name = row.get('name')
+    _industry = row.get("industry")
+    _hs = _ts_code.split(".")[-1]
+    _edt = datetime.datetime.strptime(edt, "%Y%m%d")
+    dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
+    bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
+    return CZSC(bars)
