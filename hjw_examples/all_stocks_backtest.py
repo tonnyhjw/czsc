@@ -44,59 +44,59 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 
     print('Combined Sharpe Ratio Analysis:')
     pprint(combined_sharpe_ratio)
-    email_content = f"{combined_trade_analyzer} \n\n {combined_sharpe_ratio}"
+    email_content = generate_email_body(combined_trade_analyzer)
     email_subject = f"[测试][回测]回测结果"
     notify_buy_backtrader(email_content, email_subject)
 
 
-def combine_trade_analyzers(analyzers):
-    combined = bt.AutoOrderedDict()
-    for analyzer in analyzers:
-
-        # 合并总体盈亏金额
-        if 'pnl' in analyzer:
-            pnl_data = analyzer['pnl']
-            for key in ['gross', 'net']:
-                if key in pnl_data:
-                    pnl_value = pnl_data[key]['total']
-                    if 'pnl' not in combined:
-                        combined['pnl'] = bt.AutoOrderedDict()
-                    if key not in combined['pnl']:
-                        combined['pnl'][key] = bt.AutoOrderedDict()
-                    if 'total' not in combined['pnl'][key]:
-                        combined['pnl'][key]['total'] = 0
-                    combined['pnl'][key]['total'] += pnl_value
-
-        # 合并总体盈亏比例
-        for side in ['won', 'lost']:
-            if side in analyzer:
-                side_data = analyzer[side]
-                if 'total' in side_data:
-                    total_value = side_data['total']
-                    if side not in combined:
-                        combined[side] = bt.AutoOrderedDict()
-                    if 'total' not in combined[side]:
-                        combined[side]['total'] = 0
-                    combined[side]['total'] += total_value
-
-    return combined
-
-
 # def combine_trade_analyzers(analyzers):
 #     combined = bt.AutoOrderedDict()
-#     for analyzer_data in analyzers:
-#         # try:
-#         #     analyzer_data = analyzer.get_analysis()
-#         # except (AttributeError, KeyError):
-#         #     continue
-#         if not analyzer_data:
-#             continue
-#         for key, value in analyzer_data.items():
-#             if key in combined:
-#                 combined[key] = combine_dicts(combined[key], value)
-#             else:
-#                 combined[key] = value
+#     for analyzer in analyzers:
+#
+#         # 合并总体盈亏金额
+#         if 'pnl' in analyzer:
+#             pnl_data = analyzer['pnl']
+#             for key in ['gross', 'net']:
+#                 if key in pnl_data:
+#                     pnl_value = pnl_data[key]['total']
+#                     if 'pnl' not in combined:
+#                         combined['pnl'] = bt.AutoOrderedDict()
+#                     if key not in combined['pnl']:
+#                         combined['pnl'][key] = bt.AutoOrderedDict()
+#                     if 'total' not in combined['pnl'][key]:
+#                         combined['pnl'][key]['total'] = 0
+#                     combined['pnl'][key]['total'] += pnl_value
+#
+#         # 合并总体盈亏比例
+#         for side in ['won', 'lost']:
+#             if side in analyzer:
+#                 side_data = analyzer[side]
+#                 if 'total' in side_data:
+#                     total_value = side_data['total']
+#                     if side not in combined:
+#                         combined[side] = bt.AutoOrderedDict()
+#                     if 'total' not in combined[side]:
+#                         combined[side]['total'] = 0
+#                     combined[side]['total'] += total_value
+#
 #     return combined
+
+
+def combine_trade_analyzers(analyzers):
+    combined = bt.AutoOrderedDict()
+    for analyzer_data in analyzers:
+        # try:
+        #     analyzer_data = analyzer.get_analysis()
+        # except (AttributeError, KeyError):
+        #     continue
+        if not analyzer_data:
+            continue
+        for key, value in analyzer_data.items():
+            if key in combined:
+                combined[key] = combine_dicts(combined[key], value)
+            else:
+                combined[key] = value
+    return combined
 
 
 def combine_dicts(dict1, dict2):
@@ -136,6 +136,27 @@ def combine_sharpe_ratios(ratios):
                 if value is not None and combined[key] is not None:
                     combined[key] = (combined[key] + value) / 2  # 计算平均值
     return combined
+
+
+def generate_email_body(analysis):
+    # 从分析结果中提取数据
+    gross_pnl = analysis['pnl']['gross']['total']
+    net_pnl = analysis['pnl']['net']['total']
+    win_ratio = analysis['won']['total']
+    loss_ratio = analysis['lost']['total']
+
+    # 格式化电子邮件正文
+    email_body = f"""                        
+        总体盈亏金额:
+        总盈利金额: ¥{gross_pnl:.2f}
+        总净利金额: ¥{net_pnl:.2f}
+        
+        总体盈亏比例:
+        盈利笔数占比: {win_ratio}%
+        亏损笔数占比: {loss_ratio}%
+        
+        """
+    return email_body
 
 
 if __name__ == '__main__':
