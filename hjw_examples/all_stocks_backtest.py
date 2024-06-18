@@ -48,16 +48,10 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 def combine_trade_analyzers(analyzers):
     combined = bt.AutoOrderedDict()
     for analyzer in analyzers:
-        try:
-            analyzer_data = analyzer.get_analysis()
-        except (AttributeError, KeyError):
-            continue
-        if not analyzer_data:
-            continue
 
         # 合并总体盈亏金额
-        if 'pnl' in analyzer_data:
-            pnl_data = vim ['pnl']
+        if 'pnl' in analyzer:
+            pnl_data = analyzer['pnl']
             for key in ['gross', 'net']:
                 if key in pnl_data:
                     pnl_value = pnl_data[key]['total']
@@ -71,8 +65,8 @@ def combine_trade_analyzers(analyzers):
 
         # 合并总体盈亏比例
         for side in ['won', 'lost']:
-            if side in analyzer_data:
-                side_data = analyzer_data[side]
+            if side in analyzer:
+                side_data = analyzer[side]
                 if 'total' in side_data:
                     total_value = side_data['total']
                     if side not in combined:
