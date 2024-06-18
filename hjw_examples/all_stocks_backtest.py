@@ -92,10 +92,12 @@ def combine_sharpe_ratios(ratios):
     combined = bt.AutoOrderedDict()
     for ratio in ratios:
         for key, value in ratio.items():
-            if key in combined:
-                combined[key] = (combined[key] + value) / 2  # 计算平均值
+            if key not in combined:
+                if value is not None:
+                    combined[key] = value
             else:
-                combined[key] = value
+                if value is not None and combined[key] is not None:
+                    combined[key] = (combined[key] + value) / 2  # 计算平均值
     return combined
 
 
