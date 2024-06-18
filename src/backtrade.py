@@ -140,7 +140,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     buy_points = list(query_all_buy_point(symbol, fx_pwr="强", signals="一买"))
     if not buy_points:
         print(f"No buy points for {ts_code}")
-        return None, None
+        return {"trade_analyzer": None, "sharpe_ratio": None}
     sdt = buy_points[0].date.strftime('%Y%m%d')
     tdc = TsDataCache(home_path)
     df = tdc.pro_bar(ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=False)
@@ -188,4 +188,5 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     fig = cerebro.plot(style='candlestick')[0][0]
     fig.savefig(f'statics/bt_imgs/{ts_code}_{freq}_{sdt}-{edt}.png')
 
-    return trade_analyzer, sharpe_ratio
+    return {"trade_analyzer": trade_analyzer, "sharpe_ratio": sharpe_ratio}
+
