@@ -207,7 +207,8 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
 
     # 获取格式化后的backtrader数据
     bt_data = get_bt_data(df)
-    print(bt_data[0])
+    print(bt_data.params.index())
+    print(bt_data.params.count())
 
     c = CZSC(bars)
     fxs = c.fx_list
