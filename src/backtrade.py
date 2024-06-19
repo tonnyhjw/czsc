@@ -185,18 +185,18 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     # print(f'Sharpe Ratio Analysis for {ts_code}:')
     # pprint(sharpe_ratio)
 
-    # 绘图并保存到文件
-    fig = cerebro.plot(style='candlestick')[0][0]
-    fig.savefig(f'statics/bt_imgs/{ts_code}_{freq}_{sdt}-{edt}.png')
+    # # 绘图并保存到文件
+    # fig = cerebro.plot(style='candlestick')[0][0]
+    # fig.savefig(f'statics/bt_imgs/{ts_code}_{freq}_{sdt}-{edt}.png')
 
-    # 手动释放内存
-    del df
-    del bt_data
-    del cerebro
-    del bars
-    del c
-    del fxs
-    gc.collect()
+    # # 手动释放内存
+    # del df
+    # del bt_data
+    # del cerebro
+    # del bars
+    # del c
+    # del fxs
+    # gc.collect()
 
     return {"trade_analyzer": trade_analyzer, "sharpe_ratio": sharpe_ratio}
 
