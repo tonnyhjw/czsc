@@ -14,7 +14,7 @@ from src.notify import notify_buy_backtrader
 from src.backtrade import run_single_stock_backtest
 
 
-def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'), freq="D"):
+def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'), fx_pwr="弱", signals="二买", freq="D"):
     all_trade_analyzers = []
     all_sharpe_ratios = []
 
@@ -24,7 +24,7 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
         for index, row in stock.iterrows():
             ts_code = row.get('ts_code')
             print(f'Running backtest for {ts_code}')
-            future = executor.submit(run_single_stock_backtest, ts_code, edt, freq)
+            future = executor.submit(run_single_stock_backtest, ts_code, edt, fx_pwr, signals, freq)
             futures[future] = ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -44,7 +44,7 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 
     print('Combined Sharpe Ratio Analysis:')
     pprint(combined_sharpe_ratio)
-    email_subject = f"[测试][回测]弱二买测试结果"
+    email_subject = f"[测试][回测]{fx_pwr}{signals}测试结果"
     notify_buy_backtrader(combined_trade_analyzer, combined_sharpe_ratio, email_subject)
 
 
@@ -124,5 +124,9 @@ def generate_email_body(analysis):
 if __name__ == '__main__':
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     # stock_basic = stock_basic.head(100)
-    run_all_stocks_backtest(stock_basic)
+    FX_PWR = ["强", "中", "弱"]
+    SIGNALS = ["一买", "二买", "三买"]
+    for _signals in SIGNALS:
+        for _fx_pwr in FX_PWR:
+            run_all_stocks_backtest(stock_basic, fx_pwr=_fx_pwr, signals=_signals)
 
