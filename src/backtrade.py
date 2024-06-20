@@ -177,6 +177,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
 
     # 获取分析器结果
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
+    print(result.analyzers.sharpe_ratio)
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
 
     # # 打印分析器结果

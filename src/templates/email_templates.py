@@ -80,7 +80,7 @@ def backtrader_email_body(trade_analysis, sharpe_ratio):
         <li><strong>盈亏比</strong>
             <ul>
                 <li><strong>盈亏次数比:</strong> {trade_analysis['won']['total']} : {trade_analysis['lost']['total']} (盈利的交易总数:亏损的交易总数)</li>
-                <li><strong>盈利交易占比:</strong> {trade_analysis['won']['total']/trade_analysis['total']['closed']:.2f} (盈利的交易总数:已结算的交易数)</li>
+                <li><strong>盈利交易占比:</strong> {trade_analysis['won']['total']/trade_analysis['total']['closed']*100:.2f}% (盈利的交易总数:已结算的交易数)</li>
             </ul>
         </li>
         <li><strong>盈利交易:</strong>
