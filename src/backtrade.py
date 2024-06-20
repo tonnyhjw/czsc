@@ -138,7 +138,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     symbol = ts_code.split(".")[0]
 
     # 设置策略参数
-    buy_points = list(query_all_buy_point(symbol, signals="三买", freq=freq))
+    buy_points = list(query_all_buy_point(symbol, fx_pwr=["强"], signals="三买", freq=freq))
     if not buy_points:
         # print(f"No buy points for {ts_code}")
         return {"trade_analyzer": None, "sharpe_ratio": None}
