@@ -38,12 +38,12 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
     combined_trade_analyzer = combine_trade_analyzers(all_trade_analyzers)
     combined_sharpe_ratio = combine_sharpe_ratios(all_sharpe_ratios)
 
-    # 打印汇总分析结果
-    print('Combined Trade Analysis Results:')
-    pprint(combined_trade_analyzer)
-
-    print('Combined Sharpe Ratio Analysis:')
-    pprint(combined_sharpe_ratio)
+    # # 打印汇总分析结果
+    # print('Combined Trade Analysis Results:')
+    # pprint(combined_trade_analyzer)
+    #
+    # print('Combined Sharpe Ratio Analysis:')
+    # pprint(combined_sharpe_ratio)
     email_subject = f"[测试][回测]{fx_pwr}{signals}测试结果"
     notify_buy_backtrader(combined_trade_analyzer, combined_sharpe_ratio, email_subject)
 
