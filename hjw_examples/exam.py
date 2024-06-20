@@ -29,5 +29,5 @@ if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
     result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
-    pprint.pprint(result)
+    pprint.pprint(result.get("sharpe_ratio"))
     # view_fxs()
