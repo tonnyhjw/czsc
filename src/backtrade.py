@@ -162,7 +162,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
 
     # 添加分析器
     cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trade_analyzer')
-    cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio')
+    cerebro.addanalyzer(bt.analyzers.SharpeRatio_A, _name='sharpe_ratio')
 
     # 设置初始现金
     cerebro.broker.set_cash(100000.0)
