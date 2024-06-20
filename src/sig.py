@@ -247,7 +247,8 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             and abs(c.bars_raw[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3
             and c.bars_raw[-1].cache[cache_key]['macd'] > c.bars_raw[-2].cache[cache_key]['macd']
             and c.bars_raw[-1].cache[cache_key]['dif'] > 0
-            and c.bars_raw[-1].cache[cache_key]['dea'] > 0
+            # and c.bars_raw[-1].cache[cache_key]['dea'] > 0
+            and (latest_fx.raw_bars[-1].close - latest_fx.raw_bars[-2].close) / latest_fx.raw_bars[-2].close <= 0.05
         ):
             zs1_after_1st_buy = zs_seq_after_1st_buy[0]
             # 判断二买
