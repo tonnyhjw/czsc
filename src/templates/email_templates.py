@@ -168,7 +168,7 @@ def backtrader_email_body(trade_analysis, sharpe_ratio):
 
     <h2>综合夏普比率分析</h2>
     <ul>
-        <li><strong>夏普比率:</strong> {sharpe_ratio['sharperatio']} (夏普比率衡量的是投资相对于其风险的回报。一般来说，夏普比率越高越好，0以上是正收益，1以上是优秀，2以上是非常优秀。负数表示投资回报低于无风险利率)</li>
+        <li><strong>夏普比率:</strong> {sharpe_ratio.get('sharperatio', '暂无数据')} (夏普比率衡量的是投资相对于其风险的回报。一般来说，夏普比率越高越好，0以上是正收益，1以上是优秀，2以上是非常优秀。负数表示投资回报低于无风险利率)</li>
     </ul>
     """
 

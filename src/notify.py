@@ -62,7 +62,8 @@ def notify_buy_points(results: list, email_subject: str, notify_empty: bool = Tr
 
 def notify_buy_backtrader(trade_analysis, sharpe_ratio, email_subject: str):
     try:
-        if trade_analysis and sharpe_ratio:
+        # if trade_analysis and sharpe_ratio:
+        if trade_analysis:
             email_content = backtrader_email_body(trade_analysis, sharpe_ratio)
             # 发送电子邮件
             send_email(email_content, email_subject)
