@@ -28,5 +28,6 @@ def view_fxs():
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
-    # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
-    view_fxs()
+    result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
+    pprint.pprint(result)
+    # view_fxs()
