@@ -127,6 +127,7 @@ def add_dicts(dict1, dict2):
 def combine_sharpe_ratios(ratios):
     combined = bt.AutoOrderedDict()
     for ratio in ratios:
+        pprint(ratio)
         for key, value in ratio.items():
             if key not in combined:
                 if value is not None:

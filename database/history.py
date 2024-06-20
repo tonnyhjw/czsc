@@ -102,12 +102,14 @@ def query_latest_buy_point(symbol, fx_pwr=None, signals=None):
     return query.order_by(BuyPoint.date.desc()).first()
 
 
-def query_all_buy_point(symbol, fx_pwr=None, signals=None):
+def query_all_buy_point(symbol, fx_pwr=None, signals=None, sdt=None, edt=None):
     """
     根据股票代码查询所有买点信息，可根据分型强度和信号过滤。
     :param symbol: 股票代码
     :param fx_pwr: 可选，分型强度过滤
     :param signals: 可选，买入信号过滤
+    :param sdt: 可选，起始时间过滤
+    :param edt: 可选，结束时间过滤
     :return: 配置好的查询对象
     """
     # 构建基本查询
@@ -126,6 +128,14 @@ def query_all_buy_point(symbol, fx_pwr=None, signals=None):
             query = query.where(BuyPoint.signals.in_(signals))
         else:
             query = query.where(BuyPoint.signals == signals)
+
+    # 根据 起始时间 添加过滤条件
+    if sdt is not None:
+        query = query.where(BuyPoint.date >= sdt)
+
+    # 根据 结束时间 添加过滤条件
+    if sdt is not None:
+        query = query.where(BuyPoint.date <= edt)
 
     # 返回按日期降序排序的查询对象
     return query.order_by(BuyPoint.date.asc())
