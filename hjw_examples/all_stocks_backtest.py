@@ -48,46 +48,9 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
     notify_buy_backtrader(combined_trade_analyzer, combined_sharpe_ratio, email_subject)
 
 
-# def combine_trade_analyzers(analyzers):
-#     combined = bt.AutoOrderedDict()
-#     for analyzer in analyzers:
-#
-#         # 合并总体盈亏金额
-#         if 'pnl' in analyzer:
-#             pnl_data = analyzer['pnl']
-#             for key in ['gross', 'net']:
-#                 if key in pnl_data:
-#                     pnl_value = pnl_data[key]['total']
-#                     if 'pnl' not in combined:
-#                         combined['pnl'] = bt.AutoOrderedDict()
-#                     if key not in combined['pnl']:
-#                         combined['pnl'][key] = bt.AutoOrderedDict()
-#                     if 'total' not in combined['pnl'][key]:
-#                         combined['pnl'][key]['total'] = 0
-#                     combined['pnl'][key]['total'] += pnl_value
-#
-#         # 合并总体盈亏比例
-#         for side in ['won', 'lost']:
-#             if side in analyzer:
-#                 side_data = analyzer[side]
-#                 if 'total' in side_data:
-#                     total_value = side_data['total']
-#                     if side not in combined:
-#                         combined[side] = bt.AutoOrderedDict()
-#                     if 'total' not in combined[side]:
-#                         combined[side]['total'] = 0
-#                     combined[side]['total'] += total_value
-#
-#     return combined
-
-
 def combine_trade_analyzers(analyzers):
     combined = bt.AutoOrderedDict()
     for analyzer_data in analyzers:
-        # try:
-        #     analyzer_data = analyzer.get_analysis()
-        # except (AttributeError, KeyError):
-        #     continue
         if not analyzer_data:
             continue
         for key, value in analyzer_data.items():
@@ -127,7 +90,6 @@ def add_dicts(dict1, dict2):
 def combine_sharpe_ratios(ratios):
     combined = bt.AutoOrderedDict()
     for ratio in ratios:
-        pprint(ratio)
         for key, value in ratio.items():
             if key not in combined:
                 if value is not None:
