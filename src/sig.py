@@ -86,7 +86,6 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     print(bi_b_dif, bi_a_dif)
     print(zs2.is_valid)
     print(ubi['direction'] == Direction.Up)
-    print(len(ubi['fxs']) < 2)
     print(zs2.sdir == Direction.Down)
     print(zs2.edir == Direction.Down)
     print(zs2.dd == bi_b.low)
@@ -96,7 +95,6 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     if (
             zs2.is_valid and
             ubi['direction'] == Direction.Up and
-            len(ubi['fxs']) < 2 and
             zs2.sdir == Direction.Down and
             zs2.edir == Direction.Down and
             zs2.dd == bi_b.low and
@@ -323,3 +321,5 @@ def date_exceed_rawbars(bars_raw, fx_dt: datetime, lookback_bars: int = 5) -> bo
     index_difference = edt_index - fx_dt_index
 
     return index_difference > lookback_bars
+
+
