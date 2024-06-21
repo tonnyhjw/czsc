@@ -25,6 +25,7 @@ def view_fxs():
     pprint.pprint(c.bi_list)
     last_bi = c.bi_list[-1]
     pprint.pp(last_bi.fxs)
+    print(last_bi.fx_b.power_str)
 
 
 if __name__ == '__main__':
