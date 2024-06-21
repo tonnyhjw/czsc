@@ -23,6 +23,8 @@ def view_fxs():
     sdt, edt = "20240101", "20240429"
     c = row_2_czsc(row, sdt, edt)
     pprint.pprint(c.bi_list)
+    last_bi = c.bi_list[-1]
+    pprint.pp(last_bi.fxs)
 
 
 if __name__ == '__main__':
