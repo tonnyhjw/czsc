@@ -21,7 +21,7 @@ def play_pzbc():
 def view_fxs():
     row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
     sdt, edt = "20240101", "20240429"
-    c = row_2_czsc(row, sdt, edt)
+    c = row_2_czsc(row, sdt, edt, "D")
     pprint.pprint(c.bi_list)
     last_bi = c.bi_list[-1]
     pprint.pp(last_bi.fxs)
