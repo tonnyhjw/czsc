@@ -45,7 +45,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     latest_fx = c.ubi_fxs[-1]  # 最近一个分型
     fx_is_exceed = date_exceed_rawbars(c.bars_raw, latest_fx.dt, fx_dt_limit)
 
-    if len(bis) < 15 or not ubi or len(ubi['raw_bars']) < 3:
+    if len(bis) < 4 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     if latest_fx.mark != Mark.D or fx_is_exceed:
@@ -79,19 +79,19 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
     bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-    # print(zs2)
-    # print(bi_a)
-    # print(bi_b)
-    # print(bi_a_macd_area, bi_b_macd_area)
-    # print(bi_b_dif, bi_a_dif)
-    # print(zs2.is_valid)
-    # print(ubi['direction'] == Direction.Up)
-    # print(len(ubi['fxs']) < 2)
-    # print(zs2.sdir == Direction.Down)
-    # print(zs2.edir == Direction.Down)
-    # print(zs2.dd == bi_b.low)
-    # print((0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)))
-    # print(v2)
+    print(zs2)
+    print(bi_a)
+    print(bi_b)
+    print(bi_a_macd_area, bi_b_macd_area)
+    print(bi_b_dif, bi_a_dif)
+    print(zs2.is_valid)
+    print(ubi['direction'] == Direction.Up)
+    print(len(ubi['fxs']) < 2)
+    print(zs2.sdir == Direction.Down)
+    print(zs2.edir == Direction.Down)
+    print(zs2.dd == bi_b.low)
+    print((0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)))
+    print(v2)
 
     if (
             zs2.is_valid and
