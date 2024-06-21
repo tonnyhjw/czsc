@@ -6,7 +6,7 @@ from src.backtrade import run_single_stock_backtest
 
 def play_day_trend_reverse():
     row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
-    sdt, edt = "20240101", "20240429"
+    sdt, edt = "20200101", "20240429"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
