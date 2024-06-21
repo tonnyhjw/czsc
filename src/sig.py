@@ -57,18 +57,24 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     else:
         v2 = latest_fx.power_str
 
-    zs_seq = get_zs_seq(bis)
-    if len(zs_seq) == 0:
+    # zs_seq = get_zs_seq(bis)
+    # if len(zs_seq) == 0:
+    #     v1 = '无中枢'
+    #     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
+    #
+    # zs1 = zs_seq[-1]
+    # # 当最后的中枢少于3笔，就将最后的中枢和倒数第二个中枢合并再计算
+    # if not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq) > 1:
+    #     zs1 = ZS(zs_seq[-2].bis + zs1.bis)
+    # # 查找 BI.high 等于 zs2 的 gg 那一笔，并切片
+    # bi_a_index = next((i for i, bi in enumerate(zs1.bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
+    # remaining_bis = zs1.bis[bi_a_index:]
+
+    remaining_bis = select_pzbc_bis(bis)
+    if not remaining_bis:
         v1 = '无中枢'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
-    zs1 = zs_seq[-1]
-    # 当最后的中枢少于3笔，就将最后的中枢和倒数第二个中枢合并再计算
-    if not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq) > 1:
-        zs1 = ZS(zs_seq[-2].bis + zs1.bis)
-    # 查找 BI.high 等于 zs2 的 gg 那一笔，并切片
-    bi_a_index = next((i for i, bi in enumerate(zs1.bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
-    remaining_bis = zs1.bis[bi_a_index:]
     zs2 = ZS(remaining_bis)
     estimated_profit = (zs2.zd - cur_price) / cur_price
 
@@ -79,22 +85,23 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
     bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-    print(zs2)
-    print(bi_a)
-    print(bi_b)
-    print(bi_a_macd_area, bi_b_macd_area)
-    print(bi_b_dif, bi_a_dif)
-    print(zs2.is_valid)
-    print(ubi['direction'] == Direction.Up)
-    print(zs2.sdir == Direction.Down)
-    print(zs2.edir == Direction.Down)
-    print(zs2.dd == bi_b.low)
-    print((0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)))
-    print(v2)
+    # print(zs2)
+    # print(bi_a)
+    # print(bi_b)
+    # print(bi_a_macd_area, bi_b_macd_area)
+    # print(bi_b_dif, bi_a_dif)
+    # print(zs2.is_valid)
+    # print(ubi['direction'] == Direction.Up)
+    # print(zs2.sdir == Direction.Down)
+    # print(zs2.edir == Direction.Down)
+    # print(zs2.dd == bi_b.low)
+    # print((0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)))
+    # print(v2)
 
     if (
             zs2.is_valid and
             ubi['direction'] == Direction.Up and
+            len(ubi['fxs']) < 2 and
             zs2.sdir == Direction.Down and
             zs2.edir == Direction.Down and
             zs2.dd == bi_b.low and
@@ -323,3 +330,40 @@ def date_exceed_rawbars(bars_raw, fx_dt: datetime, lookback_bars: int = 5) -> bo
     return index_difference > lookback_bars
 
 
+def select_pzbc_bis(bis):
+    zs_seq = get_zs_seq(bis)
+    if len(zs_seq) == 0:
+        return None
+    zs1 = zs_seq[-1]
+    # 当最后的中枢少于3笔，就将最后的中枢和倒数第二个中枢合并再计算
+    if not zs1.is_valid and zs1.edir == Direction.Down and len(zs_seq) > 1:
+        zs1 = ZS(zs_seq[-2].bis + zs1.bis)
+    # 查找 BI.high 等于 zs2 的 gg 那一笔，并切片
+    bi_a_index = next((i for i, bi in enumerate(zs1.bis) if bi.high == zs1.gg and bi.direction == Direction.Down), None)
+    remaining_bis = zs1.bis[bi_a_index:]
+    return remaining_bis
+
+
+def is_lower_freq_pzbc(bis):
+    """
+    检查次级别的盘整背驰。
+
+    :param bis: bi列表
+    :return: 是否疑似次级别盘整底背驰， True或False
+    """
+    remaining_bis = select_pzbc_bis(bis)
+    if not remaining_bis:
+        return None
+
+    zs = ZS(remaining_bis)
+    bi_a = zs.bis[0]
+    bi_b = zs.bis[-1]
+    if (
+            zs.is_valid and
+            zs.sdir == Direction.Down and
+            zs.edir == Direction.Down and
+            zs.dd == bi_b.low
+    ):
+        return True
+    else:
+        return False
