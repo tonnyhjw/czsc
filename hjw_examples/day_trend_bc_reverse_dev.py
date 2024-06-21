@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # formatted_dates = date_range.strftime('%Y%m%d').tolist()
 
     today = datetime.datetime.now().strftime("%Y%m%d")
-    trade_dates = TsDataCache(home_path).get_dates_span('2024-03-11', today, is_open=True)
+    trade_dates = TsDataCache(home_path).get_dates_span('2024-03-28', today, is_open=True)
 
     # 将日期格式化为'%Y%m%d'
     for business_date in trade_dates:
