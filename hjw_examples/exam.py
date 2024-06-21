@@ -19,7 +19,7 @@ def play_pzbc():
 
 
 def view_fxs():
-    row = dict(ts_code="002180.sh", symbol="002180", name="纳思达", industry="IT设备")
+    row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
     sdt, edt = "20240101", "20240429"
     c = row_2_czsc(row, sdt, edt)
     pprint.pprint(c.bi_list)
