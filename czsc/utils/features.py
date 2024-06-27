@@ -7,7 +7,9 @@ describe: 因子（特征）处理
 """
 import pandas as pd
 from loguru import logger
+from deprecated import deprecated
 from sklearn.preprocessing import scale
+from sklearn.linear_model import LinearRegression
 
 
 def normalize_feature(df, x_col, **kwargs):
@@ -31,7 +33,7 @@ def normalize_feature(df, x_col, **kwargs):
     """
     df = df.copy()
     assert df[x_col].isna().sum() == 0, "因子有缺失值，缺失数量为：{}".format(df[x_col].isna().sum())
-    q = kwargs.get("q", 0.05)           # 缩尾比例
+    q = kwargs.get("q", 0.05)  # 缩尾比例
     df[x_col] = df.groupby("dt")[x_col].transform(lambda x: scale(x.clip(lower=x.quantile(q), upper=x.quantile(1 - q))))
     return df
 
@@ -39,76 +41,34 @@ def normalize_feature(df, x_col, **kwargs):
 def normalize_ts_feature(df, x_col, n=10, **kwargs):
     """对时间序列数据进行归一化处理
 
-    函数计算逻辑：
-
-    1. 首先，进行一系列的断言检查，确保因子值的取值数量大于分层数量，并且因子列没有缺失值。
-    2. 从kwargs参数中获取分层方法method的值，默认为"expanding"，以及min_periods的值，默认为300。
-    3. 如果在DataFrame的列中不存在x_col_norm列，则进行以下操作：
-        - 如果分层方法是"expanding"，则使用expanding函数对因子列进行处理，计算每个时间点的标准化值，公式为(当前值 - 平均值) / 标准差。
-        - 如果分层方法是"rolling"，则使用rolling函数对因子列进行处理，计算每个窗口的标准化值，窗口大小为min_periods，公式同上。
-        - 如果分层方法不是上述两种情况，则抛出错误。
-        - 对于缺失值，获取原始值，然后进行标准化。
-
-    4. 如果在DataFrame的列中不存在x_col_qcut列，则进行以下操作：
-        - 如果分层方法是"expanding"，则使用expanding函数对因子列进行处理，计算每个时间点的分位数，将其转化为分位数的标签（0到n-1）。
-        - 如果分层方法是"rolling"，则使用rolling函数对因子列进行处理，计算每个窗口的分位数，窗口大小为min_periods。
-        - 如果分层方法不是上述两种情况，则抛出错误。
-        - 使用分位数后的值填充原始值中的缺失值。
-        - 对于缺失值，获取原始值，然后进行分位数处理分层。
-        - 创建一个新的列x_col分层，根据分位数的标签值，将其转化为"第xx层"的字符串形式。
-
-    :param df: 因子数据，必须包含 dt, x_col 列，其中 dt 为日期，x_col 为因子值，数据样例：
+    :param df: 因子数据，必须包含 dt, x_col 列，其中 dt 为日期，x_col 为因子值
     :param x_col: 因子列名
     :param n: 分层数量，默认为10
     :param kwargs:
 
-        - method: 分层方法，expanding 或 rolling，默认为 expanding
-        - min_periods: expanding 时的最小样本数量，默认为300
+        - window: 窗口大小，默认为2000
+        - min_periods: 最小样本数量，默认为300
 
     :return: df, 添加了 x_col_norm, x_col_qcut, x_col分层 列
     """
-    assert df[x_col].nunique() > n, "因子值的取值数量必须大于分层数量"
+    assert df[x_col].nunique() > n * 2, "因子值的取值数量必须大于分层数量"
     assert df[x_col].isna().sum() == 0, "因子有缺失值，缺失数量为：{}".format(df[x_col].isna().sum())
-    method = kwargs.get("method", "expanding")
+    window = kwargs.get("window", 2000)
     min_periods = kwargs.get("min_periods", 300)
 
-    if f"{x_col}_norm" not in df.columns:
-        if method == "expanding":
-            df[f"{x_col}_norm"] = df[x_col].expanding(min_periods=min_periods).apply(
-                lambda x: (x.iloc[-1] - x.mean()) / x.std(), raw=False)
-
-        elif method == "rolling":
-            df[f"{x_col}_norm"] = df[x_col].rolling(min_periods=min_periods, window=min_periods).apply(
-                lambda x: (x.iloc[-1] - x.mean()) / x.std(), raw=False)
-
-        else:
-            raise ValueError("method 必须为 expanding 或 rolling")
-
-        # 对于缺失值，获取原始值，然后进行标准化
-        na_x = df[df[f"{x_col}_norm"].isna()][x_col].values
-        df.loc[df[f"{x_col}_norm"].isna(), f"{x_col}_norm"] = na_x - na_x.mean() / na_x.std()
+    # 不能有 inf 和 -inf
+    if df.loc[df[x_col].isin([float("inf"), float("-inf")]), x_col].shape[0] > 0:
+        raise ValueError(f"存在 {x_col} 为 inf / -inf 的数据")
 
     if f"{x_col}_qcut" not in df.columns:
-        if method == "expanding":
-            df[f'{x_col}_qcut'] = df[x_col].expanding(min_periods=min_periods).apply(
-                lambda x: pd.qcut(x, q=n, labels=False, duplicates='drop', retbins=False).values[-1], raw=False)
-
-        elif method == "rolling":
-            df[f'{x_col}_qcut'] = df[x_col].rolling(min_periods=min_periods, window=min_periods).apply(
-                lambda x: pd.qcut(x, q=n, labels=False, duplicates='drop', retbins=False).values[-1], raw=False)
-
-        else:
-            raise ValueError("method 必须为 expanding 或 rolling")
-
-        # 对于缺失值，获取原始值，然后进行分位数处理分层
-        na_x = df[df[f"{x_col}_qcut"].isna()][x_col].values
-        df.loc[df[f"{x_col}_qcut"].isna(), f"{x_col}_qcut"] = pd.qcut(na_x, q=n, labels=False, duplicates='drop', retbins=False)
-
-        if df[f'{x_col}_qcut'].isna().sum() > 0:
-            logger.warning(f"因子 {x_col} 分层存在 {df[f'{x_col}_qcut'].isna().sum()} 个缺失值，已使用前值填充")
-            df[f'{x_col}_qcut'] = df[f'{x_col}_qcut'].ffill()
-
-        df[f'{x_col}分层'] = df[f'{x_col}_qcut'].apply(lambda x: f'第{str(int(x+1)).zfill(2)}层')
+        df[f"{x_col}_qcut"] = (
+            df[x_col]
+            .rolling(min_periods=min_periods, window=min_periods)
+            .apply(lambda x: pd.qcut(x, q=n, labels=False, duplicates="drop", retbins=False).values[-1], raw=False)
+        )
+        df[f"{x_col}_qcut"] = df[f"{x_col}_qcut"].fillna(-1)
+        # 第00层表示缺失值
+        df[f"{x_col}分层"] = df[f"{x_col}_qcut"].apply(lambda x: f"第{str(int(x+1)).zfill(2)}层")
 
     return df
 
@@ -144,23 +104,28 @@ def feture_cross_layering(df, x_col, **kwargs):
     :return: df, 添加了 x_col分层 列
     """
     n = kwargs.get("n", 10)
-    assert 'dt' in df.columns, "因子数据必须包含 dt 列"
-    assert 'symbol' in df.columns, "因子数据必须包含 symbol 列"
+    assert "dt" in df.columns, "因子数据必须包含 dt 列"
+    assert "symbol" in df.columns, "因子数据必须包含 symbol 列"
     assert x_col in df.columns, "因子数据必须包含 {} 列".format(x_col)
-    assert df['symbol'].nunique() > n, "标的数量必须大于分层数量"
+    assert df["symbol"].nunique() > n, "标的数量必须大于分层数量"
 
     if df[x_col].nunique() > n:
+
         def _layering(x):
-            return pd.qcut(x, q=n, labels=False, duplicates='drop')
-        df[f'{x_col}分层'] = df.groupby('dt')[x_col].transform(_layering)
+            return pd.qcut(x, q=n, labels=False, duplicates="drop")
+
+        df[f"{x_col}分层"] = df.groupby("dt")[x_col].transform(_layering)
     else:
         sorted_x = sorted(df[x_col].unique())
-        df[f'{x_col}分层'] = df[x_col].apply(lambda x: sorted_x.index(x))
+        df[f"{x_col}分层"] = df[x_col].apply(lambda x: sorted_x.index(x))
+
     df[f"{x_col}分层"] = df[f"{x_col}分层"].fillna(-1)
-    df[f'{x_col}分层'] = df[f'{x_col}分层'].apply(lambda x: f'第{str(int(x+1)).zfill(2)}层')
+    # 第00层表示缺失值
+    df[f"{x_col}分层"] = df[f"{x_col}分层"].apply(lambda x: f"第{str(int(x+1)).zfill(2)}层")
     return df
 
 
+@deprecated(version="1.0", reason="禁止使用 expanding，推荐用 czsc.features.utils.rolling_rank 替代")
 def rolling_rank(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
     """计算序列的滚动排名
 
@@ -176,8 +141,8 @@ def rolling_rank(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
         min_periods: int
             最小计算周期
     """
-    min_periods = kwargs.get('min_periods', 2)
-    new_col = new_col if new_col else f'{col}_rank'
+    min_periods = kwargs.get("min_periods", 2)
+    new_col = new_col if new_col else f"{col}_rank"
     if n is None:
         df[new_col] = df[col].expanding(min_periods=min_periods).rank()
     else:
@@ -185,6 +150,7 @@ def rolling_rank(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
     df[new_col] = df[new_col].fillna(0)
 
 
+@deprecated(version="1.0", reason="禁止使用 expanding，推荐用 czsc.features.utils.rolling_norm 替代")
 def rolling_norm(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
     """计算序列的滚动归一化值
 
@@ -200,16 +166,19 @@ def rolling_norm(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
         min_periods: int
             最小计算周期
     """
-    min_periods = kwargs.get('min_periods', 2)
-    new_col = new_col if new_col else f'{col}_norm'
+    min_periods = kwargs.get("min_periods", 2)
+    new_col = new_col if new_col else f"{col}_norm"
 
     if n is None:
         df[new_col] = df[col].expanding(min_periods=min_periods).apply(lambda x: (x[-1] - x.mean()) / x.std(), raw=True)
     else:
-        df[new_col] = df[col].rolling(window=n, min_periods=min_periods).apply(lambda x: (x[-1] - x.mean()) / x.std(), raw=True)
+        df[new_col] = (
+            df[col].rolling(window=n, min_periods=min_periods).apply(lambda x: (x[-1] - x.mean()) / x.std(), raw=True)
+        )
     df[new_col] = df[new_col].fillna(0)
 
 
+@deprecated(version="1.0", reason="禁止使用 expanding，推荐用 czsc.features.utils.rolling_qcut 替代")
 def rolling_qcut(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
     """计算序列的滚动分位数
 
@@ -226,12 +195,12 @@ def rolling_qcut(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
         - min_periods: int 最小计算周期
         - q: int 分位数数量
     """
-    q = kwargs.get('q', 10)
-    min_periods = kwargs.get('min_periods', q)
-    new_col = new_col if new_col else f'{col}_qcut'
+    q = kwargs.get("q", 10)
+    min_periods = kwargs.get("min_periods", q)
+    new_col = new_col if new_col else f"{col}_qcut"
 
     def __qcut_func(x):
-        return pd.qcut(x, q=q, labels=False, duplicates='drop')[-1]
+        return pd.qcut(x, q=q, labels=False, duplicates="drop")[-1]
 
     if n is None:
         df[new_col] = df[col].expanding(min_periods=min_periods).apply(__qcut_func, raw=True)
@@ -240,7 +209,64 @@ def rolling_qcut(df: pd.DataFrame, col, n=None, new_col=None, **kwargs):
     df[new_col] = df[new_col].fillna(-1)
 
 
-def find_most_similarity(vector: pd.Series, matrix: pd.DataFrame, n=10, metric='cosine', **kwargs):
+@deprecated(version="1.0", reason="禁止使用 expanding，推荐用 czsc.features.utils.rolling_qcut 替代")
+def rolling_compare(df, col1, col2, new_col=None, n=None, **kwargs):
+    """计算序列的滚动归一化值
+
+    :param df: pd.DataFrame
+        待计算的数据
+    :param col1: str
+        第一个列名
+    :param col2: str
+        第二个列名
+    :param n: int
+        滚动窗口大小, 默认为None, 表示计算 expanding ，否则计算 rolling
+    :param new_col: str
+        新列名，默认为 None, 表示使用 f'{col}_norm' 作为新列名
+    :param kwargs:
+        min_periods: int
+            最小计算周期
+    """
+    min_periods = kwargs.get("min_periods", 2)
+    new_col = new_col if new_col else f"compare_{col1}_{col2}"
+    method = kwargs.get("method", "sub")
+    assert method in [
+        "sub",
+        "divide",
+        "lr_intercept",
+        "lr_coef",
+    ], "method 必须为 sub, divide, lr_intercept, lr_coef 中的一种"
+
+    for i in range(len(df)):
+        dfi = df.loc[:i, [col1, col2]] if n is None else df.loc[i - n + 1 : i, [col1, col2]]
+        dfi = dfi.copy()
+        if i < min_periods:
+            df.loc[i, new_col] = 0
+            continue
+
+        if method == "sub":
+            df.loc[i, new_col] = dfi[col1].sub(dfi[col2]).mean()
+
+        elif method == "divide":
+            df.loc[i, new_col] = dfi[col1].divide(dfi[col2]).mean()
+
+        elif method == "lr_intercept":
+            x = dfi[col2].values.reshape(-1, 1)
+            y = dfi[col1].values.reshape(-1, 1)
+            reg = LinearRegression().fit(x, y)
+            df.loc[i, new_col] = reg.intercept_[0]
+
+        elif method == "lr_coef":
+            x = dfi[col2].values.reshape(-1, 1)
+            y = dfi[col1].values.reshape(-1, 1)
+            reg = LinearRegression().fit(x, y)
+            df.loc[i, new_col] = reg.coef_[0][0]
+
+        else:
+            raise ValueError(f"method {method} not support")
+
+
+def find_most_similarity(vector: pd.Series, matrix: pd.DataFrame, n=10, metric="cosine", **kwargs):
     """寻找向量在矩阵中最相似的n个向量
 
     :param vector: 1维向量, Series结构
@@ -263,7 +289,8 @@ def find_most_similarity(vector: pd.Series, matrix: pd.DataFrame, n=10, metric='
     :param kwargs: 其他参数
     """
     from sklearn.metrics.pairwise import pairwise_distances
-    metric = kwargs.get('metric', 'cosine')
+
+    metric = kwargs.get("metric", "cosine")
     sim = pairwise_distances(vector.values.reshape(1, -1), matrix.T, metric=metric).reshape(-1)
     sim = pd.Series(sim, index=matrix.columns)
     sim = sim.sort_values(ascending=False)[:n]

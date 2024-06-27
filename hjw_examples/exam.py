@@ -1,49 +1,36 @@
-import datetime
 import pprint
 
-from czsc.data import TsDataCache
-from czsc import home_path
-from czsc.signals.tas import update_macd_cache
-from czsc.analyze import CZSC
-from hjw_examples.stock_process import *
+from src.stock_process import *
+from src.backtrade import run_single_stock_backtest
 
 
-def play():
-    row = dict(ts_code="688065.sh", symbol="688065", name="凯赛生物", industry="化工原料")
-    sdt, edt = "20180501", "20240416"
-    result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D")
+def play_day_trend_reverse():
+    row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
+    sdt, edt = "20200101", "20240429"
+    result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
 
-def fx_reliability_exam(sdt, edt):
-    import concurrent
-    from concurrent.futures import ProcessPoolExecutor
-    from hjw_examples.history import read_history
+def play_pzbc():
+    row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
+    sdt, edt = "20240101", "20240429"
+    result = bottom_pzbc(row, sdt, edt, "D", fx_dt_limit=5)
+    pprint.pprint(result)
 
-    history_csv = f"statics/history/day_trend_bc_reverse.csv"
-    history = read_history(history_csv)
-    stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
-    results = []  # 用于存储所有股票的结果
 
-    with ProcessPoolExecutor(max_workers=2) as executor:
-        futures = {}
-        for index, row in stock_basic.iterrows():
-            _ts_code = row.get('ts_code')
-            future = executor.submit(trend_reverse_ubi_entry, row, sdt, edt, 'D', 5)
-            futures[future] = _ts_code  # 保存future和ts_code的映射
-
-        for future in concurrent.futures.as_completed(futures):
-            result = future.result()
-            if result:
-                results.append(result)
-
-    for _stock in results:
-        if not history[(history['ts_code'] == _stock.get('ts_code'))].empty:
-            print(f"{row.get('name')} {_ts_code}，出现过日线买点")
-        else:
-            print("没有出现买点")
+def view_fxs():
+    row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
+    sdt, edt = "20240101", "20240429"
+    c = row_2_czsc(row, sdt, edt, "D")
+    pprint.pprint(c.bi_list)
+    last_bi = c.bi_list[-1]
+    pprint.pp(last_bi.fxs)
+    print(last_bi.fx_b.power_str)
 
 
 if __name__ == '__main__':
-    # fx_reliability_exam("20180501", "20240329")
-    play()
+    play_day_trend_reverse()
+    # play_pzbc()
+    # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
+    # pprint.pprint(result.get("sharpe_ratio"))
+    # view_fxs()

@@ -6,10 +6,9 @@ import traceback
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
-from flask import Flask, render_template
-from czsc import CZSC, home_path, empty_cache_path, RawBar
+from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from hjw_examples.sig import trend_reverse_ubi
+from src.sig import trend_reverse_ubi
 
 idx = 1000
 

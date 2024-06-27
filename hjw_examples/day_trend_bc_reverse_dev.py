@@ -1,8 +1,7 @@
-import copy
 import os
+import pprint
 import sys
 import datetime
-import traceback
 import concurrent
 import pandas as pd
 from loguru import logger
@@ -13,11 +12,8 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import home_path
 from czsc.data import TsDataCache
-from database.history import check_duplicate, insert_buy_point
-from hjw_examples.notify import send_email
-from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr, sort_by_signals
-from hjw_examples.templates.email_templates import daily_email_style
-from hjw_examples.stock_process import trend_reverse_ubi_entry
+from src.notify import notify_buy_points
+from src.stock_process import trend_reverse_ubi_entry
 
 idx = 1000
 script_name = os.path.basename(__file__)
@@ -51,37 +47,22 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             if result:
                 results.append(result)
 
-    try:
-        if results:
-            # 将结果转换为 DataFrame
-            sorted_results = sorted(results, key=sort_by_profit, reverse=True)
-            sorted_results = sorted(sorted_results, key=sort_by_fx_pwr, reverse=True)
-            sorted_results = sorted(sorted_results, key=sort_by_signals)
-            df_results = pd.DataFrame(sorted_results)
-            # 生成 HTML 表格
-            html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
-            styled_table = daily_email_style(html_table)
-
-            # 发送电子邮件
-            send_email(styled_table, f"[测试][日线买点][A股]{edt}发现{len(results)}个买点")
-        else:
-            html_table = f"<h1>{edt}没有发现买点</h1>"
-            logger.info(html_table)
-
-    except Exception as e_msg:
-        tb = traceback.format_exc()  # 获取 traceback 信息
-        logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
+    email_subject = f"[测试][日线买点][A股]{edt}发现{len(results)}个买点"
+    notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
 
 
 if __name__ == '__main__':
-    # 获取当前日期
-    today = datetime.datetime.now()
+    # # 获取当前日期
+    # today = datetime.datetime.now()
+    #
+    # # 生成日期范围，从2024年1月1日到今天
+    # date_range = pd.date_range(start='2024-01-17', end=today, freq='B')
+    # formatted_dates = date_range.strftime('%Y%m%d').tolist()
 
-    # 生成日期范围，从2024年1月1日到今天
-    date_range = pd.date_range(start='2024-04-08', end=today, freq='B')
+    today = datetime.datetime.now().strftime("%Y%m%d")
+    trade_dates = TsDataCache(home_path).get_dates_span('2024-03-30', today, is_open=True)
 
     # 将日期格式化为'%Y%m%d'
-    formatted_dates = date_range.strftime('%Y%m%d').tolist()
-    for business_date in formatted_dates:
+    for business_date in trade_dates:
         logger.info(f"测试日期:{business_date}")
         check(edt=business_date)

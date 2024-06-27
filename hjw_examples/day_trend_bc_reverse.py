@@ -1,10 +1,7 @@
-import copy
 import os
 import sys
 import datetime
-import traceback
 import concurrent
-import pandas as pd
 from loguru import logger
 from concurrent.futures import ProcessPoolExecutor
 
@@ -13,11 +10,8 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import home_path
 from czsc.data import TsDataCache
-from database.history import check_duplicate, insert_buy_point
-from hjw_examples.notify import send_email
-from hjw_examples.formatters import sort_by_profit, sort_by_fx_pwr
-from hjw_examples.templates.email_templates import daily_email_style
-from hjw_examples.stock_process import trend_reverse_ubi_entry
+from src.notify import notify_buy_points
+from src.stock_process import trend_reverse_ubi_entry
 
 idx = 1000
 script_name = os.path.basename(__file__)
@@ -50,24 +44,9 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
             result = future.result()
             if result:
                 results.append(result)
-    try:
-        if results:
-            # 将结果转换为 DataFrame
-            sorted_results = sorted(results, key=sort_by_profit, reverse=True)
-            sorted_results = sorted(sorted_results, key=sort_by_fx_pwr, reverse=True)
-            df_results = pd.DataFrame(sorted_results)
-            # 生成 HTML 表格
-            html_table = df_results.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
-        else:
-            html_table = "<h1>没有发现买点</h1>"
 
-        styled_table = daily_email_style(html_table)
-
-        # 发送电子邮件
-        send_email(styled_table, f"[自动盯盘][日线买点][A股]{edt}发现{len(results)}个买点")
-    except Exception as e_msg:
-        tb = traceback.format_exc()  # 获取 traceback 信息
-        logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
+    email_subject = f"[自动盯盘][日线买点][A股]{edt}发现{len(results)}个买点"
+    notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
 
 
 if __name__ == '__main__':

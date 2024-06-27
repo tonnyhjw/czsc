@@ -12,10 +12,10 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import home_path
 from czsc.data import TsDataCache
-from hjw_examples.notify import send_email
-from hjw_examples.formatters import sort_by_fx_dt
-from hjw_examples.templates.email_templates import daily_email_style
-from hjw_examples.stock_process import bot_fx_detect
+from src.notify import send_email
+from src.formatters import sort_by_fx_dt
+from src.templates.email_templates import daily_email_style
+from src.stock_process import bot_fx_detect
 
 idx = 1000
 script_name = os.path.basename(__file__)
