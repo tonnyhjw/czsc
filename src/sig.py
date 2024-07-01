@@ -1,6 +1,7 @@
 import pprint
 import datetime
 from loguru import logger
+from itertools import chain
 from collections import OrderedDict
 
 from czsc import CZSC
@@ -318,11 +319,12 @@ def select_pzbc_bis(bis):
     return remaining_bis
 
 
-def detect_lower_freq_pzbc(bis):
+def detect_lower_freq_pzbc(bis, cache_key):
     """
     检查次级别的盘整背驰。
 
     :param bis: bi列表
+    :param cache_key: cache参数
     :return: 是否疑似次级别盘整底背驰， True或False
     """
     remaining_bis = select_pzbc_bis(bis)
@@ -332,11 +334,16 @@ def detect_lower_freq_pzbc(bis):
     zs = ZS(remaining_bis)
     bi_a = zs.bis[0]
     bi_b = zs.bis[-1]
+    remaining_raw_bars = list(chain.from_iterable(bi.raw_bars for bi in remaining_bis))
+    max_abs_dea = max(abs(x.cache[cache_key]['dea']) for x in remaining_raw_bars)
+    latest_abs_dea = abs(remaining_raw_bars[-1].cache[cache_key]['dea'])
+
     if (
             zs.is_valid and
             zs.sdir == Direction.Down and
             zs.edir == Direction.Down and
-            zs.dd == bi_b.low
+            zs.dd == bi_b.low and
+            latest_abs_dea <= 0.3 * max_abs_dea
     ):
         return True
     else:
