@@ -13,7 +13,7 @@ def play_day_trend_reverse():
 
 def play_pzbc():
     row = dict(ts_code="600171.sh", symbol="600171", name="上海贝岭", industry="半导体")
-    sdt, edt = "20240101", "20240223"
+    sdt, edt = "20200101", "20240223"
     result = bottom_pzbc(row, sdt, edt, "W", fx_dt_limit=30)
     pprint.pprint(result)
 
@@ -29,8 +29,8 @@ def view_fxs():
 
 
 if __name__ == '__main__':
-    # play_day_trend_reverse()
-    play_pzbc()
+    play_day_trend_reverse()
+    # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
     # view_fxs()
