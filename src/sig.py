@@ -207,27 +207,16 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
         is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy, cache_key)
 
-        # pprint.pp(zs_seq_after_1st_buy[-1].bis)
-        # pprint.pp(bis[-1])
-        # print(ubi['direction'] == Direction.Up)
-        # print(len(ubi['fxs']) < 2)
-        # print(is_lower_freq_pzbc)
-        # print(abs(c.bars_raw[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3)
-        # print(c.bars_raw[-1].cache[cache_key]['macd'] > c.bars_raw[-2].cache[cache_key]['macd'])
-        # print(c.bars_raw[-1].cache[cache_key]['dif'] > 0)
-        # print(c.bars_raw[-1].cache[cache_key]['dea'] > 0)
+        bis_pzbc_conditions = (
+            (0 < len(zs_seq_after_1st_buy) < 3, "0 < len(zs_seq_after_1st_buy) < 3"),
+            (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
+            (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
+            (is_lower_freq_pzbc, "is_lower_freq_pzbc"),
+            (raw_bar_increase_within_limit(latest_fx.raw_bars), "raw_bar_increase_within_limit")
+        )
+        failed_bis_pzbc_conditions = select_failed_conditions(bis_pzbc_conditions)
 
-        if (
-            0 < len(zs_seq_after_1st_buy) < 3
-            and ubi['direction'] == Direction.Up
-            and len(ubi['fxs']) < 2
-            and is_lower_freq_pzbc
-            # and abs(c.bars_raw[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3
-            # and c.bars_raw[-1].cache[cache_key]['macd'] > c.bars_raw[-2].cache[cache_key]['macd']
-            # and c.bars_raw[-1].cache[cache_key]['dif'] > 0
-            # and c.bars_raw[-1].cache[cache_key]['dea'] > 0
-            and raw_bar_increase_within_limit(latest_fx.raw_bars)
-        ):
+        if not failed_bis_pzbc_conditions:
             zs1_after_1st_buy = zs_seq_after_1st_buy[0]
             # 判断二买
             if (
@@ -251,6 +240,9 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                                          industry, latest_fx.dt)
                 # if v2 != '弱':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+        else:
+            logger.info("Failed bis_pzbc_conditions:", failed_bis_pzbc_conditions)
+
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
 
@@ -354,3 +346,7 @@ def raw_bar_increase_within_limit(raw_bars, percentage=0.05):
     end_price = raw_bars[-1].high
     change = (end_price - begin_price) / end_price
     return change <= percentage
+
+
+def select_failed_conditions(conditions):
+    return [desc for cond, desc in conditions if not cond]
