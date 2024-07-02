@@ -106,7 +106,8 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         if v2 != '弱':
 
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
-
+    else:
+        logger.info("Failed pzbc_conditions:", failed_pzbc_conditions)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
 
