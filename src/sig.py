@@ -334,14 +334,15 @@ def detect_lower_freq_pzbc(bis, cache_key):
     bi_b = zs.bis[-1]
     remaining_raw_bars = list(chain.from_iterable(bi.raw_bars for bi in remaining_bis))
     max_abs_dea = max(abs(x.cache[cache_key]['dea']) for x in remaining_raw_bars)
-    latest_abs_dea = abs(remaining_raw_bars[-1].cache[cache_key]['dea'])
+    latest_dea = remaining_raw_bars[-1].cache[cache_key]['dea']
+    latest_dif = remaining_raw_bars[-1].cache[cache_key]['dif']
 
     if (
             zs.is_valid and
             zs.sdir == Direction.Down and
             zs.edir == Direction.Down and
             zs.dd == bi_b.low and
-            latest_abs_dea <= 0.3 * max_abs_dea
+            (abs(latest_dea) <= 0.5 * max_abs_dea or latest_dif >= latest_dea)
     ):
         return True
     else:
