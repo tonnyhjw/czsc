@@ -163,32 +163,34 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
     # 是否一买
     if zs3.is_valid:
-        if (
-            ubi['direction'] == Direction.Up
-            and len(ubi['fxs']) < 2
-            and ubi['low'] < zs3.zd
-            and zs2.zd > zs3.zg
-        ):
-            # 否则检测一买
-            bi_a, bi_b = zs2.bis[-1], zs3.bis[-1]
-            bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
-            bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
+        bi_a, bi_b = zs2.bis[-1], zs3.bis[-1]
+        bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
+        bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
 
-            bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-            bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
 
-            if (
-                0 > bi_b_dif > bi_a_dif
-                and abs(bi_b_macd_area) < abs(bi_a_macd_area)
-                and estimated_profit >= 0.03
-            ):
-                if bi_b.low == zs3.dd:
-                    v1 = '一买'
-                    # 插入数据库
-                    history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                             industry, latest_fx.dt)
-                    if v2 == '强':
-                        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+        trend_bc_conditions = (
+            (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
+            (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
+            (ubi['low'] < zs3.zd, "ubi['low'] < zs3.zd"),
+            (zs2.zd > zs3.zg, "zs2.zd > zs3.zg"),
+            (0 > bi_b_dif > bi_a_dif, "0 > bi_b_dif > bi_a_dif"),
+            (abs(bi_b_macd_area) < abs(bi_a_macd_area), "abs(bi_b_macd_area) < abs(bi_a_macd_area)"),
+            (estimated_profit >= 0.03, "estimated_profit >= 0.03"),
+            (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
+        )
+        failed_trend_bc_conditions = select_failed_conditions(trend_bc_conditions)
+        if not failed_trend_bc_conditions:
+            # 无条件不通过则判断为一买
+            v1 = '一买'
+            # 插入数据库
+            history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                                     industry, latest_fx.dt)
+            if v2 == '强':
+                return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+        else:
+            logger.info(f"一买不成立原因: {failed_trend_bc_conditions}")
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
     if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买'):
@@ -233,7 +235,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 # if v2 != '弱':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
-            logger.info(f"Failed bis_pzbc_conditions: {failed_bis_pzbc_conditions}")
+            logger.info(f"二三买不成立原因: {failed_bis_pzbc_conditions}")
 
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
