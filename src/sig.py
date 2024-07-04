@@ -178,7 +178,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             (0 > bi_b_dif > bi_a_dif, f"{bi_b_dif=} <= {bi_a_dif=}"),
             (abs(bi_b_macd_area) < abs(bi_a_macd_area), f"{abs(bi_b_macd_area)=} >= {abs(bi_a_macd_area)=}"),
             (estimated_profit >= 0.03, "estimated_profit >= 0.03"),
-            (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
+            # (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
         )
         failed_trend_bc_conditions = select_failed_conditions(trend_bc_conditions)
         if not failed_trend_bc_conditions:
@@ -327,7 +327,7 @@ def detect_lower_freq_pzbc(bis, cache_key):
             zs.is_valid and
             zs.sdir == Direction.Down and
             zs.edir == Direction.Down and
-            zs.dd == bi_b.low and
+            # zs.dd == bi_b.low and
             (abs(latest_dea) <= 0.5 * max_abs_dea or latest_dif >= latest_dea)
     ):
         return True
