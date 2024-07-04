@@ -178,7 +178,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             (0 > bi_b_dif > bi_a_dif, f"{bi_b_dif=} <= {bi_a_dif=}"),
             (abs(bi_b_macd_area) < abs(bi_a_macd_area), f"{abs(bi_b_macd_area)=} >= {abs(bi_a_macd_area)=}"),
             (estimated_profit >= 0.03, "estimated_profit >= 0.03"),
-            # (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
+            (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
         )
         failed_trend_bc_conditions = select_failed_conditions(trend_bc_conditions)
         if not failed_trend_bc_conditions:
