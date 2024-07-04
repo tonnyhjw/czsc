@@ -175,8 +175,8 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
             (ubi['low'] < zs3.zd, "ubi['low'] < zs3.zd"),
             (zs2.zd > zs3.zg, "zs2.zd > zs3.zg"),
-            (0 > bi_b_dif > bi_a_dif, "0 > bi_b_dif > bi_a_dif"),
-            (abs(bi_b_macd_area) < abs(bi_a_macd_area), "abs(bi_b_macd_area) < abs(bi_a_macd_area)"),
+            (0 > bi_b_dif > bi_a_dif, f"{bi_b_dif=} <= {bi_a_dif=}"),
+            (abs(bi_b_macd_area) < abs(bi_a_macd_area), f"{abs(bi_b_macd_area)=} >= {abs(bi_a_macd_area)=}"),
             (estimated_profit >= 0.03, "estimated_profit >= 0.03"),
             (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
         )
