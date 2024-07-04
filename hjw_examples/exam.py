@@ -5,8 +5,8 @@ from src.backtrade import run_single_stock_backtest
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="688521.sh", symbol="688521", name="芯原股份", industry="半导体")
-    sdt, edt = "20200101", "20240702"
+    row = dict(ts_code="600171.sh", symbol="600171", name="上海贝岭", industry="半导体")
+    sdt, edt = "20200101", "20240223"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
