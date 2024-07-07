@@ -5,16 +5,16 @@ from src.backtrade import run_single_stock_backtest
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
-    sdt, edt = "20200101", "20240429"
+    row = dict(ts_code="600076.sh", symbol="600076", name="康欣新材", industry="广告包装")
+    sdt, edt = "20200101", "20240626"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
 
 def play_pzbc():
-    row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
-    sdt, edt = "20240101", "20240429"
-    result = bottom_pzbc(row, sdt, edt, "D", fx_dt_limit=5)
+    row = dict(ts_code="600171.sh", symbol="600171", name="上海贝岭", industry="半导体")
+    sdt, edt = "20200101", "20240223"
+    result = bottom_pzbc(row, sdt, edt, "W", fx_dt_limit=30)
     pprint.pprint(result)
 
 

@@ -16,8 +16,13 @@ from czsc.data import TsDataCache
 
 dc = TsDataCache(home_path)
 app = Flask(__name__, static_folder="templates")
+<<<<<<< HEAD
 bars = dc.pro_bar('000001.SH', start_date="19910101", end_date="20240601", freq='M', asset="I", adj='qfq', raw_bar=True)
 # bars = dc.pro_bar('002180.sz', start_date="20200101", end_date="20240601", freq='D', asset="E", adj='qfq', raw_bar=True)
+=======
+# bars = dc.pro_bar('000001.SH', start_date="19910101", end_date="20240601", freq='M', asset="I", adj='qfq', raw_bar=True)
+bars = dc.pro_bar('600076.sh', start_date="20200101", end_date="20240701", freq='D', asset="E", adj='qfq', raw_bar=True)
+>>>>>>> 011f7ff815dd650ac2811e94f1f05f1e62835929
 idx = 1000
 
 

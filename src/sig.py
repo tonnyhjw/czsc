@@ -1,6 +1,7 @@
 import pprint
 import datetime
 from loguru import logger
+from itertools import chain
 from collections import OrderedDict
 
 from czsc import CZSC
@@ -85,28 +86,19 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
     bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
     bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-    # print(zs2)
-    # print(bi_a)
-    # print(bi_b)
-    # print(bi_a_macd_area, bi_b_macd_area)
-    # print(bi_b_dif, bi_a_dif)
-    # print(zs2.is_valid)
-    # print(ubi['direction'] == Direction.Up)
-    # print(zs2.sdir == Direction.Down)
-    # print(zs2.edir == Direction.Down)
-    # print(zs2.dd == bi_b.low)
-    # print((0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)))
-    # print(v2)
 
-    if (
-            zs2.is_valid and
-            ubi['direction'] == Direction.Up and
-            len(ubi['fxs']) < 2 and
-            zs2.sdir == Direction.Down and
-            zs2.edir == Direction.Down and
-            zs2.dd == bi_b.low and
-            (0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area))
-    ):
+    pzbc_conditions = (
+        (zs2.is_valid, "zs2.is_valid"),
+        (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
+        (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
+        (zs2.sdir == Direction.Down, "zs2.sdir == Direction.Down"),
+        (zs2.edir == Direction.Down, "zs2.edir == Direction.Down"),
+        (zs2.dd == bi_b.low, "zs2.dd == bi_b.low"),
+        (0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area), "0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)")
+    )
+    failed_pzbc_conditions = select_failed_conditions(pzbc_conditions)
+
+    if not failed_pzbc_conditions:
         v1 = '一买'
         # 插入数据库
         history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
@@ -114,7 +106,8 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         if v2 != '弱':
 
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
-
+    else:
+        logger.info(f"Failed pzbc_conditions: {failed_pzbc_conditions}")
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
 
@@ -170,33 +163,34 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
     # 是否一买
     if zs3.is_valid:
-        if (
-            ubi['direction'] == Direction.Up
-            and len(ubi['fxs']) < 2
-            and ubi['low'] < zs3.zd
-            and zs2.zd > zs3.zg
-        ):
-            # 否则检测一买
-            bi_a, bi_b = zs2.bis[-1], zs3.bis[-1]
-            bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
-            bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
+        bi_a, bi_b = zs2.bis[-1], zs3.bis[-1]
+        bi_a_dif = min(x.cache[cache_key]['dif'] for x in bi_a.raw_bars)
+        bi_b_dif = min(x.cache[cache_key]['dif'] for x in bi_b.raw_bars)
 
-            bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
-            bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_a_macd_area = sum(macd for x in bi_a.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
+        bi_b_macd_area = sum(macd for x in bi_b.raw_bars if (macd := x.cache[cache_key]['macd']) < 0)
 
-            if (
-                0 > bi_b_dif > bi_a_dif
-                and abs(bi_b_macd_area) < abs(bi_a_macd_area)
-                and estimated_profit >= 0.03
-            ):
-                if bi_b.low == zs3.dd:
-                    v1 = '一买'
-                    # 插入数据库
-                    history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                             industry, latest_fx.dt)
-                    if v2 != '弱':
-                        return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
-
+        trend_bc_conditions = (
+            (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
+            (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
+            (ubi['low'] < zs3.zd, "ubi['low'] < zs3.zd"),
+            (zs2.zd > zs3.zg, "zs2.zd > zs3.zg"),
+            (0 > bi_b_dif > bi_a_dif, f"{bi_b_dif=} <= {bi_a_dif=}"),
+            (abs(bi_b_macd_area) < abs(bi_a_macd_area), f"{abs(bi_b_macd_area)=} >= {abs(bi_a_macd_area)=}"),
+            (estimated_profit >= 0.03, "estimated_profit >= 0.03"),
+            (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
+        )
+        failed_trend_bc_conditions = select_failed_conditions(trend_bc_conditions)
+        if not failed_trend_bc_conditions:
+            # 无条件不通过则判断为一买
+            v1 = '一买'
+            # 插入数据库
+            history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
+                                     industry, latest_fx.dt)
+            if v2 == '强':
+                return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+        else:
+            logger.info(f"一买不成立原因: {failed_trend_bc_conditions}")
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
     if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买'):
@@ -205,30 +199,18 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
-        max_macd_of_bi_0 = max(abs(x.cache[cache_key]['macd']) for x in bis_after_1st_buy[0].raw_bars)
-        is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy)
+        is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy, cache_key)
 
-        # pprint.pp(zs_seq_after_1st_buy[-1].bis)
-        # pprint.pp(bis[-1])
-        # print(ubi['direction'] == Direction.Up)
-        # print(len(ubi['fxs']) < 2)
-        # print(is_lower_freq_pzbc)
-        # print(abs(c.bars_raw[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3)
-        # print(c.bars_raw[-1].cache[cache_key]['macd'] > c.bars_raw[-2].cache[cache_key]['macd'])
-        # print(c.bars_raw[-1].cache[cache_key]['dif'] > 0)
-        # print(c.bars_raw[-1].cache[cache_key]['dea'] > 0)
+        bis_pzbc_conditions = (
+            (0 < len(zs_seq_after_1st_buy) < 3, "0 < len(zs_seq_after_1st_buy) < 3"),
+            (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
+            (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
+            (is_lower_freq_pzbc, "is_lower_freq_pzbc"),
+            (raw_bar_increase_within_limit(latest_fx.raw_bars), "raw_bar_increase_within_limit")
+        )
+        failed_bis_pzbc_conditions = select_failed_conditions(bis_pzbc_conditions)
 
-        if (
-            0 < len(zs_seq_after_1st_buy) < 3
-            and ubi['direction'] == Direction.Up
-            and len(ubi['fxs']) < 2
-            and is_lower_freq_pzbc
-            # and abs(c.bars_raw[-1].cache[cache_key]['macd']) < max_macd_of_bi_0 / 3
-            # and c.bars_raw[-1].cache[cache_key]['macd'] > c.bars_raw[-2].cache[cache_key]['macd']
-            # and c.bars_raw[-1].cache[cache_key]['dif'] > 0
-            # and c.bars_raw[-1].cache[cache_key]['dea'] > 0
-            # and (latest_fx.raw_bars[-1].close - latest_fx.raw_bars[-2].close) / latest_fx.raw_bars[-2].close <= 0.05
-        ):
+        if not failed_bis_pzbc_conditions:
             zs1_after_1st_buy = zs_seq_after_1st_buy[0]
             # 判断二买
             if (
@@ -240,8 +222,8 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt)
-                # if v2 != '弱':
-                return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+                if v2 != '弱':
+                    return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
             # 判断三买
             zs2_after_1st_buy = zs_seq_after_1st_buy[1]
@@ -252,6 +234,9 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                                          industry, latest_fx.dt)
                 # if v2 != '弱':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+        else:
+            logger.info(f"二三买不成立原因: {failed_bis_pzbc_conditions}")
+
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
 
@@ -318,11 +303,12 @@ def select_pzbc_bis(bis):
     return remaining_bis
 
 
-def detect_lower_freq_pzbc(bis):
+def detect_lower_freq_pzbc(bis, cache_key):
     """
     检查次级别的盘整背驰。
 
     :param bis: bi列表
+    :param cache_key: cache参数
     :return: 是否疑似次级别盘整底背驰， True或False
     """
     remaining_bis = select_pzbc_bis(bis)
@@ -332,12 +318,29 @@ def detect_lower_freq_pzbc(bis):
     zs = ZS(remaining_bis)
     bi_a = zs.bis[0]
     bi_b = zs.bis[-1]
+    remaining_raw_bars = list(chain.from_iterable(bi.raw_bars for bi in remaining_bis))
+    max_abs_dea = max(abs(x.cache[cache_key]['dea']) for x in remaining_raw_bars)
+    latest_dea = remaining_raw_bars[-1].cache[cache_key]['dea']
+    latest_dif = remaining_raw_bars[-1].cache[cache_key]['dif']
+
     if (
             zs.is_valid and
             zs.sdir == Direction.Down and
             zs.edir == Direction.Down and
-            zs.dd == bi_b.low
+            # zs.dd == bi_b.low and
+            (abs(latest_dea) <= 0.5 * max_abs_dea or latest_dif >= latest_dea)
     ):
         return True
     else:
         return False
+
+
+def raw_bar_increase_within_limit(raw_bars, percentage=0.05):
+    begin_price = min(raw_bars[-1].open, raw_bars[-2].close)
+    end_price = raw_bars[-1].high
+    change = (end_price - begin_price) / end_price
+    return change <= percentage
+
+
+def select_failed_conditions(conditions):
+    return [desc for cond, desc in conditions if not cond]
