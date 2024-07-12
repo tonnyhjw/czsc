@@ -4,7 +4,8 @@ import traceback
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from src.sig import is_strong_bot_fx, trend_reverse_ubi, macd_pzbc_ubi
+from src.sig import is_strong_bot_fx, macd_pzbc_ubi
+from src.sig_xd import trend_reverse_ubi
 
 logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
