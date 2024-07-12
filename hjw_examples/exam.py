@@ -1,7 +1,7 @@
 import pprint
 
 from src.stock_process import *
-from src.backtrade import run_single_stock_backtest
+from src.decorate import *
 
 
 def play_day_trend_reverse():
@@ -18,19 +18,20 @@ def play_pzbc():
     pprint.pprint(result)
 
 
-def view_fxs():
+@timer
+def xd_dev():
+    from src.xd.analyze import create_xd
     row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
-    sdt, edt = "20240101", "20240429"
+    sdt, edt = "20200101", "20240429"
     c = row_2_czsc(row, sdt, edt, "D")
-    pprint.pprint(c.bi_list)
-    last_bi = c.bi_list[-1]
-    pprint.pp(last_bi.fxs)
-    print(last_bi.fx_b.power_str)
+    xd_fxs = create_xd(c.bi_list)
+    for fx in xd_fxs:
+        print(fx.mark)
 
 
 if __name__ == '__main__':
-    play_day_trend_reverse()
+    # play_day_trend_reverse()
     # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
-    # view_fxs()
+    xd_dev()

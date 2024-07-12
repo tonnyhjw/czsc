@@ -10,12 +10,10 @@ import webbrowser
 from loguru import logger
 from typing import List
 from collections import OrderedDict
-from pyecharts import options as opts
 
 from czsc.enum import Mark, Direction
 from czsc.objects import BI, FX, RawBar, NewBar
 from czsc.utils.echarts_plot import kline_pro
-from czsc.utils.sig import get_zs_seq, get_sub_elements
 from czsc import envs
 
 logger.disable('czsc.analyze')
@@ -322,6 +320,7 @@ class CZSC:
         :param bs: 交易标记，默认为空
         :return:
         """
+        from src.xd.analyze import analyze_xd
         color_list = ["yellow", "orange", "red"]
         kline = [x.__dict__ for x in self.bars_raw]
         zs_markline_data = []
@@ -329,17 +328,20 @@ class CZSC:
             bi = [{'dt': x.fx_a.dt, "bi": x.fx_a.fx} for x in self.bi_list] + \
                  [{'dt': self.bi_list[-1].fx_b.dt, "bi": self.bi_list[-1].fx_b.fx}]
             fx = [{'dt': x.dt, "fx": x.fx} for x in self.fx_list]
-            zs_seq = get_zs_seq(self.bi_list)
-            for zs, color in zip(zs_seq[-3:], color_list):
-                # 上边界和下边界
-                zs_markline_data.extend([
-                    {"yAxis": zs.zg, "lineStyle": opts.LineStyleOpts(color=color)},
-                    {"yAxis": zs.zd, "lineStyle": opts.LineStyleOpts(color=color)},
-                ])
+            xd_list = analyze_xd(self.bi_list)
+            xd = [{'dt': x.end_bi.fx_b.dt, "xd": x.end_bi.fx_b.fx} for x in xd_list]
+            # zs_seq = get_zs_seq(self.bi_list)
+            # for zs, color in zip(zs_seq[-3:], color_list):
+            #     # 上边界和下边界
+            #     zs_markline_data.extend([
+            #         {"yAxis": zs.zg, "lineStyle": opts.LineStyleOpts(color=color)},
+            #         {"yAxis": zs.zd, "lineStyle": opts.LineStyleOpts(color=color)},
+            #     ])
         else:
             bi = []
             fx = []
-        chart = kline_pro(kline, bi=bi, fx=fx, width=width, height=height, bs=bs, zs_seq=zs_markline_data,
+            xd = []
+        chart = kline_pro(kline, bi=bi, fx=fx, width=width, height=height, bs=bs, xd=xd,
                           title="{}-{}".format(self.symbol, self.freq.value))
         return chart
 
