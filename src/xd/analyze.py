@@ -149,7 +149,7 @@ def process_sequence(current_seq: FeatureSequence, opposite_seq: FeatureSequence
                 else:
                     # 假如同向且没有缺口
                     if not tzfx.has_gap():
-                        if len(bis[xds[-1].start_bi_index: tzfx.fx_bi_index]) >= 6:
+                        if len(bis[xds[-1].start_bi_index: tzfx.fx_bi_index]) > 6:
                             # 如果分型的笔到起始笔够6笔就插入一笔，以其中最高的一笔算
                             xds[-1].end_bi, xds[-1].end_bi_index = find_extreme_bi(bis, xds[-1].start_bi_index,
                                                                                    tzfx.fx_bi_index, xds[-1].direction)
@@ -176,8 +176,8 @@ def process_sequence(current_seq: FeatureSequence, opposite_seq: FeatureSequence
 
 
 def find_extreme_bi(bis: List[BI], start_index: int, end_index: int, xd_direction: Direction) -> tuple[BI, int]:
-    # if end_index - start_index < 6:
-    #     raise ValueError("end_index must be at least 6 greater than start_index")
+    if end_index - start_index < 6:
+        raise ValueError("end_index must be at least 6 greater than start_index")
 
     if len(bis) < end_index - 3 + 1:
         raise ValueError("bis list is not long enough for the given end_index")
