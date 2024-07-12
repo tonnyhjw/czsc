@@ -1,7 +1,3 @@
-import datetime
-import pprint
-from typing import List
-
 from src.objects import *
 
 
@@ -179,17 +175,6 @@ def process_sequence(current_seq: FeatureSequence, opposite_seq: FeatureSequence
     return current_seq, opposite_seq, xds
 
 
-def same_mark_tzfx_process(xds, tzfx, bis):
-    pass
-
-
-class BI:
-    def __init__(self, high: float, low: float, direction: Direction):
-        self.high = high
-        self.low = low
-        self.direction = direction
-
-
 def find_extreme_bi(bis: List[BI], start_index: int, end_index: int, xd_direction: Direction) -> tuple[BI, int]:
     if end_index - start_index < 6:
         raise ValueError("end_index must be at least 6 greater than start_index")
@@ -224,8 +209,6 @@ def find_extreme_bi(bis: List[BI], start_index: int, end_index: int, xd_directio
         return target_bi, target_bi_index
     else:
         raise ValueError(f"{target_bi=} {len(bis[start:end])=} {bis[start]} {target_direction} {end=}")
-
-
 
 
 # 主函数

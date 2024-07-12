@@ -68,6 +68,16 @@ class XD:
                 len(self.bis) >= 3 and
                 not has_gap(self.bis[0], self.bis[2]))
 
+    @property
+    def high(self):
+        """线段最高点"""
+        return max([x.high for x in self.bis])
+
+    @property
+    def low(self):
+        """线段最低点"""
+        return min([x.low for x in self.bis])
+
 
 @dataclass
 class FeatureSequence:
@@ -75,3 +85,86 @@ class FeatureSequence:
     elem_direction: Direction
     sequence: List[FeatureElement] = field(default_factory=list)
     last_tzfx: Optional[TZFX] = None
+
+
+@dataclass
+class XDZS:
+    """中枢对象，主要用于辅助信号函数计算"""
+    xds: List[XD]
+    bis: List[BI]
+    cache: dict = field(default_factory=dict)  # cache 用户缓存
+
+    def __post_init__(self):
+        self.symbol = self.bis[0].symbol
+
+    @property
+    def zg(self):
+        """中枢上沿"""
+        return min([x.high for x in self.xds[:3]])
+
+    @property
+    def zd(self):
+        """中枢下沿"""
+        return max([x.low for x in self.xds[:3]])
+
+    @property
+    def sdt(self):
+        """中枢开始时间"""
+        return self.bis[0].sdt
+
+    @property
+    def edt(self):
+        """中枢结束时间"""
+        return self.bis[-1].edt
+
+    @property
+    def sdir(self):
+        """中枢第一笔方向，sdir 是 start direction 的缩写"""
+        return self.bis[0].direction
+
+    @property
+    def edir(self):
+        """中枢倒一笔方向，edir 是 end direction 的缩写"""
+        return self.bis[-1].direction
+
+    @property
+    def zz(self):
+        """中枢中轴"""
+        return self.zd + (self.zg - self.zd) / 2
+
+    @property
+    def gg(self):
+        """中枢最高点"""
+        return max([x.high for x in self.bis])
+
+    @property
+    def dd(self):
+        """中枢最低点"""
+        return min([x.low for x in self.bis])
+
+
+    @property
+    def is_valid(self):
+        """中枢是否有效"""
+        if self.zg < self.zd or len(self.xds) < 3:
+            return False
+
+        for xd in self.xds:
+            # 中枢内的笔必须与中枢的上下沿有交集
+            if (
+                self.zg >= xd.high >= self.zd
+                or self.zg >= xd.low >= self.zd
+                or xd.high >= self.zg > self.zd >= xd.low
+            ):
+                continue
+            else:
+                return False
+
+        return True
+
+    def __repr__(self):
+        return (
+            f"ZS(sdt={self.sdt}, sdir={self.sdir}, edt={self.edt}, edir={self.edir}, "
+            f"len_bis={len(self.bis)}, zg={self.zg}, zd={self.zd}, "
+            f"gg={self.gg}, dd={self.dd}, zz={self.zz})"
+        )
