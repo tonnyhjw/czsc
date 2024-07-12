@@ -176,8 +176,8 @@ def process_sequence(current_seq: FeatureSequence, opposite_seq: FeatureSequence
 
 
 def find_extreme_bi(bis: List[BI], start_index: int, end_index: int, xd_direction: Direction) -> tuple[BI, int]:
-    if end_index - start_index < 6:
-        raise ValueError("end_index must be at least 6 greater than start_index")
+    # if end_index - start_index < 6:
+    #     raise ValueError("end_index must be at least 6 greater than start_index")
 
     if len(bis) < end_index - 3 + 1:
         raise ValueError("bis list is not long enough for the given end_index")
