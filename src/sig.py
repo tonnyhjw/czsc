@@ -107,7 +107,7 @@ def macd_pzbc_ubi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
 
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     else:
-        logger.info(f"Failed pzbc_conditions: {failed_pzbc_conditions}")
+        logger.info(f"{name}{symbol}盘整背驰不成立原因: {failed_pzbc_conditions}")
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
 
@@ -190,7 +190,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             if v2 == '强':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
-            logger.info(f"一买不成立原因: {failed_trend_bc_conditions}")
+            logger.info(f"{name}{symbol}一买不成立原因: {failed_trend_bc_conditions}")
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
     if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买'):
@@ -235,7 +235,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 # if v2 != '弱':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
-            logger.info(f"二三买不成立原因: {failed_bis_pzbc_conditions}")
+            logger.info(f"{name}{symbol}二三买不成立原因: {failed_bis_pzbc_conditions}")
 
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
