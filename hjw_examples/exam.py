@@ -20,13 +20,13 @@ def play_pzbc():
 
 @timer
 def xd_dev():
-    from src.xd.analyze import create_xd
-    row = dict(ts_code="002180.sz", symbol="002180", name="纳思达", industry="IT设备")
-    sdt, edt = "20200101", "20240429"
+    from src.xd.analyze import analyze_xd
+    row = dict(ts_code="688004.SH", symbol="688004", name="博汇科技", industry="软件服务")
+    sdt, edt = "20180501", "20240712"
     c = row_2_czsc(row, sdt, edt, "D")
-    xd_fxs = create_xd(c.bi_list)
-    for fx in xd_fxs:
-        print(fx.mark)
+    xds = analyze_xd(c.bi_list)
+    for xd in xds:
+        print(xd.start_bi_index, xd.end_bi_index)
 
 
 if __name__ == '__main__':
