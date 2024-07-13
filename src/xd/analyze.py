@@ -70,6 +70,7 @@ def analyze_xd(bis: List[BI]) -> List[XD]:
     bi_index = 0
     while bi_index < len(bis):
         if not xds:
+            print(bis[bi_index])
             if has_gap(bis[bi_index + 1], bis[bi_index + 3]):
                 xds.append(XD(bis[bi_index].symbol, [bis[bi_index]], bis[bi_index], bi_index))
             else:
@@ -177,10 +178,10 @@ def process_sequence(current_seq: FeatureSequence, opposite_seq: FeatureSequence
 
 def find_extreme_bi(bis: List[BI], start_index: int, end_index: int, xd_direction: Direction) -> tuple[BI, int]:
     if end_index - start_index < 6:
-        raise ValueError("end_index must be at least 6 greater than start_index")
+        raise ValueError(f"{end_index=} must be at least 6 greater than {start_index=}")
 
     if len(bis) < end_index - 3 + 1:
-        raise ValueError("bis list is not long enough for the given end_index")
+        raise ValueError(f"{len(bis)=} list is not long enough for the given {end_index=}")
 
     # 调整切片范围
     start = start_index + 2
