@@ -74,7 +74,5 @@ def analyze_xd(bis: List[BI]) -> List[XD]:
         current_xd.end_bi = current_xd.bis[-1]
         xds.append(current_xd)
 
-    for xd in xds:
-        print(f"{len(xd.bis)=}")
     return xds
 
