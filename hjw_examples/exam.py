@@ -21,12 +21,14 @@ def play_pzbc():
 @timer
 def xd_dev():
     from src.xd.analyze_by_break import analyze_xd
+    from src.sig_xd import get_xd_zs_seq
     row = dict(ts_code="300510.SZ", symbol="300510", name="金冠股份", industry="电气设备")
     sdt, edt = "20180501", "20240712"
     c = row_2_czsc(row, sdt, edt, "D")
     xds = analyze_xd(c.bi_list)
-    for xd in xds:
-        print(xd.start_bi_index, xd.end_bi_index)
+    zs_seq = get_xd_zs_seq(xds)
+    for zs in zs_seq[-3:]:
+        pprint.pprint(zs.bis)
 
 
 if __name__ == '__main__':
