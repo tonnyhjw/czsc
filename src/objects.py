@@ -57,6 +57,12 @@ class XD:
     def __post_init__(self):
         self.symbol = self.bis[0].symbol
 
+    def __repr__(self):
+        return (
+            f"XD(symbol={self.symbol}, sdt={self.start_bi.sdt}, edt={self.end_bi.edt}, "
+            f"direction={self.direction}, high={self.high}, low={self.low})"
+        )
+
     @property
     def direction(self) -> Direction:
         return self.start_bi.direction
@@ -73,14 +79,18 @@ class XD:
     @property
     def high(self):
         """线段最高点"""
-        return max([x.high for x in self.bis])
+        if self.direction == Direction.Up:
+            return self.end_bi.high
+        else:
+            return self.start_bi.high
 
     @property
     def low(self):
         """线段最低点"""
-        return min([x.low for x in self.bis])
-
-
+        if self.direction == Direction.Up:
+            return self.start_bi.low
+        else:
+            return self.end_bi.low
 
 
 @dataclass
@@ -169,6 +179,6 @@ class XDZS:
     def __repr__(self):
         return (
             f"ZS(sdt={self.sdt}, sdir={self.sdir}, edt={self.edt}, edir={self.edir}, "
-            f"len_bis={len(self.bis)}, zg={self.zg}, zd={self.zd}, "
+            f"len_bis={len(self.bis)}, len_xds={len(self.xds)}, zg={self.zg}, zd={self.zd}, "
             f"gg={self.gg}, dd={self.dd}, zz={self.zz})"
         )
