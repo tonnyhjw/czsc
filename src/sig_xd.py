@@ -251,11 +251,11 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     del c
     del xds
     del zs_seq
-    del bis_after_1st_buy
-    del xds_after_1st_buy
-    del zs_seq_after_1st_buy
-    del zs1_after_1st_buy
-    del zs2_after_1st_buy
+    # del bis_after_1st_buy
+    # del xds_after_1st_buy
+    # del zs_seq_after_1st_buy
+    # del zs1_after_1st_buy
+    # del zs2_after_1st_buy
     gc.collect()
 
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
