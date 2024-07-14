@@ -46,7 +46,6 @@ class TZFX:
 
 @dataclass
 class XD:
-    symbol: str
     bis: List[BI]
     start_bi: BI
     start_bi_index: int
@@ -54,6 +53,9 @@ class XD:
     end_bi_index: Optional[int] = None
     start_fx: Optional[TZFX] = None     # 起始的分型
     end_fx: Optional[TZFX] = None     # 结束的分型
+
+    def __post_init__(self):
+        self.symbol = self.bis[0].symbol
 
     @property
     def direction(self) -> Direction:
@@ -77,6 +79,8 @@ class XD:
     def low(self):
         """线段最低点"""
         return min([x.low for x in self.bis])
+
+
 
 
 @dataclass

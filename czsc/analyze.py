@@ -320,7 +320,8 @@ class CZSC:
         :param bs: 交易标记，默认为空
         :return:
         """
-        from src.xd.analyze import analyze_xd
+        # from src.xd.analyze import analyze_xd
+        from src.xd.analyze_by_break import analyze_xd
         color_list = ["yellow", "orange", "red"]
         kline = [x.__dict__ for x in self.bars_raw]
         zs_markline_data = []
