@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # # 生成日期范围，从2024年1月1日到今天
     # date_range = pd.date_range(start='2024-01-17', end=today, freq='B')
     # formatted_dates = date_range.strftime('%Y%m%d').tolist()
-    sdt, edt = '2024-03-27', '2024-04-27'
+    sdt, edt = '2024-01-01', '2024-03-15'
     today = datetime.datetime.now().strftime("%Y%m%d")
     trade_dates = TsDataCache(home_path).get_dates_span(sdt, edt, is_open=True)
 
