@@ -28,7 +28,9 @@ def xd_dev():
     xds = analyze_xd(c.bi_list)
     zs_seq = get_xd_zs_seq(xds)
     for zs in zs_seq[-3:]:
-        pprint.pprint(zs.bis)
+        print(len(zs.bis))
+        pprint.pprint(zs.bis[0])
+        pprint.pprint(zs.bis[-1])
 
 
 if __name__ == '__main__':
