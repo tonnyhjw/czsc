@@ -12,7 +12,7 @@ from czsc.signals.tas import update_macd_cache
 from czsc.utils.sig import get_zs_seq
 from czsc.enum import Mark
 from database import history
-from src.xd.analyze import analyze_xd
+from src.xd.analyze_by_break import analyze_xd
 from src.objects import XD, XDZS
 
 
