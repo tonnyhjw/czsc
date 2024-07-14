@@ -1,4 +1,5 @@
 import pprint
+import gc
 import datetime
 from loguru import logger
 from itertools import chain
@@ -247,6 +248,15 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
             logger.info(f"{name}{symbol}二三买不成立原因: {failed_bis_pzbc_conditions}")
+    del c
+    del xds
+    del zs_seq
+    del bis_after_1st_buy
+    del xds_after_1st_buy
+    del zs_seq_after_1st_buy
+    del zs1_after_1st_buy
+    del zs2_after_1st_buy
+    gc.collect()
 
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 

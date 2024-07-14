@@ -1,3 +1,4 @@
+import gc
 import datetime
 from loguru import logger
 import traceback
@@ -46,6 +47,11 @@ def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
         logger.critical(f"{_ts_code} {_name}出现报错，{e_msg}\nTraceback: {tb}")
 
     finally:
+        del c
+        del _signals
+        del s_value_detail
+        del symbol_link
+        gc.collect()
         return output
 
 
