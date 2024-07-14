@@ -206,7 +206,8 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
-        zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
+        xds_after_1st_buy = analyze_xd(bis_after_1st_buy)
+        zs_seq_after_1st_buy = get_xd_zs_seq(xds_after_1st_buy)
         is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy, cache_key)
 
         bis_pzbc_conditions = (
@@ -224,7 +225,7 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             if (
                     latest_fx.low < zs1_after_1st_buy.zg
                     and len(zs_seq_after_1st_buy) == 1
-                    and len(zs1_after_1st_buy.bis) > 2
+                    and len(zs1_after_1st_buy.xds) >= 2
             ):
                 v1 = '二买'
                 # 插入数据库
@@ -235,7 +236,9 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
             # 判断三买
             zs2_after_1st_buy = zs_seq_after_1st_buy[1]
-            if latest_fx.low > zs1_after_1st_buy.zg:
+            if (latest_fx.low > zs1_after_1st_buy.zg and
+                    len(zs_seq_after_1st_buy) == 2 and
+                    len(zs2_after_1st_buy.xds) == 1):
                 v1 = '三买'
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
