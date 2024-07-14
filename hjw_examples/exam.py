@@ -5,7 +5,7 @@ from src.decorate import *
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="688004.SH", symbol="688004", name="博汇科技", industry="软件服务")
+    row = dict(ts_code="300510.SZ", symbol="300510", name="金冠股份", industry="电气设备")
     sdt, edt = "20180501", "20240712"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
@@ -20,8 +20,8 @@ def play_pzbc():
 
 @timer
 def xd_dev():
-    from src.xd.analyze import analyze_xd
-    row = dict(ts_code="688004.SH", symbol="688004", name="博汇科技", industry="软件服务")
+    from src.xd.analyze_by_break import analyze_xd
+    row = dict(ts_code="300510.SZ", symbol="300510", name="金冠股份", industry="电气设备")
     sdt, edt = "20180501", "20240712"
     c = row_2_czsc(row, sdt, edt, "D")
     xds = analyze_xd(c.bi_list)

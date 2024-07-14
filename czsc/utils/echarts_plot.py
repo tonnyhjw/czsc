@@ -333,7 +333,7 @@ def kline_pro(kline: List[dict],
         chart_xd.add_xaxis(xd_dts)
         chart_xd.add_yaxis(series_name="XD", y_axis=xd_val,
                            symbol="triangle", symbol_size=10,
-                           itemstyle_opts=opts.ItemStyleOpts(color="rgba(220, 118, 51, 1.0)", ))
+                           itemstyle_opts=opts.ItemStyleOpts(color="rgba(255, 255, 0, 1.0)", ))
 
         chart_xd.set_global_opts(xaxis_opts=grid0_xaxis_opts, legend_opts=legend_not_show_opts)
         chart_k = chart_k.overlap(chart_xd)
