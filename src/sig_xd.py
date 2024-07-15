@@ -208,6 +208,8 @@ def trend_reverse_ubi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
         xds_after_1st_buy = analyze_xd(bis_after_1st_buy)
+        if xds_after_1st_buy[0].direction == Direction.Down:
+            xds_after_1st_buy.pop(0)
         zs_seq_after_1st_buy = get_xd_zs_seq(xds_after_1st_buy)
         is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy, cache_key)
 
