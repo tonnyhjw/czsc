@@ -145,6 +145,7 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
     if len(bars_raw) < last_n:
         return False
 
+    print(f"{cur_price=} < {bars_raw[-1].cache[ma]} {bars_raw[-1].dt}")
     if cur_price < bars_raw[-1].cache[ma]:
         return False
 
