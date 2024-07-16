@@ -34,9 +34,18 @@ def xd_dev():
     print(zs_seq[-1].is_valid)
 
 
+@timer
+def ma_pzbc_dev():
+    row = dict(ts_code="002727.SZ", symbol="002727", name="一心堂", industry="医药商业")
+    sdt, edt = "20180501", "20240322"
+    ma_pzbc(row, sdt, edt, "D", 5)
+    return
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
-    xd_dev()
+    # xd_dev()
+    ma_pzbc_dev()

@@ -48,7 +48,7 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
     if latest_fx.mark != Mark.D or fx_is_exceed:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif history.buy_point_exists(symbol, latest_fx.dt, freq, db):
+    elif history.buy_point_exists(symbol, latest_fx.dt, freq, db=db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     elif ma_is_up_and_support(c, last_n=3, ma_type="EMA", timeperiod=250, cur_price=cur_price):
@@ -58,10 +58,10 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
         v2 = latest_fx.power_str
 
     if is_macd_pzbc_bi(c, name=name, symbol=symbol):
-        v1 = '买点'
+        v1 = '强势盘整背驰'
         # 插入数据库
         history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                 industry, latest_fx.dt, db)
+                                 industry, latest_fx.dt, db=db)
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 

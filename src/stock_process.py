@@ -133,7 +133,7 @@ def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5):
         _signals = long_term_ma_support(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
         logger.debug(_signals)
         for s_value in _signals.values():
-            if "买" in s_value:
+            if "强势盘整背驰" in s_value:
                 s_value_detail = s_value.split("_")
                 symbol_link = f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
                 output = {
