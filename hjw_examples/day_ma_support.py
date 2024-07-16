@@ -30,7 +30,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
             _today = datetime.datetime.today()
             logger.info(f"共{total_stocks}个股票，正在分析第{index}只个股{_ts_code}在{edt}的走势，"
                         f"进度{round(float(index/total_stocks)*100)}%")
-            future = executor.submit(ma_pzbc, row, sdt, edt, 'D', 5)
+            future = executor.submit(ma_pzbc, row, sdt, edt, 'D', 2)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
