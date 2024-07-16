@@ -38,7 +38,7 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
 
     ubi = c.ubi
     bis = c.bi_list
-    cur_price = c.bars_raw[-1].close
+    cur_price = c.bars_raw[-1].high
     latest_fx = c.ubi_fxs[-1]  # 最近一个分型
     fx_is_exceed = date_exceed_rawbars(c.bars_raw, latest_fx.dt, fx_dt_limit)
 
@@ -145,7 +145,7 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
     if len(bars_raw) < last_n:
         return False
 
-    if cur_price > bars_raw[-1].cache[ma]:
+    if cur_price < bars_raw[-1].cache[ma]:
         return False
 
     last_n_bars = bars_raw[-last_n:]
