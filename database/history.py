@@ -43,47 +43,6 @@ def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None, db="
     return exists
 
 
-# def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: str,
-#                      fx_pwr: str, expect_profit: float, industry: str, date: datetime, reason=None, db="BI"):
-#     """
-#     插入新的买点记录
-#     :param name: 股票名称
-#     :param symbol: 股票代码
-#     :param ts_code: tushare代码
-#     :param freq: K线级别
-#     :param signals: 买点类型
-#     :param fx_pwr: 分型强度
-#     :param expect_profit: 预期收益
-#     :param industry: 板块
-#     :param date: 买点日期
-#     :param reason: 买点原因
-#     :param db: 数据库选择，可选BI或XD，默认BI
-#     """
-#     switch_database(db)
-#
-#     # 将 pandas.Timestamp 转换为 datetime 对象
-#     if isinstance(date, pd.Timestamp):
-#         date = date.to_pydatetime()
-#
-#     if not check_duplicate(ts_code, date):
-#         buy_point = BuyPoint.create(
-#             name=name,
-#             symbol=symbol,
-#             ts_code=ts_code,
-#             freq=freq,
-#             signals=signals,
-#             fx_pwr=fx_pwr,
-#             expect_profit=expect_profit,
-#             industry=industry,
-#             date=date,
-#             reason=reason
-#         )
-#         buy_point.save()
-#         logger.info(f"插入新买点: {ts_code} {date} {reason} {buy_point}")
-#     else:
-#         logger.debug(f"买点已存在: {ts_code} {date}")
-
-
 def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: str,
                      fx_pwr: str, expect_profit: float, industry: str, date: datetime, reason=None, db="BI"):
     """
@@ -102,10 +61,6 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
     """
     logger.info(f"Inserting buy point with database choice: {db}")
     switch_database(db)
-
-    # 确认当前使用的数据库
-    current_db = db_proxy.obj
-    logger.info(f"Current database after switch: {current_db.database}")
 
     if isinstance(date, pd.Timestamp):
         date = date.to_pydatetime()
