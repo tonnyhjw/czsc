@@ -2,11 +2,12 @@ import datetime
 
 from peewee import *
 
-from database.configs import *
+from database import configs
 
 # 连接SQLite数据库
-db_buy_point_bi = SqliteDatabase(BUY_POINT_BI_PATH)
-db_buy_point_xd = SqliteDatabase(BUY_POINT_XD_PATH)
+db_buy_point_bi = SqliteDatabase(configs.BUY_POINT_BI_PATH)
+db_buy_point_xd = SqliteDatabase(configs.BUY_POINT_XD_PATH)
+db_buy_point_ma250 = SqliteDatabase(configs.BUY_POINT_MA250_PATH)
 
 # 创建一个数据库代理
 db_proxy = DatabaseProxy()
@@ -39,6 +40,8 @@ def switch_database(db_choice: str):
         db_proxy.initialize(db_buy_point_bi)
     elif db_choice == "XD":
         db_proxy.initialize(db_buy_point_xd)
+    elif db_choice == "MA250":
+        db_proxy.initialize(db_buy_point_ma250)
     else:
         raise ValueError("Invalid database choice. Use BI or XD.")
 
