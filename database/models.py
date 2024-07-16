@@ -1,8 +1,11 @@
 import datetime
-
+from loguru import logger
 from peewee import *
 
 from database import configs
+
+logger.add("statics/logs/database.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
+
 
 # 连接SQLite数据库
 db_buy_point_bi = SqliteDatabase(configs.BUY_POINT_BI_PATH)
@@ -36,6 +39,7 @@ class BuyPoint(Model):
 
 # 函数用于切换数据库
 def switch_database(db_choice: str):
+    logger.info(f"Attempting to switch to database: {db_choice}")
     if db_choice == "BI":
         db_proxy.initialize(db_buy_point_bi)
     elif db_choice == "XD":
@@ -43,7 +47,8 @@ def switch_database(db_choice: str):
     elif db_choice == "MA250":
         db_proxy.initialize(db_buy_point_ma250)
     else:
-        raise ValueError("Invalid database choice. Use BI or XD.")
+        raise ValueError(f"Invalid database choice: {db_choice}. Use BI, XD, or MA250.")
+    logger.info(f"Successfully switched to database: {db_choice}")
 
 
 def create_tables():
@@ -65,6 +70,6 @@ def test_connection(db_choice):
 
 if __name__ == '__main__':
     # create_tables()
-    test_connection("BI")  # 测试数据库1
-    test_connection("XD")  # 测试数据库2
+    # test_connection("BI")  # 测试数据库1
+    # test_connection("XD")  # 测试数据库2
     test_connection("MA250")
