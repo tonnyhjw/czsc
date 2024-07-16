@@ -202,4 +202,4 @@ def demo():
     date = datetime.today()
     reason = '背驰强一买'
 
-    insert_buy_point(name, symbol, ts_code, freq, signals, fx_pwr, expect_profit, industry, date, reason)
+    insert_buy_point(name, symbol, ts_code, freq, signals, fx_pwr, expect_profit, industry, date, reason, "MA250")

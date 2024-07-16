@@ -57,7 +57,7 @@ def create_tables():
 def test_connection(db_choice):
     switch_database(db_choice)
     try:
-        BuyPoint.select().count()
+        print(BuyPoint.select().count())
         print(f"Successfully connected to database {db_choice}")
     except Exception as e:
         print(f"Failed to connect to database {db_choice}: {e}")
