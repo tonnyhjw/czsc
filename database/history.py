@@ -105,12 +105,12 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
 
     # 确认当前使用的数据库
     current_db = db_proxy.obj
-    logger.info(f"Current database after switch: {current_db}")
+    logger.info(f"Current database after switch: {current_db.database}")
 
     if isinstance(date, pd.Timestamp):
         date = date.to_pydatetime()
 
-    if not check_duplicate(ts_code, date):
+    if not check_duplicate(ts_code, date, db=db):
         try:
             with db_proxy.atomic():
                 buy_point = BuyPoint.create(

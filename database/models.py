@@ -48,7 +48,7 @@ def switch_database(db_choice: str):
         db_proxy.initialize(db_buy_point_ma250)
     else:
         raise ValueError(f"Invalid database choice: {db_choice}. Use BI, XD, or MA250.")
-    logger.info(f"Successfully switched to database: {db_choice}")
+    logger.info(f"Successfully switched to database: {db_proxy.obj.database}")
 
 
 def create_tables():
