@@ -43,9 +43,9 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
 
 
 if __name__ == '__main__':
-    first_day = '2024-03-22'
-    last_day = '2024-05-12'
-    # last_day = datetime.datetime.now().strftime("%Y-%m-%d")
+    first_day = '2024-07-12'
+    # last_day = '2024-05-12'
+    last_day = datetime.datetime.now().strftime("%Y-%m-%d")
     trade_dates = TsDataCache(home_path).get_dates_span(first_day, last_day, is_open=True)
 
     # 将日期格式化为'%Y%m%d'
