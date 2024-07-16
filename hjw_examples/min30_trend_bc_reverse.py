@@ -8,7 +8,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from src.sig import trend_reverse_ubi
+from src.sig_dev import trend_reverse_ubi
 
 idx = 1000
 

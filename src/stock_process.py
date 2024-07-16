@@ -5,8 +5,10 @@ import traceback
 
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from src.sig import is_strong_bot_fx, macd_pzbc_ubi, trend_reverse_ubi
-# from src.sig_xd import trend_reverse_ubi
+from src.sig.trend_reverse import trend_reverse_bi, trend_reverse_xd
+from src.sig.pzbc import macd_pzbc_bi
+from src.sig.utils import is_strong_bot_fx
+
 
 logger.add("statics/logs/stock_process.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
@@ -26,7 +28,7 @@ def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
         # if "ST" in _name:
         #     return output
         c = CZSC(bars)
-        _signals = trend_reverse_ubi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
+        _signals = trend_reverse_bi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
         logger.debug(_signals)
 
         for s_value in _signals.values():
@@ -92,7 +94,7 @@ def bottom_pzbc(row, sdt, edt, freq: str = 'W', fx_dt_limit: int = 30):
     try:
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
-        _signals = macd_pzbc_ubi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
+        _signals = macd_pzbc_bi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
         logger.debug(_signals)
         for s_value in _signals.values():
             if "买" in s_value:

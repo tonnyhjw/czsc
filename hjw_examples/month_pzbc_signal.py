@@ -7,7 +7,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import CZSC, home_path
 from czsc.data import TsDataCache
-from src.sig import macd_pzbc_ubi
+from src.sig_dev import macd_pzbc_ubi
 
 idx = 1000
 
