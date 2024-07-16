@@ -39,7 +39,7 @@ class BuyPoint(Model):
 
 # 函数用于切换数据库
 def switch_database(db_choice: str):
-    logger.debug(f"Attempting to switch to database: {db_choice}")
+    # logger.debug(f"Attempting to switch to database: {db_choice}")
     if db_choice == "BI":
         db_proxy.initialize(db_buy_point_bi)
     elif db_choice == "XD":
@@ -48,7 +48,7 @@ def switch_database(db_choice: str):
         db_proxy.initialize(db_buy_point_ma250)
     else:
         raise ValueError(f"Invalid database choice: {db_choice}. Use BI, XD, or MA250.")
-    logger.debug(f"Successfully switched to database: {db_proxy.obj.database}")
+    # logger.debug(f"Successfully switched to database: {db_proxy.obj.database}")
 
 
 def create_tables():

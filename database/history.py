@@ -59,7 +59,7 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
     :param reason: 买点原因
     :param db: 数据库选择，可选BI或XD，默认BI
     """
-    logger.info(f"Inserting buy point with database choice: {db}")
+    # logger.info(f"Inserting buy point with database choice: {db}")
     switch_database(db)
 
     if isinstance(date, pd.Timestamp):
