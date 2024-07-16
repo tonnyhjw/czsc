@@ -33,6 +33,7 @@ def macd_pzbc_bi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     :param kwargs:
     :return: 信号识别结果
     """
+    db = "BI"
     freq = c.freq.value
     v1 = '其他'
     edt = kwargs.get('edt', datetime.datetime.now())
@@ -53,7 +54,7 @@ def macd_pzbc_bi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
     if latest_fx.mark != Mark.D or fx_is_exceed:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif history.buy_point_exists(symbol, latest_fx.dt, freq):
+    elif history.buy_point_exists(symbol, latest_fx.dt, freq, db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
@@ -103,7 +104,7 @@ def macd_pzbc_bi(c: CZSC, fx_dt_limit: int = 30, **kwargs) -> OrderedDict:
         v1 = '一买'
         # 插入数据库
         history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                 industry, latest_fx.dt)
+                                 industry, latest_fx.dt, db)
         if v2 != '弱':
 
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)

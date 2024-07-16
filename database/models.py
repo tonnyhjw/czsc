@@ -2,10 +2,14 @@ import datetime
 
 from peewee import *
 
-from database.configs import BUY_POINT_PATH
+from database.configs import *
 
 # 连接SQLite数据库
-db = SqliteDatabase(BUY_POINT_PATH)
+db_buy_point_bi = SqliteDatabase(BUY_POINT_BI_PATH)
+db_buy_point_xd = SqliteDatabase(BUY_POINT_XD_PATH)
+
+# 创建一个数据库代理
+db_proxy = DatabaseProxy()
 
 
 class BuyPoint(Model):
@@ -26,15 +30,25 @@ class BuyPoint(Model):
     reason = TextField(null=True)  # 买点原因
 
     class Meta:
-        database = db
+        database = db_proxy
+
+
+# 函数用于切换数据库
+def switch_database(db_choice: str):
+    if db_choice == "BI":
+        db_proxy.initialize(db_buy_point_bi)
+    elif db_choice == "XD":
+        db_proxy.initialize(db_buy_point_xd)
+    else:
+        raise ValueError("Invalid database choice. Use BI or XD.")
 
 
 def create_tables():
     # 连接数据库
-    db.connect()
+    switch_database("BI")
 
     # 创建表格
-    db.create_tables([BuyPoint])
+    db_proxy.create_tables([BuyPoint])
 
 
 if __name__ == '__main__':

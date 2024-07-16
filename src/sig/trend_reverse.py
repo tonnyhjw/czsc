@@ -34,6 +34,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     :param kwargs:
     :return: 信号识别结果
     """
+    db = "BI"
     freq = c.freq.value
     v1 = '其他'
     edt = kwargs.get('edt', datetime.datetime.now())
@@ -54,7 +55,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     if latest_fx.mark != Mark.D or fx_is_exceed:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif history.buy_point_exists(symbol, latest_fx.dt, freq):
+    elif history.buy_point_exists(symbol, latest_fx.dt, freq, db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
@@ -93,15 +94,15 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             v1 = '一买'
             # 插入数据库
             history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                     industry, latest_fx.dt)
+                                     industry, latest_fx.dt, db)
             if v2 == '强':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
             logger.info(f"{name}{symbol}一买不成立原因: {failed_trend_bc_conditions}")
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
-    if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买'):
-        latest_1st_buy_point = history.query_latest_buy_point(symbol, signals='一买')
+    if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买', db=db):
+        latest_1st_buy_point = history.query_latest_buy_point(symbol, signals='一买', db=db)
 
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
@@ -128,7 +129,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 v1 = '二买'
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                         industry, latest_fx.dt)
+                                         industry, latest_fx.dt, db)
                 if v2 != '弱':
                     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
@@ -138,7 +139,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 v1 = '三买'
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                         industry, latest_fx.dt)
+                                         industry, latest_fx.dt, db)
                 # if v2 != '弱':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
@@ -163,6 +164,7 @@ def trend_reverse_xd(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     :param kwargs:
     :return: 信号识别结果
     """
+    db = "XD"
     freq = c.freq.value
     v1 = '其他'
     edt = kwargs.get('edt', datetime.datetime.now())
@@ -183,7 +185,7 @@ def trend_reverse_xd(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     if latest_fx.mark != Mark.D or fx_is_exceed:
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif history.buy_point_exists(symbol, latest_fx.dt, freq):
+    elif history.buy_point_exists(symbol, latest_fx.dt, freq, db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
@@ -227,15 +229,15 @@ def trend_reverse_xd(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             v1 = '一买'
             # 插入数据库
             history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                     industry, latest_fx.dt)
+                                     industry, latest_fx.dt, db)
             if v2 == '强':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
             logger.info(f"{name}{symbol}一买不成立原因: {failed_trend_bc_conditions}")
 
     # 30 * N天内是否有过一买且向上笔, 存在一买则检测二三买
-    if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买'):
-        latest_1st_buy_point = history.query_latest_buy_point(symbol, signals='一买')
+    if history.check_duplicate(symbol, edt, days=30 * 6, signals='一买', db=db):
+        latest_1st_buy_point = history.query_latest_buy_point(symbol, signals='一买', db=db)
 
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
@@ -265,7 +267,7 @@ def trend_reverse_xd(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 v1 = '二买'
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                         industry, latest_fx.dt)
+                                         industry, latest_fx.dt, db)
                 if v2 != '弱':
                     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
 
@@ -277,7 +279,7 @@ def trend_reverse_xd(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 v1 = '三买'
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                         industry, latest_fx.dt)
+                                         industry, latest_fx.dt, db)
                 # if v2 != '弱':
                 return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:

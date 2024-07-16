@@ -2,12 +2,12 @@ from loguru import logger
 import pandas as pd
 
 from datetime import timedelta, datetime
-from database.models import BuyPoint
+from database.models import BuyPoint, switch_database
 
 logger.add("statics/logs/database.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None):
+def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None, db="BI"):
     """
     检查给定股票代码和日期是否在最近N天内已存在买点记录，并可以根据分型强度过滤。
     :param symbol: 股票代码
@@ -15,8 +15,10 @@ def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None):
     :param days: 检查的天数范围，默认30天
     :param fx_pwr: 可选，分型强度过滤
     :param signals: 可选，买点类型过滤
+    :param db: 数据库选择，可选BI或XD，默认BI
     :return: True表示重复, False表示未重复
     """
+    switch_database(db)
     # 将 pandas.Timestamp 转换为 datetime 对象
     if isinstance(check_date, pd.Timestamp):
         check_date = check_date.to_pydatetime()
@@ -42,7 +44,7 @@ def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None):
 
 
 def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: str,
-                     fx_pwr: str, expect_profit: float, industry: str, date: datetime, reason=None):
+                     fx_pwr: str, expect_profit: float, industry: str, date: datetime, reason=None, db="BI"):
     """
     插入新的买点记录
     :param name: 股票名称
@@ -55,7 +57,10 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
     :param industry: 板块
     :param date: 买点日期
     :param reason: 买点原因
+    :param db: 数据库选择，可选BI或XD，默认BI
     """
+    switch_database(db)
+
     # 将 pandas.Timestamp 转换为 datetime 对象
     if isinstance(date, pd.Timestamp):
         date = date.to_pydatetime()
@@ -79,14 +84,17 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
         logger.debug(f"买点已存在: {ts_code} {date}")
 
 
-def query_latest_buy_point(symbol, fx_pwr=None, signals=None):
+def query_latest_buy_point(symbol, fx_pwr=None, signals=None, db="BI"):
     """
     根据股票代码查询最近的买点信息，可根据分型强度和信号过滤。
     :param symbol: 股票代码
     :param fx_pwr: 可选，分型强度过滤
     :param signals: 可选，买入信号过滤
+    :param db: 数据库选择，可选BI或XD，默认BI
     :return: 配置好的查询对象
     """
+    switch_database(db)
+
     # 构建基本查询
     query = BuyPoint.select().where(BuyPoint.symbol == symbol)
 
@@ -102,7 +110,7 @@ def query_latest_buy_point(symbol, fx_pwr=None, signals=None):
     return query.order_by(BuyPoint.date.desc()).first()
 
 
-def query_all_buy_point(symbol, fx_pwr=None, signals=None, freq=None, sdt=None, edt=None):
+def query_all_buy_point(symbol, fx_pwr=None, signals=None, freq=None, sdt=None, edt=None, db="BI"):
     """
     根据股票代码查询所有买点信息，可根据分型强度和信号过滤。
     :param symbol: 股票代码
@@ -111,8 +119,11 @@ def query_all_buy_point(symbol, fx_pwr=None, signals=None, freq=None, sdt=None, 
     :param freq: 可选，交易级别过滤
     :param sdt: 可选，起始时间过滤
     :param edt: 可选，结束时间过滤
+    :param db: 数据库选择，可选BI或XD，默认BI
     :return: 配置好的查询对象
     """
+    switch_database(db)
+
     # 构建基本查询
     query = BuyPoint.select().where(BuyPoint.symbol == symbol)
 
@@ -149,7 +160,7 @@ def query_all_buy_point(symbol, fx_pwr=None, signals=None, freq=None, sdt=None, 
     return query.order_by(BuyPoint.date.asc())
 
 
-def buy_point_exists(symbol, check_date, freq, signals=None):
+def buy_point_exists(symbol, check_date, freq, signals=None, db="BI"):
     """
     检查给定股票代码、日期和信号的买点是否已存在。
 
@@ -157,8 +168,11 @@ def buy_point_exists(symbol, check_date, freq, signals=None):
     :param check_date: 检查的日期
     :param freq: K线图级别
     :param signals: 可选，买入信号
+    :param db: 数据库选择，可选BI或XD，默认BI
     :return: 如果存在返回 True，否则返回 False
     """
+    switch_database(db)
+
     # 将 pandas.Timestamp 转换为 datetime 对象
     if isinstance(check_date, pd.Timestamp):
         check_date = check_date.to_pydatetime()
