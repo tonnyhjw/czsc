@@ -54,5 +54,17 @@ def create_tables():
     db_proxy.create_tables([BuyPoint])
 
 
+def test_connection(db_choice):
+    switch_database(db_choice)
+    try:
+        BuyPoint.select().count()
+        print(f"Successfully connected to database {db_choice}")
+    except Exception as e:
+        print(f"Failed to connect to database {db_choice}: {e}")
+
+
 if __name__ == '__main__':
-    create_tables()
+    # create_tables()
+    test_connection("BI")  # 测试数据库1
+    test_connection("XD")  # 测试数据库2
+    test_connection("MA250")
