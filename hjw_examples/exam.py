@@ -36,8 +36,8 @@ def xd_dev():
 
 @timer
 def ma_pzbc_dev():
-    row = dict(ts_code="002727.SZ", symbol="002727", name="一心堂", industry="医药商业")
-    sdt, edt = "20180501", "20240322"
+    row = dict(ts_code="836504.BJ", symbol="836504", name="博迅生物", industry="医疗保健")
+    sdt, edt = "20180501", "20240524"
     ma_pzbc(row, sdt, edt, "D", 5)
     return
 

@@ -65,7 +65,7 @@ if __name__ == '__main__':
         # 将日期格式化为'%Y%m%d'
         for business_date in trade_dates:
             logger.info(f"测试日期:{business_date}")
-            check(edt=business_date)
+            check(edt=business_date, subj_lv1="测试")
     else:
         logger.info("正在运行默认模式")
         check()

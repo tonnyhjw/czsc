@@ -51,7 +51,7 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
     elif history.buy_point_exists(symbol, latest_fx.dt, freq, db=db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif not ma_is_up_and_support(c, last_n=3, ma_type="EMA", timeperiod=250, cur_price=cur_price):
+    elif not ma_is_up_and_support(c, last_n=3, ma_type="SMA", timeperiod=250, cur_price=cur_price):
         v1 = '均线不达标'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
@@ -144,6 +144,7 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
     cur_price = kwargs.get("cur_price")
     if len(bars_raw) < last_n:
         return False
+    print(f"{bars_raw[-1].cache[ma]=}")
 
     if cur_price < bars_raw[-1].cache[ma]:
         return False
