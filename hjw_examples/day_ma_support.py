@@ -19,7 +19,7 @@ script_name = os.path.basename(__file__)
 logger.add("statics/logs/day_ma_support.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def check(sdt: str = "20200101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), subj_lv1="自动盯盘"):
+def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), subj_lv1="自动盯盘"):
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     total_stocks = len(stock_basic)
     results = []  # 用于存储所有股票的结果
@@ -44,12 +44,12 @@ def check(sdt: str = "20200101", edt: str = datetime.datetime.now().strftime('%Y
 
 
 if __name__ == '__main__':
-    sdt = '2024-03-22'
+    _sdt = '2024-03-22'
     today = datetime.datetime.now().strftime("%Y%m%d")
 
     parser = argparse.ArgumentParser(description="这是一个示例程序")
     # 添加参数
-    parser.add_argument("sdt", nargs='?', default=sdt, help="开始日期")
+    parser.add_argument("sdt", nargs='?', default=_sdt, help="开始日期")
     parser.add_argument("edt", nargs='?', default=today, help="结束日期")
     # 添加可选参数 -d 或 --dev
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
