@@ -7,6 +7,7 @@ from czsc import CZSC, RawBar
 from czsc.utils import get_sub_elements, create_single_signal
 from czsc.signals.tas import update_macd_cache, update_ma_cache
 from src.sig.utils import *
+from src.objects import has_gap
 from database import history
 
 logger.add("statics/logs/pzbc.log", level="INFO", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
@@ -46,13 +47,13 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
     if len(bis) < 4 or not ubi or len(ubi['raw_bars']) < 3:
         v1 = 'K线不合标准'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    if latest_fx.mark != Mark.D or fx_is_exceed:
+    if latest_fx.mark != Mark.D or fx_is_exceed or has_gap(latest_fx.elements[0], latest_fx.elements[1]):
         v1 = '没有底分型'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     elif history.buy_point_exists(symbol, latest_fx.dt, freq, db=db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif not ma_is_up_and_support(c, last_n=2, ma_type="SMA", timeperiod=250, cur_price=cur_price):
+    elif not ma_is_up_and_support(c, last_n=5, ma_type="SMA", timeperiod=250, cur_price=cur_price):
         v1 = '均线不达标'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
@@ -111,6 +112,7 @@ def is_macd_pzbc_bi(c: CZSC, **kwargs) -> bool:
         (zs2.sdir == Direction.Down, "zs2.sdir == Direction.Down"),
         (zs2.edir == Direction.Down, "zs2.edir == Direction.Down"),
         (zs2.dd == bi_b.low, "zs2.dd == bi_b.low"),
+        (len(zs2.bis) >= 5, "len(zs2.bis)"),
         (0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area), "0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)")
     )
     failed_pzbc_conditions = select_failed_conditions(pzbc_conditions)
@@ -147,7 +149,9 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
     if len(bars_raw) < last_n:
         return False
 
-    if cur_price < bars_raw[-1].cache[ma] or np.isnan(bars_raw[-1].cache[ma]):
+    # if cur_price < bars_raw[-1].cache[ma] or np.isnan(bars_raw[-1].cache[ma]):
+    #     return False
+    if np.isnan(bars_raw[-1].cache[ma]):
         return False
 
     last_n_bars = bars_raw[-last_n:]
