@@ -133,13 +133,13 @@ def get_bt_data(df):
 
 
 def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'),
-                              fx_pwr="弱", signals="二买", freq="D"):
+                              fx_pwr="弱", signals="二买", freq="D", db="BI"):
     cerebro = bt.Cerebro()
 
     symbol = ts_code.split(".")[0]
 
     # 设置策略参数
-    buy_points = list(query_all_buy_point(symbol, fx_pwr=fx_pwr, signals=signals, freq=freq))
+    buy_points = list(query_all_buy_point(symbol, fx_pwr=fx_pwr, signals=signals, freq=freq, db=db))
     if not buy_points:
         # print(f"No buy points for {ts_code}")
         return {"trade_analyzer": None, "sharpe_ratio": None}

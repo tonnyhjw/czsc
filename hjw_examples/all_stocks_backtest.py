@@ -14,7 +14,8 @@ from src.notify import notify_buy_backtrader
 from src.backtrade import run_single_stock_backtest
 
 
-def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'), fx_pwr="弱", signals="二买", freq="D"):
+def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
+                            fx_pwr="弱", signals="二买", freq="D", db="BI"):
     all_trade_analyzers = []
     all_sharpe_ratios = []
 
@@ -24,7 +25,7 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
         for index, row in stock.iterrows():
             ts_code = row.get('ts_code')
             print(f'Running backtest for {ts_code}')
-            future = executor.submit(run_single_stock_backtest, ts_code, edt, fx_pwr, signals, freq)
+            future = executor.submit(run_single_stock_backtest, ts_code, edt, fx_pwr, signals, freq, db)
             futures[future] = ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -128,5 +129,5 @@ if __name__ == '__main__':
     SIGNALS = ["二买", "三买"]
     for _signals in SIGNALS:
         for _fx_pwr in FX_PWR:
-            run_all_stocks_backtest(stock_basic, fx_pwr=_fx_pwr, signals=_signals)
+            run_all_stocks_backtest(stock_basic, fx_pwr=_fx_pwr, signals=_signals, db="MA250")
 
