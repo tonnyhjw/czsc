@@ -1,4 +1,5 @@
 import datetime
+import numpy as np
 from loguru import logger
 from collections import OrderedDict
 
@@ -142,11 +143,11 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
     bars_raw = c.bars_raw
     ma = update_ma_cache(c, ma_type=ma_type, timeperiod=timeperiod)
     cur_price = kwargs.get("cur_price")
+
     if len(bars_raw) < last_n:
         return False
-    print(f"{bars_raw[-1].cache[ma]=}")
 
-    if cur_price < bars_raw[-1].cache[ma]:
+    if cur_price < bars_raw[-1].cache[ma] or np.isnan(bars_raw[-1].cache[ma]):
         return False
 
     last_n_bars = bars_raw[-last_n:]
