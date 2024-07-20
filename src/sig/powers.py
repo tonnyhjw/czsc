@@ -37,6 +37,8 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
     name, ts_code, symbol = kwargs.get('name'), kwargs.get('ts_code'), kwargs.get('symbol')
     k1, k2, k3 = freq, symbol, edt.strftime("%Y%m%d")
     industry, freq = kwargs.get('industry'), kwargs.get('freq')
+    timeperiod = kwargs.get('timeperiod', 250)
+    last_n = kwargs.get('last_n', 5)
 
     ubi = c.ubi
     bis = c.bi_list
@@ -53,7 +55,7 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
     elif history.buy_point_exists(symbol, latest_fx.dt, freq, db=db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif not ma_is_up_and_support(c, last_n=5, ma_type="SMA", timeperiod=250, cur_price=cur_price):
+    elif not ma_is_up_and_support(c, last_n=last_n, ma_type="SMA", timeperiod=timeperiod, cur_price=cur_price):
         v1 = '均线不达标'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:

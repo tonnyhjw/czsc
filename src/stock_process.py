@@ -118,7 +118,7 @@ def bottom_pzbc(row, sdt, edt, freq: str = 'W', fx_dt_limit: int = 30):
         return output
 
 
-def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5):
+def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: int = 250, last_n: int = 5):
     dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')
@@ -130,7 +130,8 @@ def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5):
     try:
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
-        _signals = long_term_ma_support(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
+        _signals = long_term_ma_support(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq,
+                                        timeperiod=timeperiod, last_n=last_n, **row)
         logger.debug(_signals)
         for s_value in _signals.values():
             if "强势盘整背驰" in s_value:
