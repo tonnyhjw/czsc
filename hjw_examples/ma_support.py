@@ -13,6 +13,7 @@ from czsc import home_path
 from czsc.data import TsDataCache
 from src.notify import notify_buy_points
 from src.stock_process import ma_pzbc
+from src import is_friday
 
 idx = 1000
 script_name = os.path.basename(__file__)
@@ -69,6 +70,8 @@ if __name__ == '__main__':
         trade_dates = TsDataCache(home_path).get_dates_span(args.sd, args.ed, is_open=True)
         # 将日期格式化为'%Y%m%d'
         for business_date in trade_dates:
+            if args.f == "W" and not is_friday(business_date):
+                continue
             logger.info(f"测试日期:{business_date}")
             check(edt=business_date, freq=args.f, timeperiod=args.tp, last_n=args.n, subj_lv1="测试")
     else:
