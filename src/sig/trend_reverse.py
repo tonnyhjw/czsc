@@ -112,7 +112,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
         is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy, cache_key)
         _has_uncover_gap = has_uncover_gap(bis_after_1st_buy, kind_is_up=True)
-        _ma_is_up = ma_is_up_and_support(c, last_n=3, ma_type="SMA", timeperiod=90)
+        _ma_is_up = ma_is_up_and_support(c, last_n=3, ma_type="SMA", timeperiod=60)
 
         bis_pzbc_conditions = (
             (0 < len(zs_seq_after_1st_buy) < 3, "0 < len(zs_seq_after_1st_buy) < 3"),
