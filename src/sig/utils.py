@@ -3,7 +3,7 @@ from loguru import logger
 from itertools import chain
 from typing import List, Optional
 
-from czsc.utils.sig import get_zs_seq
+from czsc.utils.sig import get_zs_seq, check_gap_info
 from czsc import CZSC
 from czsc.enum import Mark
 from czsc.objects import Direction, FX, BI, ZS
@@ -94,7 +94,7 @@ def detect_lower_freq_pzbc(bis, cache_key):
     print(bi_a)
     print(bi_b)
     print(f"{zs.sdir=} {zs.edir=}")
-    print(f"{latest_dif=} {latest_dea=}")
+    print(f"{latest_dif=} {latest_dea=} {max_abs_dea=}")
 
     if (
             zs.is_valid and
@@ -106,6 +106,16 @@ def detect_lower_freq_pzbc(bis, cache_key):
         return True
     else:
         return False
+
+
+def has_uncover_gap(bis: List[BI], kind_is_up: bool):
+    kind = "向上缺口" if kind_is_up else "向下缺口"
+    bars_raw = list(chain.from_iterable(bi.raw_bars for bi in bis))
+    gap_info = check_gap_info(bars_raw)
+    for gap in reversed(gap_info):
+        if gap.get("kind") == kind and gap.get("cover") == "未补":
+            return True
+    return False
 
 
 def raw_bar_increase_within_limit(raw_bars, percentage=0.05):
