@@ -80,7 +80,7 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
                     date=date,
                     reason=reason
                 )
-            logger.info(f"成功插入新买点: {ts_code} {date} {reason} {buy_point}")
+            logger.info(f"成功插入新买点: {ts_code} {date} {signals} {reason} {buy_point}")
         except Exception as e:
             logger.error(f"插入买点时发生错误: {e}")
     else:
