@@ -91,6 +91,8 @@ def detect_lower_freq_pzbc(bis, cache_key):
     max_abs_dea = max(abs(x.cache[cache_key]['dea']) for x in remaining_raw_bars)
     latest_dea = remaining_raw_bars[-1].cache[cache_key]['dea']
     latest_dif = remaining_raw_bars[-1].cache[cache_key]['dif']
+    print(bi_a)
+    print(bi_b)
     print(f"{zs.sdir=} {zs.edir=}")
     print(f"{latest_dif=} {latest_dea=}")
 
