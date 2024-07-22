@@ -97,7 +97,7 @@ def detect_lower_freq_pzbc(bis, cache_key):
     print(f"{latest_dif=} {latest_dea=} {max_abs_dea=}")
 
     if (
-            zs.is_valid and
+            # zs.is_valid and
             zs.sdir == Direction.Down and
             zs.edir == Direction.Down and
             # zs.dd == bi_b.low and

@@ -138,7 +138,7 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
     主要用于用于探测周、月线盘整背驰
 
     :param c: CZSC对象
-    :param last_n 最后n天
+    :param last_n 最后连续n天
     :param ma_type: 均线类型，可选值：SMA, EMA, WMA, KAMA, TEMA, DEMA, MAMA, TRIMA
     :param timeperiod: 计算周期
     :param kwargs:
