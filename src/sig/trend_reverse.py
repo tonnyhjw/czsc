@@ -118,7 +118,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
             (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
             (is_lower_freq_pzbc, "is_lower_freq_pzbc"),
-            (raw_bar_increase_within_limit(latest_fx.raw_bars, 0.1), "increase_break_limit"),
+            (raw_bar_increase_within_limit(latest_fx.raw_bars, 0.08), "increase_break_limit"),
             (_has_uncover_gap or _ma_is_up, f"{_has_uncover_gap=} or {_ma_is_up=}")
         )
         failed_bis_pzbc_conditions = select_failed_conditions(bis_pzbc_conditions)
