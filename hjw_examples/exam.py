@@ -5,8 +5,8 @@ from src.decorate import *
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="300510.SZ", symbol="300510", name="金冠股份", industry="电气设备")
-    sdt, edt = "20180501", "20240712"
+    row = dict(ts_code="600171.sh", symbol="600171", name="上海贝岭", industry="半导体")
+    sdt, edt = "20180501", "20240708"
     result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
