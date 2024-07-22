@@ -109,6 +109,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
         zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
         is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy, cache_key)
+        increase_from_fx_low = (cur_price - latest_fx.low) / latest_fx.low < 0.1
         _has_uncover_gap = has_uncover_gap(bis_after_1st_buy, kind_is_up=True)
         _ma_is_up = ma_is_up_and_support(c, last_n=3, ma_type="SMA", timeperiod=60)
 
@@ -117,6 +118,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
             (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
             (is_lower_freq_pzbc, "is_lower_freq_pzbc"),
+            (raw_bar_increase_within_limit(latest_fx.raw_bars, 0.1), "increase_break_limit"),
             (_has_uncover_gap or _ma_is_up, f"{_has_uncover_gap=} or {_ma_is_up=}")
         )
         failed_bis_pzbc_conditions = select_failed_conditions(bis_pzbc_conditions)
