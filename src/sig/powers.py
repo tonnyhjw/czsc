@@ -115,6 +115,7 @@ def is_macd_pzbc_bi(c: CZSC, **kwargs) -> bool:
         (zs2.edir == Direction.Down, "zs2.edir == Direction.Down"),
         (zs2.dd == bi_b.low, "zs2.dd == bi_b.low"),
         (len(zs2.bis) >= 5, "len(zs2.bis)"),
+        (abs(bi_b.change) >= 0.7 * abs(bi_a.change), f"{bi_b.change=} >= 70% * {bi_a.change=}"),
         (0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area), "0 > bi_b_dif > bi_a_dif or abs(bi_a_macd_area) > abs(bi_b_macd_area)")
     )
     failed_pzbc_conditions = select_failed_conditions(pzbc_conditions)
