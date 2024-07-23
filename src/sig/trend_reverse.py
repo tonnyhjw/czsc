@@ -81,13 +81,14 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
         trend_bc_conditions = (
             (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
-            (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
-            (ubi['low'] < zs3.zd, "ubi['low'] < zs3.zd"),
-            (zs2.zd > zs3.zg, "zs2.zd > zs3.zg"),
+            (len(ubi['fxs']) < 2, f"{len(ubi['fxs'])=} < 2"),
+            (ubi['low'] < zs3.zd, f"{ubi['low']=} < {zs3.zd=}"),
+            (zs2.zd > zs3.zg, f"{zs2.zd=} > {zs3.zg=}"),
             (0 > bi_b_dif > bi_a_dif, f"{bi_b_dif=} <= {bi_a_dif=}"),
             (abs(bi_b_macd_area) < abs(bi_a_macd_area), f"{abs(bi_b_macd_area)=} >= {abs(bi_a_macd_area)=}"),
-            (estimated_profit >= 0.03, "estimated_profit >= 0.03"),
-            (bi_b.low == zs3.dd, "bi_b.low == zs3.dd")
+            (estimated_profit >= 0.03, f"{estimated_profit=} >= 0.03"),
+            (bi_b.low == zs3.dd, f"{bi_b.low=} == zs3.dd"),
+            (abs(bi_b.change) >= 0.5 * abs(bi_a.change), f"{bi_b.change=} >= {bi_a.change=}")
         )
         failed_trend_bc_conditions = select_failed_conditions(trend_bc_conditions)
         if not failed_trend_bc_conditions:
