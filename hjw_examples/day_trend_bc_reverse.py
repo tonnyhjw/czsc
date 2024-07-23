@@ -28,6 +28,8 @@ logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="u
 
 
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d')):
+    os.environ['czsc_min_bi_len'] = '7'
+
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     total_stocks = len(stock_basic)
     results = []  # 用于存储所有股票的结果

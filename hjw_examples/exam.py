@@ -36,6 +36,7 @@ def xd_dev():
 
 
 def bi_dev():
+    os.environ['czsc_min_bi_len'] = '7'
 
     row = dict(ts_code="601969.sh", symbol="601969", name="海南矿业", industry="普钢")
     sdt, edt = "20180501", "20240418"

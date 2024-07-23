@@ -23,6 +23,8 @@ logger.add("statics/logs/day_ma_support.log", rotation="10MB", encoding="utf-8",
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'),
           freq: str = 'D', timeperiod: int = 250, last_n: int = 5,
           subj_lv1="自动盯盘"):
+    os.environ['czsc_min_bi_len'] = '7'
+
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
     total_stocks = len(stock_basic)
     results = []  # 用于存储所有股票的结果
