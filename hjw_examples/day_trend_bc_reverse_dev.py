@@ -62,11 +62,11 @@ if __name__ == '__main__':
     # # 生成日期范围，从2024年1月1日到今天
     # date_range = pd.date_range(start='2024-01-17', end=today, freq='B')
     # formatted_dates = date_range.strftime('%Y%m%d').tolist()
-    sdt, edt = '2023-01-24', '2024-01-31'
+    sdt, edt = '2024-01-24', '2024-01-31'
     today = datetime.datetime.now().strftime("%Y%m%d")
     trade_dates = TsDataCache(home_path).get_dates_span(sdt, edt, is_open=True)
 
     # 将日期格式化为'%Y%m%d'
     for business_date in trade_dates:
         logger.info(f"测试日期:{business_date}")
-        check(edt=business_date)
+        # check(edt=business_date)
