@@ -63,6 +63,7 @@ def trend_reverse_ubi_entry_us(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
     row['ts_code'] = _symbol
     row['symbol'] = row.pop("Symbol")
+    row['name'] = row.pop("Security")
     _db = "BIUS"
 
     output = {}
