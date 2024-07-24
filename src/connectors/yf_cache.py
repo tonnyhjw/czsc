@@ -115,8 +115,8 @@ class YfDataCache:
             kline = kline[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits']]
             kline.columns = ['dt', 'open', 'high', 'low', 'close', 'vol', 'Dividends', 'Stock Splits']
             kline = kline.assign(symbol=symbol)
-            kline["dt"] = kline["dt"].dt.tz_localize(None)
             kline["dt"] = pd.to_datetime(kline["dt"], format=self.date_fmt)
+            kline["dt"] = kline["dt"].dt.tz_localize(None)
             # update_bars_return(kline)
             kline.to_feather(file_cache)
 

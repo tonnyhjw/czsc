@@ -97,8 +97,8 @@ def us_raw_bar():
     from src.connectors.yf_cache import YfDataCache
 
     dc = YfDataCache(home_path, refresh=True)
-    bars = dc.history("TSLA")
-    pprint.pprint(bars)
+    bars = dc.history("TSLA", "20180101")
+    # pprint.pprint(bars)
 
 
 if __name__ == '__main__':
