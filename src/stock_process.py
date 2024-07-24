@@ -57,7 +57,7 @@ def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
 
 def trend_reverse_ubi_entry_us(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
     ydc = YfDataCache(home_path)  # 在每个进程中创建独立的实例
-    _symbol = row.get('symbol')
+    _symbol = row.get('Symbol')
     _name = row.get('Security')
     _industry = row.get("GICS Sub-Industry")
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
