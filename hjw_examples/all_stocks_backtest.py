@@ -129,5 +129,5 @@ if __name__ == '__main__':
     SIGNALS = ["一买", "二买", "三买"]
     for _signals in SIGNALS:
         for _fx_pwr in FX_PWR:
-            run_all_stocks_backtest(stock_basic, fx_pwr=_fx_pwr, signals=_signals, db="MA250")
+            run_all_stocks_backtest(stock_basic, fx_pwr=_fx_pwr, signals=_signals, db="BI")
 
