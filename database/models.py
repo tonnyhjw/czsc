@@ -11,6 +11,8 @@ logger.add("statics/logs/database.log", rotation="10MB", encoding="utf-8", enque
 db_buy_point_bi = SqliteDatabase(configs.BUY_POINT_BI_PATH)
 db_buy_point_xd = SqliteDatabase(configs.BUY_POINT_XD_PATH)
 db_buy_point_ma250 = SqliteDatabase(configs.BUY_POINT_MA250_PATH)
+db_buy_point_bi_us = SqliteDatabase(configs.BUY_POINT_BI_US_PATH)
+
 
 # 创建一个数据库代理
 db_proxy = DatabaseProxy()
@@ -42,6 +44,8 @@ def switch_database(db_choice: str):
     # logger.debug(f"Attempting to switch to database: {db_choice}")
     if db_choice == "BI":
         db_proxy.initialize(db_buy_point_bi)
+    elif db_choice == "BIUS":
+        db_proxy.initialize(db_buy_point_bi_us)
     elif db_choice == "XD":
         db_proxy.initialize(db_buy_point_xd)
     elif db_choice == "MA250":
