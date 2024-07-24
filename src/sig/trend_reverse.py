@@ -145,8 +145,8 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt, db=db)
-                # if v2 != '弱':
-                return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
+                if v2 != '弱':
+                    return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
         else:
             logger.info(f"{name}{symbol}二三买不成立原因: {failed_bis_pzbc_conditions}")
 
