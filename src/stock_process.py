@@ -61,13 +61,15 @@ def trend_reverse_ubi_entry_us(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
     _name = row.get('Security')
     _industry = row.get("GICS Sub-Industry")
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
+    row['ts_code'] = _symbol
+    row['symbol'] = row.pop("Symbol")
     _db = "BIUS"
 
     output = {}
     try:
         bars = ydc.history(_symbol, start_date=sdt, end_date=edt, freq=freq, raw_bar=True)
         c = CZSC(bars)
-        _signals = trend_reverse_bi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, ts_code=_symbol, db=_db, **row)
+        _signals = trend_reverse_bi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, db=_db, **row)
         logger.debug(_signals)
 
         for s_value in _signals.values():
