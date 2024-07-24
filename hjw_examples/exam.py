@@ -54,11 +54,18 @@ def ma_pzbc_dev():
     return
 
 
+def us_data():
+    import pandas_datareader
+    pprint.pprint(dir(pandas_datareader.data.get_data_yahoo()))
+    return
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
     # xd_dev()
-    bi_dev()
+    # bi_dev()
     # ma_pzbc_dev()
+    us_data()
