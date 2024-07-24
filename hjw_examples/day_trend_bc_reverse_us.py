@@ -78,7 +78,7 @@ if __name__ == '__main__':
     if args.dev:
         logger.info("正在运行开发模式")
         logger.info(f"使用日期范围：{args.sd} 到 {args.ed}")
-        date_range = pd.date_range(start='2024-01-01', end=today, freq="B")
+        date_range = pd.date_range(start=args.sd, end=args.ed, freq="B")
         # 将日期格式化为'%Y%m%d'
         formatted_dates = date_range.strftime('%Y%m%d').tolist()
 
