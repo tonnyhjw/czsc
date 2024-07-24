@@ -120,9 +120,9 @@ class YfDataCache:
             kline.to_feather(file_cache)
 
         if start_date:
-            kline = kline[kline["trade_date"] >= pd.to_datetime(start_date)]
+            kline = kline[kline["dt"] >= pd.to_datetime(start_date)]
         if end_date:
-            kline = kline[kline["trade_date"] <= pd.to_datetime(end_date)]
+            kline = kline[kline["dt"] <= pd.to_datetime(end_date)]
 
         kline.reset_index(drop=True, inplace=True)
         if raw_bar:
