@@ -112,8 +112,8 @@ class YfDataCache:
             ticker = yf.Ticker(symbol)
             kline = ticker.history(start=start_date_, end=self.edt)
             kline = kline.reset_index()
-            kline = kline[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits']]
-            kline.columns = ['dt', 'open', 'high', 'low', 'close', 'vol', 'Dividends', 'Stock Splits']
+            kline = kline[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
+            kline.columns = ['dt', 'open', 'high', 'low', 'close', 'vol']
             kline = kline.assign(symbol=symbol)
             kline["dt"] = pd.to_datetime(kline["dt"], format=self.date_fmt)
             kline["dt"] = kline["dt"].dt.tz_localize(None)
