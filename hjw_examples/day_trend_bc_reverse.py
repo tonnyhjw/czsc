@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     # 判断是否更新缓存
     if args.refresh:
-        tdc.clear()
+        TsDataCache(home_path).clear()
 
     # 根据参数决定运行模式
     if args.dev:
