@@ -45,7 +45,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
             if result:
                 results.append(result)
 
-    email_subject = f"[{subj_lv1}][{ydc.freq_map.get(freq)}ma支撑][A股]{edt}发现{len(results)}个买点"
+    email_subject = f"[{subj_lv1}][{ydc.freq_map.get(freq)}ma支撑][美股]{edt}发现{len(results)}个买点"
     notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
 
 
