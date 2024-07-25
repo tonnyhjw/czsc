@@ -28,12 +28,11 @@ logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="u
 # list_date     19910403
 # Name: 0, dtype: object
 
-tdc = TsDataCache(home_path)
-
 
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), freq: str = 'D',
           subj_lv1="自动盯盘"):
     os.environ['czsc_min_bi_len'] = '7'
+    tdc = TsDataCache(home_path)
 
     stock_basic = tdc.stock_basic()  # 只用于读取股票基础信息
     total_stocks = len(stock_basic)
@@ -82,7 +81,7 @@ if __name__ == '__main__':
     if args.dev:
         logger.info("正在运行开发模式")
         logger.info(f"使用日期范围：{args.sd} 到 {args.ed}")
-        trade_dates = tdc.get_dates_span(args.sd, args.ed, is_open=True)
+        trade_dates = TsDataCache(home_path).get_dates_span(args.sd, args.ed, is_open=True)
         # 将日期格式化为'%Y%m%d'
         for business_date in trade_dates:
             if args.f == "W" and not is_friday(business_date):
