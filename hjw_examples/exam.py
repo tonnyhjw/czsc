@@ -57,18 +57,11 @@ def ma_pzbc_dev():
 @timer
 def us_data_yf(symbol="TSLA"):
     import yfinance as yf
+    stock = yf.Ticker(symbol)
+    info = stock.info
+    pprint.pprint(info)
+    return symbol, info.get('sector', 'N/A'), info.get('industry', 'N/A')
 
-    # 获取纳斯达克100 ETF (QQQ) 的持仓信息
-    qqq = yf.Ticker("QQQ")
-    holdings = qqq.info
-    pprint.pprint(holdings)
-
-    if holdings:
-        components = [holding.get('symbol') for holding in holdings if holding.get('symbol')]
-        print(components)
-    else:
-        print("无法获取成分股信息")
-    return
 
 @timer
 def us_raw_bar():
@@ -80,6 +73,18 @@ def us_raw_bar():
     # pprint.pprint(bars)
 
 
+def us_members():
+    import pandas as pd
+    from src.connectors.yf_cache import YfDataCache
+    ydc = YfDataCache(home_path)  # 在每个进程中创建独立的实例
+
+    sp500 = ydc.wiki_snp500_member()
+    nd100 = ydc.nsdq_100_member()
+    df_combined = pd.concat([nd100, sp500], axis=0, ignore_index=True)
+    for index, row in df_combined.iterrows():
+        print(index, row)
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -88,5 +93,6 @@ if __name__ == '__main__':
     # xd_dev()
     # bi_dev()
     # ma_pzbc_dev()
-    us_data_yf()
+    # us_data_yf()
     # us_raw_bar()
+    us_members()

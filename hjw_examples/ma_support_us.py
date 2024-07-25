@@ -26,17 +26,16 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
     os.environ['czsc_min_bi_len'] = '7'
     ydc = YfDataCache(home_path)
 
-    snp500 = ydc.wiki_snp500_member()  # 只用于读取股票基础信息
-    total_stocks = len(snp500)
+    us_stock_list = ydc.get_us_stock_list()
+    total_stocks = len(us_stock_list)
     results = []  # 用于存储所有股票的结果
 
     with ProcessPoolExecutor(max_workers=2) as executor:
         futures = {}
-        for index, row in snp500.iterrows():
+        for index, row in us_stock_list.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
-            logger.info(f"共{total_stocks}个股票，正在分析第{index}只个股{_ts_code}在{edt}的走势，"
-                        f"进度{round(float(index/total_stocks)*100)}%")
+            logger.info(f"共{total_stocks}个股票，正在分析第{index}只个股{_ts_code}在{edt}的走势")
             future = executor.submit(ma_pzbc_us, row, sdt, edt, freq, 2, timeperiod, last_n)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 

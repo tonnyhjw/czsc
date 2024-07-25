@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import pprint
+
 import yfinance as yf
 import requests
 from bs4 import BeautifulSoup
@@ -67,8 +69,7 @@ class YfDataCache:
 
     # ------------------------------------ 原生接口----------------------------------------------
     def wiki_snp500_member(self):
-        """获取同花顺概念成分股
-
+        """获取标普500成分股
         数据源 https://en.wikipedia.org/wiki/List_of_S%26P_500_companies
         :return:
         """
@@ -90,6 +91,50 @@ class YfDataCache:
             df['ts_code'] = df['symbol']
             df.to_feather(file_cache)
         return df
+
+    def nsdq_100_member(self):
+        """获取纳斯达克100成分股
+        数据源 https://api.nasdaq.com/api/quote/list-type/nasdaq100
+        :return:
+        """
+        url = "https://api.nasdaq.com/api/quote/list-type/nasdaq100"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        cache_path = self.api_path_map["nsdq_100_member"]
+        file_cache = os.path.join(cache_path, f"nsdq_100_member.feather")
+        if not self.refresh and os.path.exists(file_cache):
+            df = pd.read_feather(file_cache)
+            if self.verbose:
+                print(f"wiki_snp500_member: read cache {file_cache}")
+        else:
+            response = requests.get(url, headers=headers)
+            assert response.status_code == 200, f"请求nasdaq100状态码{response.status_code=}"
+            data = response.json()
+            data = data.get('data')
+            assert 'data' in data and 'rows' in data['data'], "请求nasdaq100响应数据结构异常"
+            components = data['data']['rows']
+            df = pd.DataFrame(components)
+            df = df.reset_index(drop=True, inplace=False)
+            df = df[['symbol', 'companyName']]
+            # 重命名列
+            df.columns = ['symbol', 'name']
+            df['sector'] = ''
+            df['industry'] = ''
+            for index, row in df.iterrows():
+                _stock_info = self.get_stock_info(row['symbol'])
+                df.at[index, 'sector'] = _stock_info.get('sector', '')
+                df.at[index, 'industry'] = _stock_info.get('industry', '')
+                time.sleep(0.2)  # 在每次请求之间暂停0.5秒，避免请求过于频繁
+            df['ts_code'] = df['symbol']
+            df.to_feather(file_cache)
+        return df
+
+    def get_us_stock_list(self):
+        sp500 = self.wiki_snp500_member()
+        nd100 = self.nsdq_100_member()
+        us_stock_list = pd.concat([nd100, sp500], axis=0, ignore_index=True)
+        return us_stock_list
 
     def history(self, symbol, start_date=None, end_date=None, freq="D", raw_bar=True):
         """获取日线以上数据
@@ -133,13 +178,11 @@ class YfDataCache:
             kline = format_kline(kline, freq=self.freq_map[freq])
         return kline
 
-    def get_stock_info(self, symbol):
-        try:
-            stock = yf.Ticker(symbol)
-            info = stock.info
-            return symbol, info.get('sector', 'N/A'), info.get('industry', 'N/A')
-        except:
-            return symbol, 'N/A', 'N/A'
+    @staticmethod
+    def get_stock_info(symbol):
+        stock = yf.Ticker(symbol)
+        info = stock.info
+        return info
 
 
 def format_kline(kline: pd.DataFrame, freq: Freq) -> List[RawBar]:
