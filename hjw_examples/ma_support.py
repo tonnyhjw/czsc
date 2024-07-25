@@ -21,14 +21,13 @@ logger.add("statics/logs/day_ma_support.log", rotation="10MB", encoding="utf-8",
 
 
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'),
-          freq: str = 'D', timeperiod: int = 250, last_n: int = 5,
-          subj_lv1="自动盯盘"):
+          freq: str = 'D', timeperiod: int = 250, last_n: int = 5, subj_lv1="自动盯盘"):
     os.environ['czsc_min_bi_len'] = '7'
+    tdc = TsDataCache(home_path)
 
-    stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
+    stock_basic = tdc.stock_basic()  # 只用于读取股票基础信息
     total_stocks = len(stock_basic)
     results = []  # 用于存储所有股票的结果
-    subj_freq = {"D": "日线", "W": "周线"}
 
     with ProcessPoolExecutor(max_workers=2) as executor:
         futures = {}
@@ -45,7 +44,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
             if result:
                 results.append(result)
 
-    email_subject = f"[{subj_lv1}][{subj_freq.get(freq)}ma支撑][A股]{edt}发现{len(results)}个买点"
+    email_subject = f"[{subj_lv1}][{tdc.freq_map.get(freq)}ma支撑][A股]{edt}发现{len(results)}个买点"
     notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
 
 

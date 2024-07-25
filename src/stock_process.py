@@ -194,6 +194,46 @@ def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: in
         return output
 
 
+def ma_pzbc_us(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: int = 250, last_n: int = 5):
+    ydc = YfDataCache(home_path)  # 在每个进程中创建独立的实例
+    _symbol = row.get('Symbol')
+    _name = row.get('Security')
+    _industry = row.get("GICS Sub-Industry")
+    _edt = datetime.datetime.strptime(edt, "%Y%m%d")
+    row['ts_code'] = _symbol
+    row['symbol'] = row.pop("Symbol")
+    row['name'] = row.pop("Security")
+    _db = "MAUS"
+
+    output = {}
+    try:
+        bars = ydc.history(_symbol, start_date=sdt, end_date=edt, freq=freq, raw_bar=True)
+        c = CZSC(bars)
+        _signals = long_term_ma_support(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, db=_db,
+                                        timeperiod=timeperiod, last_n=last_n, **row)
+        logger.debug(_signals)
+
+        for s_value in _signals.values():
+            if "强势盘整背驰" in s_value:
+                s_value_detail = s_value.split("_")
+                symbol_link = f'<a href="https://xueqiu.com/S/{_symbol}">{_symbol}</a>'
+                output = {
+                    'name': _name,
+                    'symbol': symbol_link,
+                    'signals': s_value_detail[0],
+                    'fx_pwr': s_value_detail[1],
+                    'expect_profit(%)': round(float(s_value_detail[2]) * 100, 2),
+                    'industry': _industry
+                }
+    except Exception as e_msg:
+        tb = traceback.format_exc()  # 获取 traceback 信息
+        logger.critical(f"{_symbol} {_name}出现报错，{e_msg}\nTraceback: {tb}")
+
+    finally:
+        gc.collect()
+        return output
+
+
 def row_2_czsc(row, sdt, edt, freq: str = 'W'):
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')

@@ -29,7 +29,7 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
     :param kwargs:
     :return: 信号识别结果
     """
-    db = "MA250"
+    db = kwargs.get("db", "MA250")
     freq = c.freq.value
     v1 = '其他'
     estimated_profit = 0
