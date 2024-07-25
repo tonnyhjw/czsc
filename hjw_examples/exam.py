@@ -57,38 +57,17 @@ def ma_pzbc_dev():
 @timer
 def us_data_yf(symbol="TSLA"):
     import yfinance as yf
-    from datetime import datetime
 
-    # 设置开始日期和结束日期（今天）
-    start_date = '2012-01-01'
-    end_date = datetime.now().strftime('%Y-%m-%d')
+    # 获取纳斯达克100 ETF (QQQ) 的持仓信息
+    qqq = yf.Ticker("QQQ")
+    holdings = qqq.info
+    pprint.pprint(holdings)
 
-    # 获取特斯拉的股票数据
-    tesla = yf.Ticker(symbol)
-    tesla_data = tesla.history(start=start_date, end=end_date)
-
-    # 重置索引，使日期成为一个列
-    tesla_data = tesla_data.reset_index()
-    tesla_data = tesla_data.assign(symbol=symbol)
-    print(tesla_data.columns)
-
-    # # 选择所需的列并重命名
-    # tesla_data = tesla_data[['Date', 'Open', 'High', 'Low', 'Close']]
-    # tesla_data.columns = ['date', 'open', 'high', 'low', 'close']
-    #
-    # # 按日期升序排序
-    # tesla_data = tesla_data.sort_values('date')
-
-    # 显示前几行数据
-    print(tesla_data.head())
-
-    print(tesla_data.tail())
-
-    # 显示数据的基本信息
-    print(tesla_data.info())
-
-    # 可选：将数据保存到 CSV 文件
-    # tesla_data.to_csv('tesla_stock_data.csv', index=False)
+    if holdings:
+        components = [holding.get('symbol') for holding in holdings if holding.get('symbol')]
+        print(components)
+    else:
+        print("无法获取成分股信息")
     return
 
 @timer
@@ -109,5 +88,5 @@ if __name__ == '__main__':
     # xd_dev()
     # bi_dev()
     # ma_pzbc_dev()
-    # us_data_yf()
-    us_raw_bar()
+    us_data_yf()
+    # us_raw_bar()

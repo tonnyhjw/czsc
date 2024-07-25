@@ -44,7 +44,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
     with ProcessPoolExecutor(max_workers=2) as executor:
         futures = {}
         for index, row in snp500.iterrows():
-            _symbol = row.get('Symbol')
+            _symbol = row.get('symbol')
             _today = datetime.datetime.today()
             logger.info(f"共{total_stocks}个股票，正在分析第{index}只个股[{_symbol}]在{edt}的走势，"
                         f"进度{round(float(index/total_stocks)*100)}%")

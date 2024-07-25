@@ -57,13 +57,10 @@ def trend_reverse_ubi_entry(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
 
 def trend_reverse_ubi_entry_us(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
     ydc = YfDataCache(home_path)  # 在每个进程中创建独立的实例
-    _symbol = row.get('Symbol')
-    _name = row.get('Security')
-    _industry = row.get("GICS Sub-Industry")
+    _symbol = row.get('symbol')
+    _name = row.get('name')
+    _industry = row.get("industry")
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
-    row['ts_code'] = _symbol
-    row['symbol'] = row.pop("Symbol")
-    row['name'] = row.pop("Security")
     _db = "BIUS"
 
     output = {}
@@ -196,13 +193,11 @@ def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: in
 
 def ma_pzbc_us(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: int = 250, last_n: int = 5):
     ydc = YfDataCache(home_path)  # 在每个进程中创建独立的实例
-    _symbol = row.get('Symbol')
-    _name = row.get('Security')
-    _industry = row.get("GICS Sub-Industry")
+    _symbol = row.get('symbol')
+    _name = row.get('name')
+    _industry = row.get("industry")
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
-    row['ts_code'] = _symbol
-    row['symbol'] = row.pop("Symbol")
-    row['name'] = row.pop("Security")
+
     _db = "MAUS"
 
     output = {}

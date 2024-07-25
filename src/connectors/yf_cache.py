@@ -47,6 +47,7 @@ class YfDataCache:
         self.api_names = [
             "wiki_snp500_member",
             "history",
+            "nsdq_100_member"
         ]
         self.api_path_map = {k: os.path.join(cache_path, k) for k in self.api_names}
 
@@ -79,12 +80,14 @@ class YfDataCache:
             if self.verbose:
                 print(f"wiki_snp500_member: read cache {file_cache}")
         else:
-
             response = requests.get(url)
             soup = BeautifulSoup(response.content, 'html.parser')
             table = soup.find('table', {'id': 'constituents'})
             df = pd.read_html(str(table))[0]
             df = df.reset_index(drop=True, inplace=False)
+            df = df[['Symbol', 'Security', 'GICS Sector', 'GICS Sub-Industry']]
+            df.columns = ['symbol', 'name', 'sector', 'industry']
+            df['ts_code'] = df['symbol']
             df.to_feather(file_cache)
         return df
 
@@ -129,6 +132,14 @@ class YfDataCache:
         if raw_bar:
             kline = format_kline(kline, freq=self.freq_map[freq])
         return kline
+
+    def get_stock_info(self, symbol):
+        try:
+            stock = yf.Ticker(symbol)
+            info = stock.info
+            return symbol, info.get('sector', 'N/A'), info.get('industry', 'N/A')
+        except:
+            return symbol, 'N/A', 'N/A'
 
 
 def format_kline(kline: pd.DataFrame, freq: Freq) -> List[RawBar]:
