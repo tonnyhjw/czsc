@@ -30,12 +30,12 @@ logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="u
 # Date added                             1957-03-04
 # CIK                                         66740
 # Founded                                      1902
+ydc = YfDataCache(home_path)
 
 
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), freq: str = 'D',
           subj_lv1="自动盯盘"):
     os.environ['czsc_min_bi_len'] = '7'
-    ydc = YfDataCache(home_path)
     snp500 = ydc.wiki_snp500_member()  # 只用于读取股票基础信息
     total_stocks = len(snp500)
     results = []  # 用于存储所有股票的结果
@@ -70,9 +70,14 @@ if __name__ == '__main__':
     parser.add_argument("--sd", default=ana_sdt, help="分析开始日期")
     parser.add_argument("--ed", default=today, help="分析结束日期")
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
+    parser.add_argument("-r", "--refresh", action="store_true", help="更新缓存")
 
     # 解析参数
     args = parser.parse_args()
+
+    # 判断是否更新缓存
+    if args.refresh:
+        ydc.clear()
 
     # 根据参数决定运行模式
     if args.dev:

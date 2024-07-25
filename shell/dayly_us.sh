@@ -4,5 +4,5 @@ source venv/bin/activate
 
 
 # 以最新数据分析当天走势
-python -m hjw_examples.day_trend_bc_reverse_us
+python -m hjw_examples.day_trend_bc_reverse_us -r
 
