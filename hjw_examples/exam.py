@@ -6,9 +6,10 @@ from src.decorate import *
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="600171.sh", symbol="600171", name="上海贝岭", industry="半导体")
+    row = dict(ts_code="TSLA", symbol="TSLA", name="Tesla, Inc.", industry="Automobile Manufacturers")
     sdt, edt = "20180501", "20240708"
-    result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
+    # result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
+    result = trend_reverse_ubi_entry_us(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
 
@@ -86,7 +87,7 @@ def us_members():
 
 
 if __name__ == '__main__':
-    # play_day_trend_reverse()
+    play_day_trend_reverse()
     # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
@@ -95,4 +96,4 @@ if __name__ == '__main__':
     # ma_pzbc_dev()
     # us_data_yf()
     # us_raw_bar()
-    us_members()
+    # us_members()
