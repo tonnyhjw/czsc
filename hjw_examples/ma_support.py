@@ -21,7 +21,7 @@ logger.add("statics/logs/day_ma_support.log", rotation="10MB", encoding="utf-8",
 
 
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'),
-          freq: str = 'D', timeperiod: int = 250, last_n: int = 5, subj_lv1="自动盯盘"):
+          freq: str = 'D', timeperiod: int = 250, last_n: int = 5, subj_lv1="自动盯盘", notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'
     tdc = TsDataCache(home_path)
 
@@ -45,7 +45,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
                 results.append(result)
 
     email_subject = f"[{subj_lv1}][{tdc.freq_map.get(freq)}ma支撑][A股]{edt}发现{len(results)}个买点"
-    notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
+    notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
 
 
 if __name__ == '__main__':
@@ -74,7 +74,7 @@ if __name__ == '__main__':
             if args.f == "W" and not is_friday(business_date):
                 continue
             logger.info(f"测试日期:{business_date}")
-            check(edt=business_date, freq=args.f, timeperiod=args.tp, last_n=args.n, subj_lv1="测试")
+            check(edt=business_date, freq=args.f, timeperiod=args.tp, last_n=args.n, subj_lv1="测试", notify_empty=False)
     else:
         logger.info("正在运行默认模式")
         check(freq=args.f, timeperiod=args.tp, last_n=args.n)

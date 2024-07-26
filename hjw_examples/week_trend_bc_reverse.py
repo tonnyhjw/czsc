@@ -19,7 +19,7 @@ script_name = os.path.basename(__file__)
 logger.add("statics/logs/week_trend_bc_reverse.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
-def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y%m%d')):
+def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y%m%d'), notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'
 
     stock_basic = TsDataCache(home_path).stock_basic()  # 只用于读取股票基础信息
@@ -42,7 +42,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
                 results.append(result)
 
     email_subject = f"[自动盯盘][周线买点][A股]{edt}发现{len(results)}个买点"
-    notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
+    notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
 
 
 if __name__ == '__main__':

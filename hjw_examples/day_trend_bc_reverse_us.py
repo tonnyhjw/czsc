@@ -33,7 +33,7 @@ logger.add("statics/logs/day_trend_bc_reverse_us.log", rotation="10MB", encoding
 
 
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), freq: str = 'D',
-          subj_lv1="自动盯盘"):
+          subj_lv1="自动盯盘", notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'
     ydc = YfDataCache(home_path)
 
@@ -57,7 +57,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
                 results.append(result)
 
     email_subject = f"[{subj_lv1}][{ydc.freq_map.get(freq)}买点][美股]{edt}发现{len(results)}个买点"
-    notify_buy_points(results=results, email_subject=email_subject, notify_empty=False)
+    notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
 
 
 if __name__ == '__main__':
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             if args.f == "W" and not is_friday(business_date):
                 continue
             logger.info(f"测试日期:{business_date}")
-            check(edt=business_date, freq=args.f, subj_lv1="测试")
+            check(edt=business_date, freq=args.f, subj_lv1="测试", notify_empty=False)
     else:
         logger.info("正在运行默认模式")
         check(freq=args.f)
