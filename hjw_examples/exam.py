@@ -7,7 +7,7 @@ from src.decorate import *
 
 def play_day_trend_reverse():
     row = dict(ts_code="TSLA", symbol="TSLA", name="Tesla, Inc.", industry="Automobile Manufacturers")
-    sdt, edt = "20180501", "20240708"
+    sdt, edt = "20180501", "20240612"
     # result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     result = trend_reverse_ubi_entry_us(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
