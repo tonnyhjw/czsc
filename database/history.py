@@ -65,7 +65,7 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
     if isinstance(date, pd.Timestamp):
         date = date.to_pydatetime()
 
-    if not check_duplicate(ts_code, date, db=db):
+    if not buy_point_exists(ts_code, date, freq, db=db):
         try:
             with db_proxy.atomic():
                 buy_point = BuyPoint.create(
