@@ -8,7 +8,7 @@ from czsc.data import TsDataCache
 from src.connectors.yf_cache import YfDataCache
 from src.sig.trend_reverse import trend_reverse_bi, trend_reverse_xd
 from src.sig.pzbc import macd_pzbc_bi
-from src.sig.powers import long_term_ma_support
+from src.sig.powers import long_term_ma_support, long_term_ma_up
 from src.sig.utils import is_strong_bot_fx
 
 
@@ -155,7 +155,7 @@ def bottom_pzbc(row, sdt, edt, freq: str = 'W', fx_dt_limit: int = 30):
         return output
 
 
-def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: int = 250, last_n: int = 5):
+def ma_up_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: int = 250, last_n: int = 5):
     dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')
@@ -167,8 +167,8 @@ def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: in
     try:
         bars = dc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=True)
         c = CZSC(bars)
-        _signals = long_term_ma_support(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq,
-                                        timeperiod=timeperiod, last_n=last_n, **row)
+        _signals = long_term_ma_up(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq,
+                                   timeperiod=timeperiod, last_n=last_n, **row)
         logger.debug(_signals)
         for s_value in _signals.values():
             if "强势盘整背驰" in s_value:
@@ -191,7 +191,7 @@ def ma_pzbc(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: in
         return output
 
 
-def ma_pzbc_us(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: int = 250, last_n: int = 5):
+def ma_up_pzbc_us(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod: int = 250, last_n: int = 5):
     ydc = YfDataCache(home_path)  # 在每个进程中创建独立的实例
     _symbol = row.get('symbol')
     _name = row.get('name')
@@ -204,8 +204,8 @@ def ma_pzbc_us(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperiod:
     try:
         bars = ydc.history(_symbol, start_date=sdt, end_date=edt, freq=freq, raw_bar=True)
         c = CZSC(bars)
-        _signals = long_term_ma_support(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, db=_db,
-                                        timeperiod=timeperiod, last_n=last_n, **row)
+        _signals = long_term_ma_up(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, db=_db,
+                                   timeperiod=timeperiod, last_n=last_n, **row)
         logger.debug(_signals)
 
         for s_value in _signals.values():
