@@ -162,3 +162,33 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
         if last_n_bars[i].cache[ma] < last_n_bars[i - 1].cache[ma]:
             return False
     return True
+
+
+def break_ipo_high(c: CZSC):
+    ipo_high = c.bars_raw[0].high
+    bis = c.bi_list
+    avg_bi_power_volume = np.mean([bi.power_volume for bi in bis[1:]])
+
+    def has_break_ipo_bi():
+        for bi in bis:
+            is_break_ipo_bi = (
+                (bi.direction == Direction.Up, "bi.direction == Direction.Up"),
+                (bi.power_volume > avg_bi_power_volume, "bi.power_volume > avg_bi_power_volume"),
+                (bi.high > ipo_high, "bi.high > ipo_high")
+            )
+            if not select_failed_conditions(is_break_ipo_bi):
+                return True
+        return False
+
+    break_ipo_high_conditions = (
+        (has_break_ipo_bi(), "has_break_ipo_bi"),
+
+    )
+    failed_break_ipo_high_conditions = select_failed_conditions(break_ipo_high_conditions)
+
+    if not failed_break_ipo_high_conditions:
+        return True
+    else:
+        return False
+
+

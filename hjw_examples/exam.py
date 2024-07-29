@@ -86,8 +86,30 @@ def us_members():
         print(index, row)
 
 
+def new_stock_break_ipo(sdt="20230101", edt="20240430"):
+    from czsc.data import TsDataCache
+    from src.sig.powers import break_ipo_high
+
+    tdc = TsDataCache(home_path)
+    stock_basic = tdc.stock_basic()  # 只用于读取股票基础信息
+    total_stocks = len(stock_basic)
+    results = []  # 用于存储所有股票的结果
+
+    for index, row in stock_basic.iterrows():
+        _ts_code = row.get("ts_code")
+        _symbol = row.get('symbol')
+        _hs = _ts_code.split(".")[-1]
+        bars = tdc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq="D", asset="E", adj='qfq', raw_bar=True)
+        if len(bars) > 250:
+            continue
+
+        c = CZSC(bars)
+        if break_ipo_high(c):
+            print(f"https://xueqiu.com/S/{_hs}{_symbol}")
+
+
 if __name__ == '__main__':
-    play_day_trend_reverse()
+    # play_day_trend_reverse()
     # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
@@ -97,3 +119,4 @@ if __name__ == '__main__':
     # us_data_yf()
     # us_raw_bar()
     # us_members()
+    new_stock_break_ipo()
