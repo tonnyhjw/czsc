@@ -102,10 +102,12 @@ def new_stock_break_ipo(sdt="20230101", edt="20240430"):
         bars = tdc.pro_bar(_ts_code, start_date=sdt, end_date=edt, freq="D", asset="E", adj='qfq', raw_bar=True)
         if len(bars) > 250:
             continue
-
-        c = CZSC(bars)
-        if break_ipo_high(c):
-            print(f"https://xueqiu.com/S/{_hs}{_symbol}")
+        try:
+            c = CZSC(bars)
+            if break_ipo_high(c):
+                print(f"https://xueqiu.com/S/{_hs}{_symbol}")
+        except Exception as e_msg:
+            pass
 
 
 if __name__ == '__main__':
