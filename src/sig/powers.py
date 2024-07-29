@@ -55,7 +55,7 @@ def long_term_ma_support(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict
     elif history.buy_point_exists(symbol, latest_fx.dt, freq, db=db):
         v1 = '已存在'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
-    elif not ma_support(c, last_n=last_n, ma_type="SMA", timeperiod=timeperiod, cur_price=cur_price):
+    elif not ma_break_and_support(c, ma_type="SMA", timeperiod=timeperiod, cur_price=cur_price):
         v1 = '均线不达标'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
     else:
@@ -220,8 +220,8 @@ def ma_is_up(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, **kwargs) -> 
     return True
 
 
-def ma_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, **kwargs) -> bool:
-    """盘整背驰后，价格高于均线
+def ma_break_and_support(c: CZSC, ma_type: str,  timeperiod: int, **kwargs) -> bool:
+    """放量突破均线，缩量盘整背驰回调后，价格高于均线
 
     **信号逻辑：**
 
@@ -240,18 +240,25 @@ def ma_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, **kwargs) -
     """
     bars_raw = c.bars_raw
     ma = update_ma_cache(c, ma_type=ma_type, timeperiod=timeperiod)
+    bis = c.bi_list
+    avg_bi_power_volume = np.mean([bi.power_volume for bi in bis])
     cur_price = kwargs.get("cur_price")
 
-    if len(bars_raw) < last_n:
+    def has_break_ma_bi():
+        for bi in bis:
+            is_break_ipo_bi = (
+                (bi.direction == Direction.Up, "bi.direction == Direction.Up"),
+                (bi.power_volume > avg_bi_power_volume, "bi.power_volume > avg_bi_power_volume"),
+                (bi.fx_b.fx > bi.fx_b.new_bars[1].cache[ma], "bi.high > ipo_high")
+            )
+            if not select_failed_conditions(is_break_ipo_bi):
+                return True
         return False
 
     if cur_price < bars_raw[-1].cache[ma] or np.isnan(bars_raw[-1].cache[ma]):
         return False
 
-    last_n_bars = bars_raw[-last_n:]
-    for i in range(1, last_n):
-        if last_n_bars[i].cache[ma] < last_n_bars[i - 1].cache[ma]:
-            return False
+
     return True
 
 
