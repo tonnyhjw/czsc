@@ -166,8 +166,8 @@ def ma_is_up_and_support(c: CZSC, last_n: int, ma_type: str,  timeperiod: int, *
 
 def break_ipo_high(c: CZSC):
     ipo_high = c.bars_raw[0].high
-    bis = c.bi_list
-    avg_bi_power_volume = np.mean([bi.power_volume for bi in bis[1:]])
+    bis = c.bi_list[1:]
+    avg_bi_power_volume = np.mean([bi.power_volume for bi in bis])
 
     def has_break_ipo_bi():
         for bi in bis:
