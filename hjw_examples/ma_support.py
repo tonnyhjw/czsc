@@ -60,9 +60,14 @@ if __name__ == '__main__':
     parser.add_argument("--sd", default=ana_sdt, help="分析开始日期")
     parser.add_argument("--ed", default=today, help="分析结束日期")
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
+    parser.add_argument("-r", "--refresh", action="store_true", help="更新缓存")
 
     # 解析参数
     args = parser.parse_args()
+
+    # 判断是否更新缓存
+    if args.refresh:
+        TsDataCache(home_path).clear()
 
     # 根据参数决定运行模式
     if args.dev:
