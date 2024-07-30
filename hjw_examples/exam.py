@@ -14,8 +14,8 @@ def play_day_trend_reverse():
 
 
 def play_pzbc():
-    row = dict(ts_code="600171.sh", symbol="600171", name="上海贝岭", industry="半导体")
-    sdt, edt = "20200101", "20240223"
+    row = dict(ts_code="600187.sh", symbol="600187", name="国中水务", industry="污水处理")
+    sdt, edt = "20180501", "20240712"
     result = bottom_pzbc(row, sdt, edt, "W", fx_dt_limit=30)
     pprint.pprint(result)
 
@@ -112,7 +112,7 @@ def new_stock_break_ipo(sdt="20230101", edt="20240430"):
 
 if __name__ == '__main__':
     # play_day_trend_reverse()
-    # play_pzbc()
+    play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
     # xd_dev()
@@ -121,4 +121,4 @@ if __name__ == '__main__':
     # us_data_yf()
     # us_raw_bar()
     # us_members()
-    new_stock_break_ipo()
+    # new_stock_break_ipo()
