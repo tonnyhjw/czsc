@@ -13,6 +13,7 @@ db_buy_point_xd = SqliteDatabase(configs.BUY_POINT_XD_PATH)
 db_buy_point_ma250 = SqliteDatabase(configs.BUY_POINT_MA250_PATH)
 db_buy_point_bi_us = SqliteDatabase(configs.BUY_POINT_BI_US_PATH)
 db_buy_point_maus = SqliteDatabase(configs.BUY_POINT_MAUS_PATH)
+db_buy_point_temp = SqliteDatabase(configs.BUY_POINT_TEMP_PATH)
 
 
 # 创建一个数据库代理
@@ -53,8 +54,10 @@ def switch_database(db_choice: str):
         db_proxy.initialize(db_buy_point_ma250)
     elif db_choice == "MAUS":
         db_proxy.initialize(db_buy_point_maus)
+    elif db_choice == "TEMP":
+        db_proxy.initialize(db_buy_point_temp)
     else:
-        raise ValueError(f"Invalid database choice: {db_choice}. Use BI, XD, or MA250.")
+        raise ValueError(f"Invalid database choice: {db_choice}. Use BI, XD, MA250, MAUS, TEMP.")
     # logger.debug(f"Successfully switched to database: {db_proxy.obj.database}")
 
 

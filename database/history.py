@@ -209,7 +209,6 @@ def get_consecutive_symbols(start_date, end_date, min_occurrences: int, freq=Non
     # Peewee查询语句
     query = (query
              .select(BuyPoint.symbol, fn.COUNT(BuyPoint.symbol).alias('count'))
-             # .where((BuyPoint.date.between(start_date, end_date)))
              .group_by(BuyPoint.symbol)
              .having(fn.COUNT(BuyPoint.symbol) > min_occurrences)
              .order_by(fn.COUNT(BuyPoint.symbol).desc()))
@@ -227,5 +226,12 @@ def demo():
     pprint.pp(list(consecutive_symbols))
 
 
+def remove_duplicate_buy_points():
+    query = BuyPoint.select()
+    for e in query:
+        print(f"{e.name} {e.symbol} {e.date}")
+        # insert_buy_point()
+
+
 if __name__ == '__main__':
-    demo()
+    remove_duplicate_buy_points()
