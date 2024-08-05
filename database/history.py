@@ -204,8 +204,9 @@ def get_consecutive_symbols(start_date, end_date, min_occurrences: int, db="BI")
              .group_by(BuyPoint.symbol)
              # .having(fn.COUNT(BuyPoint.symbol) > min_occurrences)
              .order_by(fn.COUNT(BuyPoint.symbol).desc()))
+    results = [(entry.symbol, entry.count) for entry in query]
 
-    return query
+    return results
 
 
 def demo():
