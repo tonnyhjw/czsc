@@ -89,12 +89,13 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
         logger.debug(f"买点已存在: {ts_code} {date}")
 
 
-def query_latest_buy_point(symbol, fx_pwr=None, signals=None, db="BI"):
+def query_latest_buy_point(symbol, fx_pwr=None, signals=None, freq=None, db="BI"):
     """
     根据股票代码查询最近的买点信息，可根据分型强度和信号过滤。
     :param symbol: 股票代码
     :param fx_pwr: 可选，分型强度过滤
     :param signals: 可选，买入信号过滤
+    :param freq: 可选，交易级别过滤
     :param db: 数据库选择，可选BI或XD，默认BI
     :return: 配置好的查询对象
     """
@@ -110,6 +111,10 @@ def query_latest_buy_point(symbol, fx_pwr=None, signals=None, db="BI"):
     # 根据 signals 添加过滤条件
     if signals is not None:
         query = query.where(BuyPoint.signals == signals)
+
+    # 根据 signals 添加过滤条件
+    if freq is not None:
+        query = query.where(BuyPoint.freq == freq)
 
     # 返回按日期降序排序的查询对象
     return query.order_by(BuyPoint.date.desc()).first()
@@ -260,7 +265,9 @@ def demo(db="BI"):
     print(f"Symbols appearing consecutively between {start_date} and {end_date}:")
     pprint.pp(list(consecutive_symbols))
     both_freqs_symbols = find_symbols_with_both_freqs(start_date, end_date, db=db)
-    pprint.pp(list(both_freqs_symbols))
+    for symbol in both_freqs_symbols:
+        bps = query_all_buy_point(symbol, sdt=start_date, edt=end_date, db=db)
+        print(symbol, [bp.freq for bp in bps])
 
 
 if __name__ == '__main__':
