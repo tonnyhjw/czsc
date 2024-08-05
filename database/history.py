@@ -232,7 +232,7 @@ def find_symbols_with_both_freqs(start_date, end_date, db="BI"):
     # 子查询，找出在日期范围内，频率为'w'的symbol
     subquery_w = (BuyPoint
                   .select(BuyPoint.symbol)
-                  .where((BuyPoint.date.between(start_date, end_date)) & (BuyPoint.freq == 'w'))
+                  .where((BuyPoint.date.between(start_date, end_date)) & (BuyPoint.freq == 'W'))
                   .group_by(BuyPoint.symbol))
 
     # 子查询，找出在日期范围内，频率为'D'的symbol
