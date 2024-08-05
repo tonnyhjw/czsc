@@ -231,7 +231,8 @@ def remove_duplicate_buy_points():
     query = BuyPoint.select()
     for e in query:
         print(f"{e.name} {e.symbol} {e.date}")
-        # insert_buy_point()
+        insert_buy_point(e.name, e.symbol, e.ts_code, e.freq, e.signals, e.fx_pwr, e.expect_profit,
+                         e.industry, e.date, db="TEMP")
 
 
 if __name__ == '__main__':
