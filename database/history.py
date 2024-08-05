@@ -267,7 +267,8 @@ def demo(db="BI"):
     both_freqs_symbols = find_symbols_with_both_freqs(start_date, end_date, db=db)
     for symbol in both_freqs_symbols:
         bps = query_all_buy_point(symbol, sdt=start_date, edt=end_date, db=db)
-        print(symbol, [(bp.freq, bp.fx_pwr) for bp in bps])
+        print(symbol, bps[0].name, '='*30)
+        pprint.pp([(bp.freq, bp.fx_pwr, bp.date) for bp in bps])
 
 
 if __name__ == '__main__':
