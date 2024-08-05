@@ -252,13 +252,15 @@ def find_symbols_with_both_freqs(start_date, end_date, db="BI"):
     return results
 
 
-def demo():
+def demo(db="BI"):
     # 使用示例
     start_date = "2024-07-01"
     end_date = "2024-07-15"
-    consecutive_symbols = get_consecutive_symbols(start_date, end_date, 2, db="BI")
+    consecutive_symbols = get_consecutive_symbols(start_date, end_date, 2, db=db)
     print(f"Symbols appearing consecutively between {start_date} and {end_date}:")
     pprint.pp(list(consecutive_symbols))
+    both_freqs_symbols = find_symbols_with_both_freqs(start_date, end_date, db=db)
+    pprint.pp(list(both_freqs_symbols))
 
 
 if __name__ == '__main__':
