@@ -194,15 +194,24 @@ def buy_point_exists(symbol, check_date, freq, signals=None, db="BI"):
     return query.exists()
 
 
-def get_consecutive_symbols(start_date, end_date, min_occurrences: int, db="BI"):
+def get_consecutive_symbols(start_date, end_date, min_occurrences: int, freq=None, signals=None, db="BI"):
     switch_database(db)
 
+    query = BuyPoint.select().where((BuyPoint.date.between(start_date, end_date)))
+
+    # 根据 signals 添加过滤条件
+    if signals is not None:
+        query = query.where(BuyPoint.signals == signals)
+    # 根据 freq 添加过滤条件
+    if freq is not None:
+        query = query.where(BuyPoint.freq == freq)
+
     # Peewee查询语句
-    query = (BuyPoint
+    query = (query
              .select(BuyPoint.symbol, fn.COUNT(BuyPoint.symbol).alias('count'))
-             .where((BuyPoint.date.between(start_date, end_date)))
+             # .where((BuyPoint.date.between(start_date, end_date)))
              .group_by(BuyPoint.symbol)
-             # .having(fn.COUNT(BuyPoint.symbol) > min_occurrences)
+             .having(fn.COUNT(BuyPoint.symbol) > min_occurrences)
              .order_by(fn.COUNT(BuyPoint.symbol).desc()))
     results = [(entry.symbol, entry.count) for entry in query]
 
