@@ -197,9 +197,9 @@ def get_consecutive_symbols(start_date, end_date, min_occurrences=2, signals=Non
 
     # 确保日期格式正确
     if isinstance(start_date, str):
-        start_date = datetime.strptime(start_date, "%Y%m%d").date()
+        start_date = datetime.datetime.strptime(start_date, "%Y%m%d").date()
     if isinstance(end_date, str):
-        end_date = datetime.strptime(end_date, "%Y%m%d").date()
+        end_date = datetime.datetime.strptime(end_date, "%Y%m%d").date()
 
     # 使用原始SQL进行复杂查询
     query = (BuyPoint
