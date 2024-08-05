@@ -1,3 +1,5 @@
+import pprint
+
 from loguru import logger
 import pandas as pd
 
@@ -200,7 +202,7 @@ def get_consecutive_symbols(start_date, end_date, min_occurrences: int, db="BI")
              .select(BuyPoint.symbol, fn.COUNT(BuyPoint.symbol).alias('count'))
              .where((BuyPoint.date.between(start_date, end_date)))
              .group_by(BuyPoint.symbol)
-             .having(fn.COUNT(BuyPoint.symbol) > min_occurrences)
+             # .having(fn.COUNT(BuyPoint.symbol) > min_occurrences)
              .order_by(fn.COUNT(BuyPoint.symbol).desc()))
 
     return query
@@ -208,12 +210,11 @@ def get_consecutive_symbols(start_date, end_date, min_occurrences: int, db="BI")
 
 def demo():
     # 使用示例
-    start_date = "20240701"
-    end_date = "20240801"
+    start_date = "2024-07-01"
+    end_date = "2024-08-01"
     consecutive_symbols = get_consecutive_symbols(start_date, end_date, min_occurrences=2, db="BI")
     print(f"Symbols appearing consecutively between {start_date} and {end_date}:")
-    for row in consecutive_symbols:
-        print(row)
+    pprint.pp(list(consecutive_symbols))
 
 
 if __name__ == '__main__':
