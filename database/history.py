@@ -201,48 +201,33 @@ def get_consecutive_symbols(start_date, end_date, min_occurrences=2, signals=Non
     if isinstance(end_date, str):
         end_date = datetime.datetime.strptime(end_date, "%Y%m%d").date()
 
-    # 使用原始SQL进行复杂查询
-    query = (BuyPoint
-             .select(BuyPoint.symbol, fn.DATE(BuyPoint.date).alias('date'))
-             .where((BuyPoint.date >= start_date) & (BuyPoint.date <= end_date))
-             .group_by(BuyPoint.symbol, fn.DATE(BuyPoint.date))
-             .order_by(BuyPoint.symbol, BuyPoint.date))
+    # 使用子查询来找出连续出现的 symbol
+    subquery = (BuyPoint
+                .select(
+                    BuyPoint.symbol,
+                    fn.DATE(BuyPoint.date).alias('date'),
+                    (fn.DATE(BuyPoint.date) - fn.JULIANDAY(BuyPoint.symbol)).alias('date_group')
+                )
+                .where((BuyPoint.date >= start_date) & (BuyPoint.date <= end_date))
+                .alias('subquery'))
 
-    # 根据 signals 添加过滤条件
-    if signals is not None:
-        query = query.where(BuyPoint.signals == signals)
+    # 主查询：计算连续出现的天数并筛选
+    query = (subquery
+             .select(
+                 subquery.c.symbol,
+                 fn.COUNT(subquery.c.date_group).alias('consecutive_days')
+             )
+             .group_by(subquery.c.symbol, subquery.c.date_group)
+             .having(fn.COUNT(subquery.c.date_group) >= min_occurrences)
+             .order_by(subquery.c.symbol))
 
-    # 根据 signals 添加过滤条件
-    if freq is not None:
-        query = query.where(BuyPoint.freq == freq)
-
-    # 执行查询并获取结果
-    result = query.dicts()
-
-    # 处理结果以找出连续出现的symbol
+    # 执行查询并处理结果
     consecutive_symbols = {}
-    current_symbol = None
-    consecutive_days = 0
-    last_date = None
-
-    for row in result:
-        symbol = row['symbol']
-        date = row['date']
-
-        if symbol != current_symbol:
-            current_symbol = symbol
-            consecutive_days = 1
-            last_date = date
-        else:
-            if (date - last_date).days == 1:
-                consecutive_days += 1
-            else:
-                consecutive_days = 1
-            last_date = date
-
-        if consecutive_days >= min_occurrences:
-            if symbol not in consecutive_symbols or consecutive_days > consecutive_symbols[symbol]:
-                consecutive_symbols[symbol] = consecutive_days
+    for result in query.dicts():
+        symbol = result['symbol']
+        days = result['consecutive_days']
+        if symbol not in consecutive_symbols or days > consecutive_symbols[symbol]:
+            consecutive_symbols[symbol] = days
 
     return consecutive_symbols
 
@@ -251,7 +236,7 @@ def demo():
     # 使用示例
     start_date = "20240701"
     end_date = "20240801"
-    consecutive_symbols = get_consecutive_symbols(start_date, end_date, min_occurrences=2)
+    consecutive_symbols = get_consecutive_symbols(start_date, end_date, min_occurrences=2, db="BI")
     print(f"Symbols appearing consecutively between {start_date} and {end_date}:")
     for symbol, days in consecutive_symbols.items():
         print(f"{symbol}: {days} consecutive days")
