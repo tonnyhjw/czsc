@@ -227,6 +227,7 @@ def demo():
 
 
 def remove_duplicate_buy_points():
+    switch_database("BI")
     query = BuyPoint.select()
     for e in query:
         print(f"{e.name} {e.symbol} {e.date}")
