@@ -12,7 +12,7 @@ sys.path.insert(0, '..')
 from czsc import home_path
 from czsc.data import TsDataCache
 from src.notify import notify_buy_points
-from src.stock_process import ma_pzbc
+from src.stock_process import ma_up_pzbc
 from src import is_friday
 
 idx = 1000
@@ -36,7 +36,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
             _today = datetime.datetime.today()
             logger.info(f"共{total_stocks}个股票，正在分析第{index}只个股{_ts_code}在{edt}的走势，"
                         f"进度{round(float(index/total_stocks)*100)}%")
-            future = executor.submit(ma_pzbc, row, sdt, edt, freq, 2, timeperiod, last_n)
+            future = executor.submit(ma_up_pzbc, row, sdt, edt, freq, 2, timeperiod, last_n)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -60,9 +60,14 @@ if __name__ == '__main__':
     parser.add_argument("--sd", default=ana_sdt, help="分析开始日期")
     parser.add_argument("--ed", default=today, help="分析结束日期")
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
+    parser.add_argument("-r", "--refresh", action="store_true", help="更新缓存")
 
     # 解析参数
     args = parser.parse_args()
+
+    # 判断是否更新缓存
+    if args.refresh:
+        TsDataCache(home_path).clear()
 
     # 根据参数决定运行模式
     if args.dev:
