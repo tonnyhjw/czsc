@@ -217,15 +217,6 @@ def get_consecutive_symbols(start_date, end_date, min_occurrences: int, freq=Non
     return results
 
 
-def demo():
-    # 使用示例
-    start_date = "2024-07-01"
-    end_date = "2024-08-01"
-    consecutive_symbols = get_consecutive_symbols(start_date, end_date, min_occurrences=2, db="BI")
-    print(f"Symbols appearing consecutively between {start_date} and {end_date}:")
-    pprint.pp(list(consecutive_symbols))
-
-
 def remove_duplicate_buy_points():
     switch_database("BI")
     query = BuyPoint.select()
@@ -235,5 +226,40 @@ def remove_duplicate_buy_points():
                          e.industry, e.date, db="TEMP")
 
 
+def find_symbols_with_both_freqs(start_date, end_date, db="BI"):
+    switch_database(db)
+
+    # 子查询，找出在日期范围内，频率为'w'的symbol
+    subquery_w = (BuyPoint
+                  .select(BuyPoint.symbol)
+                  .where((BuyPoint.date.between(start_date, end_date)) & (BuyPoint.freq == 'w'))
+                  .group_by(BuyPoint.symbol))
+
+    # 子查询，找出在日期范围内，频率为'D'的symbol
+    subquery_d = (BuyPoint
+                  .select(BuyPoint.symbol)
+                  .where((BuyPoint.date.between(start_date, end_date)) & (BuyPoint.freq == 'D'))
+                  .group_by(BuyPoint.symbol))
+
+    # 找出既在subquery_w又在subquery_d中的symbol
+    query = (BuyPoint
+             .select(BuyPoint.symbol)
+             .where(BuyPoint.symbol.in_(subquery_w) & BuyPoint.symbol.in_(subquery_d))
+             .group_by(BuyPoint.symbol))
+
+    # 执行查询并返回结果
+    results = [entry.symbol for entry in query]
+    return results
+
+
+def demo():
+    # 使用示例
+    start_date = "2024-07-01"
+    end_date = "2024-07-15"
+    consecutive_symbols = find_symbols_with_both_freqs(start_date, end_date, db="BI")
+    print(f"Symbols appearing consecutively between {start_date} and {end_date}:")
+    pprint.pp(list(consecutive_symbols))
+
+
 if __name__ == '__main__':
-    remove_duplicate_buy_points()
+    demo()
