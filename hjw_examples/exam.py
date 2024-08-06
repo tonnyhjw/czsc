@@ -48,14 +48,6 @@ def bi_dev():
 
 
 @timer
-def ma_pzbc_dev():
-    row = dict(ts_code="836504.BJ", symbol="836504", name="博迅生物", industry="医疗保健")
-    sdt, edt = "20180501", "20240524"
-    ma_pzbc(row, sdt, edt, "D", 5)
-    return
-
-
-@timer
 def us_data_yf(symbol="TSLA"):
     import yfinance as yf
     stock = yf.Ticker(symbol)
@@ -110,9 +102,17 @@ def new_stock_break_ipo(sdt="20230101", edt="20240430"):
             pass
 
 
+@timer
+def play_sw_members():
+    from czsc.connectors import ts_connector
+    members = ts_connector.get_sw_members(level="L3")
+    for index, row in members.iterrows():
+        print(index, row["industry_name"], row["con_code"])
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
-    play_pzbc()
+    # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
     # xd_dev()
@@ -122,3 +122,4 @@ if __name__ == '__main__':
     # us_raw_bar()
     # us_members()
     # new_stock_break_ipo()
+    play_sw_members()
