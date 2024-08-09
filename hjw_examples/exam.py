@@ -156,7 +156,7 @@ def money_flow():
             for i, row in _flow_data.iterrows():
                 symbol, exchange = row.get("ts_code").split(".")
                 if history.check_duplicate(symbol, check_date=business_date, days=5, db="BI"):
-                    print(f"{symbol}: {sort_key}_{i}")
+                    print(f"{symbol}: {sort_key}_{i} {trade_dates=}")
 
 
 if __name__ == '__main__':
