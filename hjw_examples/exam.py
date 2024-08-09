@@ -126,9 +126,8 @@ def db_dev():
     business_date = "20240205"
     _business_date = datetime.datetime.strptime(business_date, "%Y%m%d")
     buy_points = history.query_all_buy_point('300059', edt=_business_date)
-    # pprint.pprint(buy_points)
-    for bp in buy_points:
-        print(bp)
+    pprint.pprint(list(buy_points.dicts()))
+
 
 
 @timer
