@@ -163,7 +163,7 @@ def query_all_buy_point(symbol, fx_pwr=None, signals=None, freq=None, sdt=None, 
         query = query.where(BuyPoint.date >= sdt)
 
     # 根据 结束时间 添加过滤条件
-    if sdt is not None:
+    if edt is not None:
         query = query.where(BuyPoint.date <= edt)
 
     # 返回按日期降序排序的查询对象
