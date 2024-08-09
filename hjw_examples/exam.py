@@ -159,7 +159,7 @@ def money_flow():
                 if history.check_duplicate(symbol, check_date=_business_date, days=5, db="BI"):
                     buy_points = history.query_all_buy_point(symbol, edt=_business_date)
                     buy_point = buy_points[-1]
-                    logger.info(f"{symbol}: {sort_key}_{i} {business_date=} {buy_point.date} "
+                    logger.info(f"{symbol} {buy_point.name}: {sort_key}_{i} {business_date=} {buy_point.date} "
                                 f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
 
 
