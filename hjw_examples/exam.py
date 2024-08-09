@@ -122,6 +122,13 @@ def get_hk_hold():
         print(index, hold)
 
 
+def db_dev():
+    business_date = "20240205"
+    _business_date = datetime.datetime.strptime(business_date, "%Y%m%d")
+    buy_points = history.query_all_buy_point('300059', edt=_business_date)
+    pprint.pprint(buy_points)
+
+
 @timer
 def get_hsgt():
     top_stocks = dc.hsgt_top10(trade_date='20240805', market_type='1')
@@ -178,4 +185,5 @@ if __name__ == '__main__':
     # play_sw_members()
     # get_hk_hold()
     # get_hsgt()
-    money_flow()
+    # money_flow()
+    db_dev()
