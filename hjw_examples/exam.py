@@ -129,6 +129,20 @@ def db_dev():
     pprint.pprint(list(buy_points.dicts()))
 
 
+def get_relative_str_date(date_str: str, n_day=30):
+    from datetime import datetime
+    from dateutil.relativedelta import relativedelta
+
+    # 将字符串转换为日期对象
+    date_obj = datetime.strptime(date_str, "%Y%m%d")
+
+    # 计算一个月前的日期
+    one_month_ago = date_obj - relativedelta(days=n_day)
+
+    # 将日期对象转换回字符串格式
+    one_month_ago_str = one_month_ago.strftime("%Y%m%d")
+    return one_month_ago_str
+
 
 @timer
 def get_hsgt():
@@ -158,9 +172,10 @@ def money_flow():
     # 将日期格式化为'%Y%m%d'
     for business_date in trade_dates:
         # logger.info(f"测试日期:{business_date}")
-        flow_data = dc.moneyflow(trade_date=business_date)
+        start_date, end_date = get_relative_str_date(business_date), business_date
+        flow_data = dc.moneyflow(start_date=start_date, end_date=end_date)
         for sort_key in sort_keys:
-            _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(10)
+            _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(50)
             for i, row in _flow_data.iterrows():
                 symbol, exchange = row.get("ts_code").split(".")
                 _business_date = datetime.datetime.strptime(business_date, "%Y%m%d")
