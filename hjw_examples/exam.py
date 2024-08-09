@@ -2,8 +2,12 @@ import os
 import pprint
 
 from src.stock_process import *
+from database import history
 from src.decorate import *
+import czsc
 
+cache_path = os.getenv("TS_CACHE_PATH", os.path.expanduser("~/.ts_data_cache"))
+dc = czsc.DataClient(url="http://api.tushare.pro", cache_path=cache_path)
 
 def play_day_trend_reverse():
     row = dict(ts_code="TSLA", symbol="TSLA", name="Tesla, Inc.", industry="Automobile Manufacturers")
@@ -110,6 +114,51 @@ def play_sw_members():
         print(index, row["industry_name"], row["con_code"])
 
 
+@timer
+def get_hk_hold():
+    holds = dc.hk_hold(trade_date='20240805', exchange='SZ')
+    holds = holds.sort_values('ratio', ascending=False, ignore_index=True)
+    for index, hold in holds.iterrows():
+        print(index, hold)
+
+
+@timer
+def get_hsgt():
+    top_stocks = dc.hsgt_top10(trade_date='20240805', market_type='1')
+    top_stocks = top_stocks.sort_values('net_amount', ascending=False, ignore_index=True)
+    print(top_stocks)
+    # for index, stock in top_stocks.iterrows():
+    #     print(index, "="*30)
+    #     print(stock)
+
+
+def money_flow():
+    sd, ed = "20240501", "20240701"
+    sort_keys = ["net_mf_vol", "buy_sm_vol", "buy_md_vol", "buy_lg_vol"]
+    # flow_data = dc.moneyflow(ts_code='301548.SZ')
+    # flow_data = dc.moneyflow(trade_date='20240607')
+    # flow_data = dc.moneyflow(start_date='20240501', end_date='20240701')
+    # flow_data = flow_data.sort_values('net_mf_vol', ascending=False, ignore_index=True)
+    # print(flow_data.head(10))
+    # flow_data = flow_data.sort_values('buy_lg_vol', ascending=False, ignore_index=True)
+    # print(flow_data.head(10))
+    # flow_data = flow_data.sort_values('buy_md_vol', ascending=False, ignore_index=True)
+    # print(flow_data.head(10))
+    # flow_data = flow_data.sort_values('buy_sm_vol', ascending=False, ignore_index=True)
+    # print(flow_data.head(10)['trade_date'].tolist())
+    trade_dates = TsDataCache(home_path).get_dates_span(sd, ed, is_open=True)
+    # 将日期格式化为'%Y%m%d'
+    for business_date in trade_dates:
+        logger.info(f"测试日期:{business_date}")
+        flow_data = dc.moneyflow(trade_date=business_date)
+        for sort_key in sort_keys:
+            _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(10)
+            for i, row in _flow_data.iterrows():
+                symbol, exchange = row.get("ts_code").split(".")
+                if history.check_duplicate(symbol, check_date=business_date, days=5, db="BI"):
+                    print(f"{symbol}: {sort_key}_{i}")
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -122,4 +171,7 @@ if __name__ == '__main__':
     # us_raw_bar()
     # us_members()
     # new_stock_break_ipo()
-    play_sw_members()
+    # play_sw_members()
+    # get_hk_hold()
+    # get_hsgt()
+    money_flow()
