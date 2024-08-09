@@ -157,7 +157,7 @@ def money_flow():
     trade_dates = TsDataCache(home_path).get_dates_span(sd, ed, is_open=True)
     # 将日期格式化为'%Y%m%d'
     for business_date in trade_dates:
-        logger.info(f"测试日期:{business_date}")
+        # logger.info(f"测试日期:{business_date}")
         flow_data = dc.moneyflow(trade_date=business_date)
         for sort_key in sort_keys:
             _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(10)
@@ -186,5 +186,5 @@ if __name__ == '__main__':
     # play_sw_members()
     # get_hk_hold()
     # get_hsgt()
-    # money_flow()
-    db_dev()
+    money_flow()
+    # db_dev()
