@@ -134,7 +134,7 @@ def get_hsgt():
 
 def money_flow():
     sd, ed = "20240501", "20240701"
-    sort_keys = ["net_mf_vol", "buy_sm_vol", "buy_md_vol", "buy_lg_vol"]
+    sort_keys = ["net_mf_amount", "buy_sm_amount", "buy_md_amount", "buy_lg_amount"]
     # flow_data = dc.moneyflow(ts_code='301548.SZ')
     # flow_data = dc.moneyflow(trade_date='20240607')
     # flow_data = dc.moneyflow(start_date='20240501', end_date='20240701')
@@ -157,7 +157,7 @@ def money_flow():
                 symbol, exchange = row.get("ts_code").split(".")
                 _business_date = datetime.datetime.strptime(business_date, "%Y%m%d")
                 if history.check_duplicate(symbol, check_date=_business_date, days=5, db="BI"):
-                    print(f"{symbol}: {sort_key}_{i} {business_date=}")
+                    logger.info(f"{symbol}: {sort_key}_{i} {business_date=}")
 
 
 if __name__ == '__main__':
