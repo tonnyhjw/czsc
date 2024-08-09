@@ -155,8 +155,9 @@ def money_flow():
             _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(10)
             for i, row in _flow_data.iterrows():
                 symbol, exchange = row.get("ts_code").split(".")
-                if history.check_duplicate(symbol, check_date=business_date, days=5, db="BI"):
-                    print(f"{symbol}: {sort_key}_{i} {trade_dates=}")
+                _business_date = datetime.datetime.strptime(business_date, "%Y%m%d")
+                if history.check_duplicate(symbol, check_date=_business_date, days=5, db="BI"):
+                    print(f"{symbol}: {sort_key}_{i} {business_date=}")
 
 
 if __name__ == '__main__':
