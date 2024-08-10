@@ -37,7 +37,7 @@ def check(target_day: str = datetime.datetime.now().strftime('%Y%m%d'), n_days: 
             result = future.result()
             if result:
                 results.append(result)
-    email_subject = f"[{subj_lv1}][资金流向][A股]{target_day}发现{len(results)}个买点自参照资金流放大"
+    email_subject = f"[{subj_lv1}][资金流向][A股]{target_day}发现{len(results)}个自参照资金流放大买点"
     notify_money_flow(results=results, email_subject=email_subject, notify_empty=notify_empty)
 
 
