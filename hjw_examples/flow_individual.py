@@ -66,5 +66,5 @@ if __name__ == '__main__':
             logger.info(f"测试日期:{business_date}")
             check(business_date, args.n, subj_lv1="测试", notify_empty=False)
     else:
-        logger.info("正在运行默认模式")
+        logger.info(f"正在运行默认模式，目标日期：{args.tgd}，共{args.n}天")
         check(args.tgd, args.n)

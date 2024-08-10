@@ -177,8 +177,8 @@ def get_relative_str_date(date_str: str, n_day=30):
     date_obj = datetime.datetime.strptime(date_str, "%Y%m%d")
 
     # 计算一个月前的日期
-    one_month_ago = date_obj - relativedelta(days=n_day)
+    relative_date = date_obj - relativedelta(days=n_day)
 
     # 将日期对象转换回字符串格式
-    one_month_ago_str = one_month_ago.strftime("%Y%m%d")
-    return one_month_ago_str
+    relative_date = relative_date.strftime("%Y%m%d")
+    return relative_date
