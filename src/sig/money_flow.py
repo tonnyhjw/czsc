@@ -24,8 +24,8 @@ def money_flow_global(target_day, n_days, head_n: int = 50):
             if history.check_duplicate(symbol, check_date=_target_day, days=5, db="BI"):
                 buy_points = history.query_all_buy_point(symbol, edt=_target_day)
                 buy_point = buy_points[-1]
-                if buy_point.signals == "一买":
-                    continue    # 排除一买
+                #if buy_point.signals == "一买":
+                #    continue    # 排除一买
                 sort_type = MONEY_FLOW_SORT_KEYS_AMOUNT.get(sort_key)
 
                 logger.info(f"{symbol} {buy_point.name}: {sort_type}_{i}"
