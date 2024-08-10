@@ -9,13 +9,15 @@ from concurrent.futures import ProcessPoolExecutor
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
-from czsc import home_path
+from czsc import home_path, DataClient
 from czsc.data import TsDataCache
 from src.notify import notify_buy_points
 from src.sig.money_flow import money_flow_individual
 from src.sig.utils import get_relative_str_date
 
 script_name = os.path.basename(__file__)
+cache_path = os.getenv("TS_CACHE_PATH", os.path.expanduser("~/.ts_data_cache"))
+dc = DataClient(url="http://api.tushare.pro", cache_path=cache_path)
 logger.add("statics/logs/flow.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
@@ -24,10 +26,13 @@ def check(target_day: str = datetime.datetime.now().strftime('%Y%m%d'), n_days: 
     start_date = get_relative_str_date(target_day, n_days)
     tdc = TsDataCache(home_path)
     stock_basic = tdc.stock_basic()  # 只用于读取股票基础信息
-    for index, row in stock_basic.iterrows():
-        _ts_code = row.get('ts_code')
-        _today = datetime.datetime.today()
-        money_flow_individual(_ts_code, start_date, target_day)
+    with ProcessPoolExecutor(max_workers=2) as executor:
+        futures = {}
+        for index, row in stock_basic.iterrows():
+            _ts_code = row.get('ts_code')
+            _today = datetime.datetime.today()
+            money_flow_individual(_ts_code, start_date, target_day)
+            future = executor.submit(money_flow_individual, _ts_code, start_date, target_day)
 
 
 if __name__ == '__main__':
