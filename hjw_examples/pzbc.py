@@ -57,7 +57,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="这是一个示例程序")
     # 添加参数
     parser.add_argument("--f", type=str, default="W", help="K线级别，通常周线以上")
-    parser.add_argument("--sdt", default=sdt, help="分析结束日期")
+    parser.add_argument("--sdt", default=sdt, help="取值范围日期上限")
     parser.add_argument("--sd", default=ana_sdt, help="分析开始日期")
     parser.add_argument("--ed", default=today, help="分析结束日期")
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
@@ -80,7 +80,7 @@ if __name__ == '__main__':
             if args.f == "W" and not is_friday(business_date):
                 continue
             logger.info(f"测试日期:{business_date}")
-            check(edt=business_date, freq=args.f, notify_empty=False)
+            check(sdt=args.sdt, edt=business_date, freq=args.f, notify_empty=False)
     else:
         logger.info("正在运行默认模式")
         check(sdt=args.sdt, freq=args.f)

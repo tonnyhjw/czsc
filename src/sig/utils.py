@@ -2,6 +2,8 @@ import datetime
 from loguru import logger
 from itertools import chain
 from typing import List, Optional
+from dateutil.relativedelta import relativedelta
+
 
 from czsc.utils.sig import get_zs_seq, check_gap_info
 from czsc import CZSC
@@ -151,3 +153,32 @@ def get_xd_zs_seq(xds: List[XD]) -> List[XDZS]:
                 zs_list[-1] = zs
 
     return zs_list
+
+
+MONEY_FLOW_SORT_KEYS_AMOUNT = dict(
+    net_mf_amount="净流入额（万元）",
+    buy_sm_amount="小单买入金额（万元）",
+    buy_md_amount="中单买入金额（万元）",
+    buy_lg_amount="大单买入金额（万元）",
+    buy_elg_amount="特大单买入金额（万元）"
+)
+
+MONEY_FLOW_SORT_KEYS_VOL = dict(
+    net_mf_vol="净流入量（手）",
+    buy_sm_vol="小单买入量（手）",
+    buy_md_vol="中单买入量（手）",
+    buy_lg_vol="大单买入量（手）",
+    buy_elg_vol="特大单买入量（手）"
+)
+
+
+def get_relative_str_date(date_str: str, n_day=30):
+    # 将字符串转换为日期对象
+    date_obj = datetime.datetime.strptime(date_str, "%Y%m%d")
+
+    # 计算一个月前的日期
+    one_month_ago = date_obj - relativedelta(days=n_day)
+
+    # 将日期对象转换回字符串格式
+    one_month_ago_str = one_month_ago.strftime("%Y%m%d")
+    return one_month_ago_str

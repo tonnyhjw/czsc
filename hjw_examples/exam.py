@@ -129,21 +129,6 @@ def db_dev():
     pprint.pprint(list(buy_points.dicts()))
 
 
-def get_relative_str_date(date_str: str, n_day=30):
-    from datetime import datetime
-    from dateutil.relativedelta import relativedelta
-
-    # 将字符串转换为日期对象
-    date_obj = datetime.strptime(date_str, "%Y%m%d")
-
-    # 计算一个月前的日期
-    one_month_ago = date_obj - relativedelta(days=n_day)
-
-    # 将日期对象转换回字符串格式
-    one_month_ago_str = one_month_ago.strftime("%Y%m%d")
-    return one_month_ago_str
-
-
 @timer
 def get_hsgt():
     top_stocks = dc.hsgt_top10(trade_date='20240805', market_type='1')
@@ -152,38 +137,6 @@ def get_hsgt():
     # for index, stock in top_stocks.iterrows():
     #     print(index, "="*30)
     #     print(stock)
-
-
-def money_flow():
-    sd, ed = "20240201", "20240808"
-    sort_keys = ["net_mf_amount", "buy_sm_amount", "buy_md_amount", "buy_lg_amount"]
-    # flow_data = dc.moneyflow(ts_code='301548.SZ')
-    # flow_data = dc.moneyflow(trade_date='20240607')
-    # flow_data = dc.moneyflow(start_date='20240501', end_date='20240701')
-    # flow_data = flow_data.sort_values('net_mf_vol', ascending=False, ignore_index=True)
-    # print(flow_data.head(10))
-    # flow_data = flow_data.sort_values('buy_lg_vol', ascending=False, ignore_index=True)
-    # print(flow_data.head(10))
-    # flow_data = flow_data.sort_values('buy_md_vol', ascending=False, ignore_index=True)
-    # print(flow_data.head(10))
-    # flow_data = flow_data.sort_values('buy_sm_vol', ascending=False, ignore_index=True)
-    # print(flow_data.head(10)['trade_date'].tolist())
-    trade_dates = TsDataCache(home_path).get_dates_span(sd, ed, is_open=True)
-    # 将日期格式化为'%Y%m%d'
-    for business_date in trade_dates:
-        # logger.info(f"测试日期:{business_date}")
-        start_date, end_date = get_relative_str_date(business_date), business_date
-        flow_data = dc.moneyflow(start_date=start_date, end_date=end_date)
-        for sort_key in sort_keys:
-            _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(50)
-            for i, row in _flow_data.iterrows():
-                symbol, exchange = row.get("ts_code").split(".")
-                _business_date = datetime.datetime.strptime(business_date, "%Y%m%d")
-                if history.check_duplicate(symbol, check_date=_business_date, days=5, db="BI"):
-                    buy_points = history.query_all_buy_point(symbol, edt=_business_date)
-                    buy_point = buy_points[-1]
-                    logger.info(f"{symbol} {buy_point.name}: {sort_key}_{i} {business_date=} {buy_point.date} "
-                                f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
 
 
 if __name__ == '__main__':
@@ -201,5 +154,5 @@ if __name__ == '__main__':
     # play_sw_members()
     # get_hk_hold()
     # get_hsgt()
-    money_flow()
-    # db_dev()
+    # money_flow_global()
+    db_dev()
