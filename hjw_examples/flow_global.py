@@ -30,7 +30,7 @@ def check(target_day: str = datetime.datetime.now().strftime('%Y%m%d'), n_days: 
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
-            future = executor.submit(money_flow_individual, _ts_code, target_day, n_days)
+            future = executor.submit(money_flow_global, _ts_code, target_day, n_days)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):

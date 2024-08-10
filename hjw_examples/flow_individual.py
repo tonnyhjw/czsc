@@ -11,7 +11,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import home_path, DataClient
 from czsc.data import TsDataCache
-from src.notify import notify_buy_points
+from src.notify import notify_money_flow
 from src.sig.money_flow import money_flow_individual
 
 script_name = os.path.basename(__file__)
@@ -38,7 +38,7 @@ def check(target_day: str = datetime.datetime.now().strftime('%Y%m%d'), n_days: 
             if result:
                 results.append(result)
     email_subject = f"[{subj_lv1}][资金流向][A股]{target_day}发现{len(results)}个买点自参照资金流放大"
-    notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
+    notify_money_flow(results=results, email_subject=email_subject, notify_empty=notify_empty)
 
 
 if __name__ == '__main__':

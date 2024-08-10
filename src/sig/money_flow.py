@@ -15,19 +15,19 @@ def money_flow_global(target_day, n_days):
     # flow_data = dc.moneyflow(trade_date='20240607')
     # flow_data = dc.moneyflow(start_date='20240501', end_date='20240701')
 
-    start_date, end_date = get_relative_str_date(target_day, n_days), business_date
+    start_date, end_date = get_relative_str_date(target_day, n_days), target_day
     flow_data = dc.moneyflow(start_date=start_date, end_date=end_date)
     for sort_key in MONEY_FLOW_SORT_KEYS_AMOUNT:
         _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(50)
         for i, row in _flow_data.iterrows():
             symbol, exchange = row.get("ts_code").split(".")
-            _business_date = datetime.datetime.strptime(business_date, "%Y%m%d")
-            if history.check_duplicate(symbol, check_date=_business_date, days=5, db="BI"):
-                buy_points = history.query_all_buy_point(symbol, edt=_business_date)
+            _target_day = datetime.datetime.strptime(target_day, "%Y%m%d")
+            if history.check_duplicate(symbol, check_date=_target_day, days=5, db="BI"):
+                buy_points = history.query_all_buy_point(symbol, edt=_target_day)
                 buy_point = buy_points[-1]
                 # if buy_point.signals != "一买":
                 logger.info(f"{symbol} {buy_point.name}: {MONEY_FLOW_SORT_KEYS_AMOUNT.get(sort_key)}_{i}"
-                            f" {business_date=} {buy_point.date} "
+                            f" {target_day=} {buy_point.date} "
                             f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
 
 
