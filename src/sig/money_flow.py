@@ -48,7 +48,7 @@ def money_flow_global(target_day, n_days, head_n: int = 50):
 
     if flow_types and results:
         # 指定要添加的flow_types
-        results = [{**r, "flow_types": "，".join(flow_types.get(r["name"]))} for r in results]
+        results = [{**r, "flow_types(RANK)": "，".join(flow_types.get(r["name"]))} for r in results]
 
     return results
 
