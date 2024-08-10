@@ -31,7 +31,7 @@ def money_flow_global(target_day, n_days, head_n: int = 50):
                             f" {target_day=} {buy_point.date} "
                             f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
                 flow_type = f"{sort_type}_{i+1}"
-                if flow_types.get(symbol):
+                if flow_types.get(buy_point.name):
                     flow_types[buy_point.name].append(flow_type)
                 else:
                     flow_types[buy_point.name] = [flow_type]
