@@ -23,7 +23,6 @@ logger.add("statics/logs/flow.log", rotation="10MB", encoding="utf-8", enqueue=T
 
 def check(target_day: str = datetime.datetime.now().strftime('%Y%m%d'), n_days: int = 365,
           subj_lv1="自动盯盘", notify_empty=True):
-    start_date = get_relative_str_date(target_day, n_days)
     tdc = TsDataCache(home_path)
     stock_basic = tdc.stock_basic()  # 只用于读取股票基础信息
     with ProcessPoolExecutor(max_workers=2) as executor:
@@ -31,8 +30,7 @@ def check(target_day: str = datetime.datetime.now().strftime('%Y%m%d'), n_days: 
         for index, row in stock_basic.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
-            money_flow_individual(_ts_code, start_date, target_day)
-            future = executor.submit(money_flow_individual, _ts_code, start_date, target_day)
+            future = executor.submit(money_flow_individual, _ts_code, target_day, n_days)
 
 
 if __name__ == '__main__':

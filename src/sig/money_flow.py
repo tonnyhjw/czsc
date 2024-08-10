@@ -34,7 +34,12 @@ def money_flow_global(ana_sd="20240201", ana_ed="20240808"):
                                 f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
 
 
-def money_flow_individual(ts_code, start_date, end_date):
+def money_flow_individual(ts_code, target_day, n_days):
+    results = dict()
+    flow_types = []
+    buy_point = None
+    start_date = get_relative_str_date(target_day, n_days)
+    end_date = target_day
     flow_data = dc.moneyflow(ts_code=ts_code, start_date=start_date, end_date=end_date)
     for sort_key in MONEY_FLOW_SORT_KEYS_VOL:
         _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(30)
@@ -46,7 +51,18 @@ def money_flow_individual(ts_code, start_date, end_date):
                 buy_points = history.query_all_buy_point(symbol, edt=_target_date)
                 buy_point = buy_points[-1]
                 # if buy_point.signals != "一买":
-                logger.info(f"{symbol} {buy_point.name}: {MONEY_FLOW_SORT_KEYS_VOL.get(sort_key)}_{i}"
+                sort_type = MONEY_FLOW_SORT_KEYS_VOL.get(sort_key)
+                logger.info(f"{symbol} {buy_point.name}: {sort_type}_{i}"
                             f" {_target_date=} {buy_point.date} "
                             f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
+                flow_types.append(f"{sort_type}_{i}")
                 break
+
+    # if buy_point:
+    #     results["name"] = buy_point.name
+    #     results["symbol"] = buy_point.symbol
+    #     results["signals"] = buy_point.signals
+    #     results["fx_pwr"] =
+    #     results["signals"] =
+
+
