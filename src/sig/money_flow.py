@@ -64,5 +64,5 @@ def money_flow_individual(ts_code, target_day, n_days):
         results["symbol"] = buy_point.symbol
         results["buy_point"] = f"{buy_point.fx_pwr}{bp_freq}{buy_point.signals}"
         results["flow_types"] = ",".join(flow_types)
-
+    return results
 
