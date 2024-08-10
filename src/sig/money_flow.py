@@ -37,7 +37,7 @@ def money_flow_global(ana_sd="20240201", ana_ed="20240808"):
 def money_flow_individual(ts_code, start_date, end_date):
     flow_data = dc.moneyflow(ts_code=ts_code, start_date=start_date, end_date=end_date)
     for sort_key in MONEY_FLOW_SORT_KEYS_VOL:
-        _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(10)
+        _flow_data = flow_data.sort_values(sort_key, ascending=False, ignore_index=True).head(30)
 
         for i, row in _flow_data.iterrows():
             symbol, exchange = row.get("ts_code").split(".")
