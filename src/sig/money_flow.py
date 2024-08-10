@@ -46,6 +46,7 @@ def money_flow_individual(ts_code, start_date, end_date):
                 buy_points = history.query_all_buy_point(symbol, edt=_target_date)
                 buy_point = buy_points[-1]
                 # if buy_point.signals != "一买":
-                logger.info(f"{symbol} {buy_point.name}: {MONEY_FLOW_SORT_KEYS_AMOUNT.get(sort_key)}_{i}"
+                logger.info(f"{symbol} {buy_point.name}: {MONEY_FLOW_SORT_KEYS_VOL.get(sort_key)}_{i}"
                             f" {_target_date=} {buy_point.date} "
                             f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
+                break
