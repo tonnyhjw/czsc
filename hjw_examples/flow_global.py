@@ -35,8 +35,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="这是一个示例程序")
     # 添加参数
-    parser.add_argument("--n", default=365, type=int, help="选取n天作为分析区间")
-    parser.add_argument("--h", default=50, type=int, help="选取成交额的头部区间")
+    parser.add_argument("--n", default=1, type=int, help="选取n天作为分析区间")
+    parser.add_argument("--h", default=10, type=int, help="选取成交额的头部区间")
     parser.add_argument("--tgd", default=today, type=str, help="目标日期")
     parser.add_argument("--sd", default=ana_sdt, help="分析开始日期")
     parser.add_argument("--ed", default=today, help="分析结束日期")
