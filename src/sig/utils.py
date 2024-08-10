@@ -156,19 +156,21 @@ def get_xd_zs_seq(xds: List[XD]) -> List[XDZS]:
 
 
 MONEY_FLOW_SORT_KEYS_AMOUNT = dict(
-    net_mf_amount="净流入额（万元）",
-    buy_sm_amount="小单买入金额（万元）",
-    buy_md_amount="中单买入金额（万元）",
-    buy_lg_amount="大单买入金额（万元）",
-    buy_elg_amount="特大单买入金额（万元）"
+    # （万元）
+    net_mf_amount="净额",
+    buy_sm_amount="小单额",
+    buy_md_amount="中单额",
+    buy_lg_amount="大单额",
+    buy_elg_amount="特大单额"
 )
 
 MONEY_FLOW_SORT_KEYS_VOL = dict(
-    net_mf_vol="净流入量（手）",
-    buy_sm_vol="小单买入量（手）",
-    buy_md_vol="中单买入量（手）",
-    buy_lg_vol="大单买入量（手）",
-    buy_elg_vol="特大单买入量（手）"
+    # （手）
+    net_mf_vol="净量",
+    buy_sm_vol="小单量",
+    buy_md_vol="中单量",
+    buy_lg_vol="大单量",
+    buy_elg_vol="特大单量"
 )
 
 

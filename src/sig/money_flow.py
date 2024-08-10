@@ -55,14 +55,14 @@ def money_flow_individual(ts_code, target_day, n_days):
                 logger.info(f"{symbol} {buy_point.name}: {sort_type}_{i}"
                             f" {_target_date=} {buy_point.date} "
                             f"{buy_point.freq=} {buy_point.signals=} {buy_point.fx_pwr=}")
-                flow_types.append(f"{sort_type}_{i}")
+                flow_types.append(f"{sort_type}_{i+1}")
                 break
 
-    # if buy_point:
-    #     results["name"] = buy_point.name
-    #     results["symbol"] = buy_point.symbol
-    #     results["signals"] = buy_point.signals
-    #     results["fx_pwr"] =
-    #     results["signals"] =
+    if buy_point and flow_types:
+        bp_freq = TsDataCache(home_path).freq_map.get(buy_point.freq)
+        results["name"] = buy_point.name
+        results["symbol"] = buy_point.symbol
+        results["buy_point"] = f"{buy_point.fx_pwr}{bp_freq}{buy_point.signals}"
+        results["flow_types"] = ",".join(flow_types)
 
 
