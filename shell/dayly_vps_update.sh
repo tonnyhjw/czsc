@@ -9,3 +9,4 @@ python -m hjw_examples.ma_support -r
 
 python -m hjw_examples.day_trend_bc_reverse --f D
 
+python -m hjw_examples.flow_global --n 7 --h 100
