@@ -64,7 +64,7 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     zs1, zs2 = zs_seq[-2], zs_seq[-1]
-    if not zs1.is_valid:
+    if len(zs1.bis) < 3:
         v1 = 'zs1不成立'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
@@ -87,9 +87,9 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         v1 = '三买'
         # 插入数据库
         history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
-                                 industry, latest_fx.dt, db)
+                                 industry, latest_fx.dt, reason="zs_elevate", db=db)
         if v2 != '弱':
             return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1, v2=v2, v3=estimated_profit)
     else:
-        logger.info(f"{name}{symbol}盘整背驰不成立原因: {failed_third_buy_conditions}")
+        logger.info(f"{name}{symbol}中枢上移三买不成立原因: {failed_third_buy_conditions}")
     return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
