@@ -9,7 +9,7 @@ from src.connectors.yf_cache import YfDataCache
 from src.sig.trend_reverse import trend_reverse_bi, trend_reverse_xd
 from src.sig.pzbc import macd_pzbc_bi
 from src.sig.powers import long_term_ma_support, long_term_ma_up
-from src.sig.zs_elevate import third_buy_bi
+from src.sig.zs_elevate import third_buy_bi, third_buy_xd
 from src.sig.utils import is_strong_bot_fx
 
 
@@ -230,7 +230,7 @@ def ma_up_pzbc_us(row, sdt, edt, freq: str = 'D', fx_dt_limit: int = 5, timeperi
         return output
 
 
-def zs_elevate_3rd_buy(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
+def zs_elevate_3rd_buy_bi(row, sdt, edt, freq: str, ana_type: str = "bi", fx_dt_limit: int = 5):
     dc = TsDataCache(home_path)  # 在每个进程中创建独立的实例
     _ts_code = row.get('ts_code')
     _symbol = row.get('symbol')
@@ -238,6 +238,8 @@ def zs_elevate_3rd_buy(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
     _industry = row.get("industry")
     _hs = _ts_code.split(".")[-1]
     _edt = datetime.datetime.strptime(edt, "%Y%m%d")
+    ana_strategy = dict(bi=third_buy_bi, xd=third_buy_xd)
+    third_buy_strategy = ana_strategy.get(ana_type)
 
     output = {}
     try:
@@ -245,7 +247,7 @@ def zs_elevate_3rd_buy(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
         # if "ST" in _name:
         #     return output
         c = CZSC(bars)
-        _signals = third_buy_bi(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
+        _signals = third_buy_strategy(c, edt=_edt, fx_dt_limit=fx_dt_limit, freq=freq, **row)
         logger.debug(_signals)
 
         for s_value in _signals.values():
