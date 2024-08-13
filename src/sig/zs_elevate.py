@@ -65,7 +65,7 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     zs1, zs2 = zs_seq[-2], zs_seq[-1]
-    if len(zs1.bis) < 9 or len(zs2.bis) < 3:
+    if len(zs1.bis) < 3 or len(zs2.bis) < 3:
         v1 = '中枢笔不足'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
