@@ -74,7 +74,7 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
     third_buy_conditions = (
         (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
-        (len(ubi['fxs']) < 2, f"{len(ubi['fxs'])} < 2"),
+        (len(ubi['fxs']) < 2, f"{len(ubi['fxs'])=} < 2"),
         (zs2_bi_a == Direction.Down, "zs2_bi_a == Direction.Down"),
         (zs2_bi_c == Direction.Down, "zs2_bi_c == Direction.Down"),
         # (zs2_bi_c.low <= zs2.dd, "zs2_bi_c.low <= zs2.dd"),

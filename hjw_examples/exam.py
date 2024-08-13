@@ -143,7 +143,7 @@ def get_hsgt():
 def elevate_dev():
     from src.stock_process import zs_elevate_3rd_buy_bi
     row = dict(ts_code="601398.sh", symbol="601398", name="工商银行", industry="国有银行")
-    sdt, edt = "20180501", "20240712"
+    sdt, edt = "20180101", "20240614"
     result = zs_elevate_3rd_buy_bi(row, sdt, edt, "D")
     pprint.pprint(result)
     return
