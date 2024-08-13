@@ -8,6 +8,7 @@ import czsc
 
 cache_path = os.getenv("TS_CACHE_PATH", os.path.expanduser("~/.ts_data_cache"))
 dc = czsc.DataClient(url="http://api.tushare.pro", cache_path=cache_path)
+os.environ['czsc_min_bi_len'] = '7'
 
 
 def play_day_trend_reverse():
@@ -142,8 +143,8 @@ def get_hsgt():
 
 def elevate_dev():
     from src.stock_process import zs_elevate_3rd_buy_bi
-    row = dict(ts_code="601398.sh", symbol="601398", name="工商银行", industry="国有银行")
-    sdt, edt = "20180101", "20240614"
+    row = dict(ts_code="601288.sh", symbol="601288", name="农业银行", industry="国有银行")
+    sdt, edt = "20180101", "20240517"
     result = zs_elevate_3rd_buy_bi(row, sdt, edt, "D")
     pprint.pprint(result)
     return
