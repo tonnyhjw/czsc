@@ -65,22 +65,19 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     zs1, zs2 = zs_seq[-2], zs_seq[-1]
-    if len(zs1.bis) < 3:
-        v1 = 'zs1不成立'
+    if len(zs1.bis) < 9 or len(zs2.bis) < 3:
+        v1 = '中枢笔不足'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     estimated_profit = (zs2.zg - cur_price) / cur_price
-    zs2_bi = zs2.bis[0]
-    zs2_bi_fx_bot = [_fx for _fx in zs2_bi.fxs if _fx.mark == Mark.D]
-    zs2_bi_fx_top = [_fx for _fx in zs2_bi.fxs if _fx.mark == Mark.G]
+    zs2_bi_a, zs2_bi_c = zs2.bis[0], zs2.bis[-1]
 
     third_buy_conditions = (
         (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
-        (len(ubi['fxs']) < 2, "len(ubi['fxs']) < 2"),
-        (zs2_bi == Direction.Down, "zs2_bi == Direction.Down"),
-        (len(zs2.bis) == 1, "len(zs2.bis) == 1"),
-        (2 <= len(zs2_bi_fx_bot), "3 <= len(zs2_bi_fx_bot)"),
-        (2 <= len(zs2_bi_fx_top), "3 <= len(zs2_bi_fx_top)"),
+        (len(ubi['fxs']) < 2, f"{len(ubi['fxs'])} < 2"),
+        (zs2_bi_a == Direction.Down, "zs2_bi_a == Direction.Down"),
+        (zs2_bi_c == Direction.Down, "zs2_bi_c == Direction.Down"),
+        (zs2_bi_c.low <= zs2.dd, "zs2_bi_c.low <= zs2.dd"),
         (zs1.zg < latest_fx.low, f"{zs1.zg=} < {latest_fx.low=}"),
     )
     failed_third_buy_conditions = select_failed_conditions(third_buy_conditions)
