@@ -29,7 +29,7 @@ logger.add("statics/logs/day_trend_bc_reverse.log", rotation="50MB", encoding="u
 # Name: 0, dtype: object
 
 
-def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), freq: str = 'D',
+def check(sdt: str = "20170101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), freq: str = 'D',
           subj_lv1="自动盯盘", notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'
     tdc = TsDataCache(home_path)
