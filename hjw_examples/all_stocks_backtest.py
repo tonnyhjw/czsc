@@ -18,6 +18,7 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
                             fx_pwr="弱", signals="二买", freq="D", db="BI"):
     all_trade_analyzers = []
     all_sharpe_ratios = []
+    all_trade_details = []
 
     with ProcessPoolExecutor(max_workers=2) as executor:
         futures = {}
@@ -30,23 +31,20 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
-            trade_analyzer, sharpe_ratio = result.get("trade_analyzer"), result.get("sharpe_ratio")
+            trade_analyzer = result.get("trade_analyzer"),
+            sharpe_ratio = result.get("sharpe_ratio")
+            trade_detail = result.get("trade_detail", {})
             if trade_analyzer and sharpe_ratio:
                 all_trade_analyzers.append(trade_analyzer)
                 all_sharpe_ratios.append(sharpe_ratio)
+                all_trade_details.append(trade_detail)
 
     # 汇总分析结果
     combined_trade_analyzer = combine_trade_analyzers(all_trade_analyzers)
     combined_sharpe_ratio = combine_sharpe_ratios(all_sharpe_ratios)
 
-    # # 打印汇总分析结果
-    # print('Combined Trade Analysis Results:')
-    # pprint(combined_trade_analyzer)
-    #
-    # print('Combined Sharpe Ratio Analysis:')
-    # pprint(combined_sharpe_ratio)
     email_subject = f"[测试][回测]{fx_pwr}{signals}测试结果"
-    notify_buy_backtrader(combined_trade_analyzer, combined_sharpe_ratio, email_subject)
+    notify_buy_backtrader(combined_trade_analyzer, combined_sharpe_ratio, all_trade_details, email_subject)
 
 
 def combine_trade_analyzers(analyzers):

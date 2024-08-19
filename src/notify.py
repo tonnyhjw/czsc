@@ -60,13 +60,22 @@ def notify_buy_points(results: list, email_subject: str, notify_empty: bool = Tr
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
-def notify_buy_backtrader(trade_analysis, sharpe_ratio, email_subject: str):
+def notify_buy_backtrader(trade_analysis, sharpe_ratio, trade_detail: list, email_subject: str):
+    email_content = "<h1>没有发现买点</h1>"
     try:
         # if trade_analysis and sharpe_ratio:
         if trade_analysis:
             email_content = backtrader_email_body(trade_analysis, sharpe_ratio)
-            # 发送电子邮件
-            send_email(email_content, email_subject)
+        if trade_detail:
+            trade_detail = sorted(trade_detail, key=sort_by_gross_profit)
+            df_trade_detail = pd.DataFrame(trade_detail)
+            html_table = df_trade_detail.to_html(classes='table table-striped table-hover', border=0, index=False,
+                                                 escape=False)
+            styled_table = daily_email_style(html_table)
+            email_content = email_content + "<br>" + styled_table
+
+        # 发送电子邮件
+        send_email(email_content, email_subject)
 
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息

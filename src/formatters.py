@@ -17,3 +17,7 @@ def sort_by_fx_dt(item_dictionary):
 
 def sort_by_signals(item_dictionary):
     return item_dictionary['signals']
+
+
+def sort_by_gross_profit(item_dictionary):
+    return item_dictionary['gross_profit']

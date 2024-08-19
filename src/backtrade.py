@@ -177,15 +177,12 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
 
     # 获取分析器结果
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
-    print(result.analyzers.sharpe_ratio)
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
-
-    # # 打印分析器结果
-    # print(f'Trade Analysis Results for {ts_code}:')
-    # pprint(trade_analyzer)
-    #
-    # print(f'Sharpe Ratio Analysis for {ts_code}:')
-    # pprint(sharpe_ratio)
+    trade_detail = {
+        'symbol': symbol,
+        'gross_profit': result.analyzers.tradeanalyzer.get_analysis()['gross']['pnl']['total'],
+        'net_profit': result.analyzers.tradeanalyzer.get_analysis()['net']['pnl']['total']
+    }
 
     # # 绘图并保存到文件
     # fig = cerebro.plot(style='candlestick')[0][0]
@@ -200,5 +197,5 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     del fxs
     gc.collect()
 
-    return {"trade_analyzer": trade_analyzer, "sharpe_ratio": sharpe_ratio}
+    return {"trade_analyzer": trade_analyzer, "sharpe_ratio": sharpe_ratio, "trade_detail": trade_detail}
 
