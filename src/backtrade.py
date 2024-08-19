@@ -178,14 +178,12 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     # 获取分析器结果
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
-    # try:
-    #     trade_detail = {
-    #         'symbol': symbol,
-    #         'gross_profit': trade_analyzer['gross']['pnl']['total'],
-    #         'net_profit': trade_analyzer['net']['pnl']['total']
-    #     }
-    # except KeyError:
-    #     trade_detail = {}
+    try:
+        trade_detail = dict(symbol=symbol)
+        trade_detail['gross_profit'] = trade_analyzer['gross']['pnl']['total']
+        trade_detail['net_profit'] = trade_analyzer['net']['pnl']['total']
+    except KeyError:
+        trade_detail = {}
 
     # # 绘图并保存到文件
     # fig = cerebro.plot(style='candlestick')[0][0]
