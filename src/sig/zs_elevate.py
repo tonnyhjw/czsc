@@ -70,16 +70,22 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
 
     estimated_profit = (zs2.zg - cur_price) / cur_price
-    zs2_bi = zs2.bis[0]
-    print(zs2_bi)
-    pprint.pp(zs2_bi.fxs)
+    zs2_bi_a = zs2.bis[0]
+
+    def single_bi_pzbc():
+        return len(zs2.bis) == 1 and 3 < len(zs2_bi_a.fxs)
+
+    def triple_bi_pzbc():
+        return len(zs2.bis) == 3 and zs2.bis[-1].low == zs2.dd
+
+    is_single_bi_pzbc = single_bi_pzbc()
+    is_triple_bi_pzbc = triple_bi_pzbc()
 
     third_buy_conditions = (
         (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
         (len(ubi['fxs']) < 2, f"{len(ubi['fxs'])=} < 2"),
-        (zs2_bi.direction == Direction.Down, "zs2_bi_a == Direction.Down"),
-        (len(zs2.bis) <= 3, "len(zs2.bis) <= 3"),
-        # (zs2_bi_c.low <= zs2.dd, "zs2_bi_c.low <= zs2.dd"),
+        (zs2_bi_a.direction == Direction.Down, "zs2_bi_a == Direction.Down"),
+        (is_single_bi_pzbc or is_triple_bi_pzbc, f"{is_triple_bi_pzbc=}, {is_triple_bi_pzbc=}"),
         (zs1.zg < latest_fx.low, f"{zs1.zg=} < {latest_fx.low=}"),
     )
     failed_third_buy_conditions = select_failed_conditions(third_buy_conditions)
