@@ -33,7 +33,7 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
             result = future.result()
             trade_analyzer = result.get("trade_analyzer")
             sharpe_ratio = result.get("sharpe_ratio")
-            trade_detail = result.get("trade_detail", {})
+            trade_detail = result.get("trade_detail")
             if trade_analyzer and sharpe_ratio:
                 all_trade_analyzers.append(trade_analyzer)
                 all_sharpe_ratios.append(sharpe_ratio)
