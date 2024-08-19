@@ -31,7 +31,7 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
-            trade_analyzer = result.get("trade_analyzer"),
+            trade_analyzer = result.get("trade_analyzer")
             sharpe_ratio = result.get("sharpe_ratio")
             trade_detail = result.get("trade_detail", {})
             if trade_analyzer and sharpe_ratio:
