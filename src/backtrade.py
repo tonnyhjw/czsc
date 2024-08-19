@@ -170,19 +170,22 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     # 设置交易手续费
     cerebro.broker.setcommission(commission=0.001)
 
-    print(f'Starting Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
+    # print(f'Starting Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
     results = cerebro.run()
     result = results[0]
-    print(f'Ending Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
+    # print(f'Ending Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
 
     # 获取分析器结果
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
-    trade_detail = {
-        'symbol': symbol,
-        'gross_profit': trade_analyzer['gross']['pnl']['total'],
-        'net_profit': trade_analyzer['net']['pnl']['total']
-    }
+    try:
+        trade_detail = {
+            'symbol': symbol,
+            'gross_profit': trade_analyzer['gross']['pnl']['total'],
+            'net_profit': trade_analyzer['net']['pnl']['total']
+        }
+    except KeyError:
+        trade_detail = {}
 
     # # 绘图并保存到文件
     # fig = cerebro.plot(style='candlestick')[0][0]
