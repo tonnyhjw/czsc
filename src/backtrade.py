@@ -180,8 +180,8 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
     trade_detail = {
         'symbol': symbol,
-        'gross_profit': result.analyzers.tradeanalyzer.get_analysis()['gross']['pnl']['total'],
-        'net_profit': result.analyzers.tradeanalyzer.get_analysis()['net']['pnl']['total']
+        'gross_profit': trade_analyzer['gross']['pnl']['total'],
+        'net_profit': trade_analyzer['net']['pnl']['total']
     }
 
     # # 绘图并保存到文件
