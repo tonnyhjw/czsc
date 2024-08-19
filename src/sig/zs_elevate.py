@@ -91,7 +91,7 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     failed_third_buy_conditions = select_failed_conditions(third_buy_conditions)
 
     if not failed_third_buy_conditions:
-        v1 = '三买'
+        v1 = '三买ZE'
         # 插入数据库
         history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                  industry, latest_fx.dt, reason="zs_elevate", db=db)
