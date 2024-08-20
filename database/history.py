@@ -46,7 +46,8 @@ def check_duplicate(symbol, check_date, days=30, fx_pwr=None, signals=None, db="
 
 
 def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: str,
-                     fx_pwr: str, expect_profit: float, industry: str, date: datetime, reason=None, db="BI"):
+                     fx_pwr: str, expect_profit: float, industry: str, date: datetime,
+                     high=None, low=None, reason=None, db="BI"):
     """
     插入新的买点记录
     :param name: 股票名称
@@ -58,6 +59,8 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
     :param expect_profit: 预期收益
     :param industry: 板块
     :param date: 买点日期
+    :param high: 分型高点
+    :param low: 分型低点
     :param reason: 买点原因
     :param db: 数据库选择，可选BI或XD，默认BI
     """
@@ -79,6 +82,8 @@ def insert_buy_point(name: str, symbol: str, ts_code: str, freq: str, signals: s
                     fx_pwr=fx_pwr,
                     expect_profit=expect_profit,
                     industry=industry,
+                    high=high,
+                    low=low,
                     date=date,
                     reason=reason
                 )
