@@ -1,18 +1,7 @@
-import os
-import gc
-import pandas as pd
 import backtrader as bt
-from datetime import datetime
-from pprint import pprint
-
-from czsc import CZSC, home_path
-from czsc.data import TsDataCache
-from czsc.data.ts import format_kline
-from czsc.enum import Mark
-from database.history import query_all_buy_point
 
 
-class MyStrategy(bt.Strategy):
+class NaiveStrategy(bt.Strategy):
     params = (
         ('buy_points', []),
         ('fxs', []),
@@ -103,100 +92,4 @@ class MyStrategy(bt.Strategy):
 
         # 订单完成后，将self.order重置为None
         self.order = None
-
-
-def get_bt_data(df):
-    # 确保日期列是datetime类型并且设置为索引
-    df['trade_date'] = pd.to_datetime(df['trade_date'])
-    df.set_index('trade_date', inplace=True)
-    df = df.sort_index()
-
-    # 确保列名符合backtrader期望的格式
-    df.rename(columns={
-        'open': 'open',
-        'high': 'high',
-        'low': 'low',
-        'close': 'close',
-        'vol': 'volume'
-    }, inplace=True)
-
-    # 确保数据类型正确
-    df = df[['open', 'high', 'low', 'close', 'volume']].astype(float)
-
-    # # 打印调试信息
-    # print("Renamed DataFrame head:\n", df.head())
-    # print("Renamed DataFrame columns:\n", df.columns)
-
-    # 使用backtrader的PandasData数据源
-    data = bt.feeds.PandasData(dataname=df)
-    return data
-
-
-def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().strftime('%Y%m%d'),
-                              fx_pwr="弱", signals="二买", freq="D", db="BI"):
-    cerebro = bt.Cerebro()
-
-    symbol = ts_code.split(".")[0]
-
-    # 设置策略参数
-    buy_points = list(query_all_buy_point(symbol, fx_pwr=fx_pwr, signals=signals, freq=freq, db=db))
-    if not buy_points:
-        # print(f"No buy points for {ts_code}")
-        return {"trade_analyzer": None, "sharpe_ratio": None}
-    sdt = buy_points[0].date.strftime('%Y%m%d')
-    tdc = TsDataCache(home_path)
-    df = tdc.pro_bar(ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=False)
-    bars = format_kline(df, tdc.freq_map[freq])
-
-    # 获取格式化后的backtrader数据
-    bt_data = get_bt_data(df)
-
-    c = CZSC(bars)
-    fxs = c.fx_list
-
-    # 传入数据
-    cerebro.adddata(bt_data)
-
-    # 创建策略实例并传递参数
-    cerebro.addstrategy(MyStrategy, buy_points=buy_points, fxs=fxs)
-
-    # 添加分析器
-    cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trade_analyzer')
-    cerebro.addanalyzer(bt.analyzers.SharpeRatio_A, _name='sharpe_ratio')
-
-    # 设置初始现金
-    cerebro.broker.set_cash(100000.0)
-
-    # 设置交易手续费
-    cerebro.broker.setcommission(commission=0.001)
-
-    # print(f'Starting Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
-    results = cerebro.run()
-    result = results[0]
-    # print(f'Ending Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
-
-    # 获取分析器结果
-    trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
-    sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
-    trade_detail = dict(symbol=symbol)
-    try:
-        trade_detail['gross_profit'] = trade_analyzer['gross']['pnl']['total']
-        trade_detail['net_profit'] = trade_analyzer['net']['pnl']['total']
-    except KeyError:
-        trade_detail['gross_profit'] = -1000
-        trade_detail['net_profit'] = -1000
-    # # 绘图并保存到文件
-    # fig = cerebro.plot(style='candlestick')[0][0]
-    # fig.savefig(f'statics/bt_imgs/{ts_code}_{freq}_{sdt}-{edt}.png')
-
-    # 手动释放内存
-    del df
-    del bt_data
-    del cerebro
-    del bars
-    del c
-    del fxs
-    gc.collect()
-
-    return {"trade_analyzer": trade_analyzer, "sharpe_ratio": sharpe_ratio, "trade_detail": trade_detail}
 

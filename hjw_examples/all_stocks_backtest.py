@@ -11,7 +11,7 @@ from concurrent.futures import ProcessPoolExecutor
 from czsc import home_path
 from czsc.data import TsDataCache
 from src.notify import notify_buy_backtrader
-from src.backtrade import run_single_stock_backtest
+from src.backtrade.run import run_single_stock_backtest
 
 
 def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
