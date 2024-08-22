@@ -56,7 +56,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     results = cerebro.run()
     result = results[0]
     # print(f'Ending Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
-
+    print(result)
     # 获取分析器结果
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
@@ -64,6 +64,8 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     try:
         trade_detail['gross_profit'] = round(trade_analyzer['pnl']['gross']['total'], 2)
         trade_detail['net_profit'] = round(trade_analyzer['pnl']['gross']['average'], 2)
+        trade_detail['buy_dates'] = result.buy_dates
+        trade_detail['sell_dates'] = result.sell_dates
     except KeyError:
         trade_detail['gross_profit'] = -1000
         trade_detail['net_profit'] = -1000
