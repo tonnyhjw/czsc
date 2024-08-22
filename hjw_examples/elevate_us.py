@@ -3,6 +3,7 @@ import sys
 import argparse
 import datetime
 import concurrent
+import pandas as pd
 from loguru import logger
 from concurrent.futures import ProcessPoolExecutor
 
@@ -10,33 +11,33 @@ from concurrent.futures import ProcessPoolExecutor
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 from czsc import home_path
-from czsc.data import TsDataCache
+from src.connectors.yf_cache import YfDataCache
 from src.notify import notify_buy_points
-from src.stock_process import zs_elevate_3rd_buy_bi
+from src.stock_process import zs_elevate_3rd_buy_bi_us
 from src import is_friday
 
 idx = 1000
 script_name = os.path.basename(__file__)
-logger.add("statics/logs/elevate.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
+logger.add("statics/logs/elevate_us.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), elem_type: str = "bi",
           freq: str = 'D', subj_lv1="自动盯盘", notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'
-    tdc = TsDataCache(home_path)
+    ydc = YfDataCache(home_path)
 
-    stock_basic = tdc.stock_basic()  # 只用于读取股票基础信息
-    total_stocks = len(stock_basic)
+    us_stock_list = ydc.get_us_stock_list()  # 只用于读取股票基础信息
+    total_stocks = len(us_stock_list)
     results = []  # 用于存储所有股票的结果
 
     with ProcessPoolExecutor(max_workers=2) as executor:
         futures = {}
-        for index, row in stock_basic.iterrows():
+        for index, row in us_stock_list.iterrows():
             _ts_code = row.get('ts_code')
             _today = datetime.datetime.today()
             logger.info(f"共{total_stocks}个股票，正在分析第{index}只个股{_ts_code}在{edt}的走势，"
                         f"进度{round(float(index/total_stocks)*100)}%")
-            future = executor.submit(zs_elevate_3rd_buy_bi, row, sdt, edt, freq, elem_type, 3)
+            future = executor.submit(zs_elevate_3rd_buy_bi_us, row, sdt, edt, freq, elem_type, 3)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -44,7 +45,7 @@ def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y
             if result:
                 results.append(result)
 
-    email_subject = f"[{subj_lv1}][{tdc.freq_map.get(freq)}中枢上移][A股]{edt}发现{len(results)}个买点"
+    email_subject = f"[{subj_lv1}][{ydc.freq_map.get(freq)}中枢上移][美股]{edt}发现{len(results)}个买点"
     notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
 
 
@@ -66,15 +67,17 @@ if __name__ == '__main__':
 
     # 判断是否更新缓存
     if args.refresh:
-        TsDataCache(home_path).clear()
+        YfDataCache(home_path).clear()
 
     # 根据参数决定运行模式
     if args.dev:
         logger.info("正在运行开发模式")
         logger.info(f"使用日期范围：{args.sd} 到 {args.ed}")
-        trade_dates = TsDataCache(home_path).get_dates_span(args.sd, args.ed, is_open=True)
+        date_range = pd.date_range(start=args.sd, end=args.ed, freq="B")
         # 将日期格式化为'%Y%m%d'
-        for business_date in trade_dates:
+        formatted_dates = date_range.strftime('%Y%m%d').tolist()
+
+        for business_date in formatted_dates:
             if args.f == "W" and not is_friday(business_date):
                 continue
             logger.info(f"测试日期:{business_date}")

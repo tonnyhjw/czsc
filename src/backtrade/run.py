@@ -1,3 +1,4 @@
+import gc
 import backtrader as bt
 from datetime import datetime
 
@@ -22,6 +23,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
         # print(f"No buy points for {ts_code}")
         return {"trade_analyzer": None, "sharpe_ratio": None}
     sdt = buy_points[0].date.strftime('%Y%m%d')
+    name = buy_points[0].name
     tdc = TsDataCache(home_path)
     df = tdc.pro_bar(ts_code, start_date=sdt, end_date=edt, freq=freq, asset="E", adj='qfq', raw_bar=False)
     bars = format_kline(df, tdc.freq_map[freq])
@@ -56,7 +58,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     # 获取分析器结果
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
-    trade_detail = dict(symbol=symbol)
+    trade_detail = dict(name=name, symbol=symbol)
     try:
         trade_detail['gross_profit'] = trade_analyzer['gross']['pnl']['total']
         trade_detail['net_profit'] = trade_analyzer['net']['pnl']['total']

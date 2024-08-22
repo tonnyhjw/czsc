@@ -33,7 +33,7 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     :param kwargs:
     :return: 信号识别结果
     """
-    db = "BI"
+    db = kwargs.get("db", "BI")
     freq = c.freq.value
     v1 = '其他'
     edt = kwargs.get('edt', datetime.datetime.now())
