@@ -63,8 +63,8 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     trade_detail = dict(name=name, symbol=symbol)
     try:
         pprint.pp(trade_analyzer)
-        trade_detail['gross_profit'] = trade_analyzer['pnl']['gross']['total']
-        trade_detail['net_profit'] = trade_analyzer['pnl']['gross']['average']
+        trade_detail['gross_profit'] = round(trade_analyzer['pnl']['gross']['total'], 2)
+        trade_detail['net_profit'] = round(trade_analyzer['pnl']['gross']['average'], 2)
     except KeyError:
         trade_detail['gross_profit'] = -1000
         trade_detail['net_profit'] = -1000
