@@ -63,8 +63,8 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     trade_detail = dict(name=name, symbol=symbol)
     try:
         pprint.pp(trade_analyzer)
-        trade_detail['gross_profit'] = trade_analyzer['gross']['pnl']['total']
-        trade_detail['net_profit'] = trade_analyzer['net']['pnl']['total']
+        trade_detail['gross_profit'] = trade_analyzer['pnl']['gross']['total']
+        trade_detail['net_profit'] = trade_analyzer['pnl']['gross']['average']
     except KeyError:
         trade_detail['gross_profit'] = -1000
         trade_detail['net_profit'] = -1000
