@@ -62,7 +62,6 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
     trade_detail = dict(name=name, symbol=symbol)
     try:
-        pprint.pp(trade_analyzer)
         trade_detail['gross_profit'] = round(trade_analyzer['pnl']['gross']['total'], 2)
         trade_detail['net_profit'] = round(trade_analyzer['pnl']['gross']['average'], 2)
     except KeyError:
