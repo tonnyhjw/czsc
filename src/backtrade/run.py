@@ -1,4 +1,6 @@
 import gc
+import pprint
+
 import backtrader as bt
 from datetime import datetime
 
@@ -60,6 +62,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
     trade_detail = dict(name=name, symbol=symbol)
     try:
+        pprint.pp(trade_analyzer)
         trade_detail['gross_profit'] = trade_analyzer['gross']['pnl']['total']
         trade_detail['net_profit'] = trade_analyzer['net']['pnl']['total']
     except KeyError:
