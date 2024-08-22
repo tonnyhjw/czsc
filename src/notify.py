@@ -67,7 +67,7 @@ def notify_buy_backtrader(trade_analysis, sharpe_ratio, trade_detail: list, emai
         if trade_analysis:
             email_content = backtrader_email_body(trade_analysis, sharpe_ratio)
         if trade_detail:
-            trade_detail = sorted(trade_detail, key=sort_by_gross_profit)
+            trade_detail = sorted(trade_detail, key=sort_by_gross_profit, reverse=True)
             df_trade_detail = pd.DataFrame(trade_detail)
             html_table = df_trade_detail.to_html(classes='table table-striped table-hover', border=0, index=False,
                                                  escape=False)
