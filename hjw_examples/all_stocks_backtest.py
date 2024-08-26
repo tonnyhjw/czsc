@@ -3,7 +3,6 @@
 import os
 import traceback
 import concurrent
-import backtrader as bt
 from pprint import pprint
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor
@@ -11,6 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 from czsc import home_path
 from czsc.data import TsDataCache
 from src.notify import notify_buy_backtrader
+from src.backtrade.utils import *
 from src.backtrade.run import run_single_stock_backtest
 
 
@@ -45,58 +45,6 @@ def run_all_stocks_backtest(stock, edt: str = datetime.now().strftime('%Y%m%d'),
 
     email_subject = f"[测试][回测]{fx_pwr}{signals}测试结果"
     notify_buy_backtrader(combined_trade_analyzer, combined_sharpe_ratio, all_trade_details, email_subject)
-
-
-def combine_trade_analyzers(analyzers):
-    combined = bt.AutoOrderedDict()
-    for analyzer_data in analyzers:
-        if not analyzer_data:
-            continue
-        for key, value in analyzer_data.items():
-            if key in combined:
-                combined[key] = combine_dicts(combined[key], value)
-            else:
-                combined[key] = value
-    return combined
-
-
-def combine_dicts(dict1, dict2):
-    combined = dict1.copy()
-    for key, value in dict2.items():
-        if key in combined:
-            if isinstance(value, bt.AutoOrderedDict):
-                combined[key] = combine_dicts(combined[key], value)
-            else:
-                if isinstance(combined[key], bt.AutoOrderedDict):
-                    combined[key] = add_dicts(combined[key], {key: value})
-                else:
-                    combined[key] += value
-        else:
-            combined[key] = value
-    return combined
-
-
-def add_dicts(dict1, dict2):
-    combined = dict1.copy()
-    for key, value in dict2.items():
-        if key in combined:
-            combined[key] += value
-        else:
-            combined[key] = value
-    return combined
-
-
-def combine_sharpe_ratios(ratios):
-    combined = bt.AutoOrderedDict()
-    for ratio in ratios:
-        for key, value in ratio.items():
-            if key not in combined:
-                if value is not None:
-                    combined[key] = value
-            else:
-                if value is not None and combined[key] is not None:
-                    combined[key] = (combined[key] + value) / 2  # 计算平均值
-    return combined
 
 
 def generate_email_body(analysis):

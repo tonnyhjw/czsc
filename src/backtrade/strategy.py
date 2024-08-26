@@ -52,7 +52,7 @@ class NaiveStrategy(bt.Strategy):
                 self.order = self.buy_bracket(size=buy_size,
                                               limitprice=None,
                                               stopprice=stop_loss_price)
-                self.buy_dates.append(current_date)
+                self.buy_dates.append(current_date.strftime("%Y%m%d"))
                 print(f'BUY ORDER CREATED: {buy_size} shares at {price} with stop loss at {stop_loss_price} on {current_date}')
             else:
                 print('Insufficient cash to create buy order')
@@ -61,7 +61,7 @@ class NaiveStrategy(bt.Strategy):
         # 检查是否有卖出信号
         if self.position.size > 0:
             for idx, fx in enumerate(self.params.fxs):
-                if fx.dt == current_date:
+                if (fx.dt - current_date).days == 1:
                     self.sell_signal = True
                     # 截断fxs列表，只保留未处理部分
                     self.params.fxs = self.params.fxs[idx + 1:]
@@ -71,7 +71,7 @@ class NaiveStrategy(bt.Strategy):
         if self.sell_signal and self.order is None:
             if self.position.size > 0:
                 self.order = self.sell(size=self.position.size)
-                self.sell_dates.append(current_date)
+                self.sell_dates.append(current_date.strftime("%Y%m%d"))
                 print(f'SELL ORDER CREATED: {self.position.size} shares at {self.data.close[0]} on {current_date}')
             else:
                 print('No position to sell')

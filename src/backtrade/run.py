@@ -5,7 +5,7 @@ import backtrader as bt
 from datetime import datetime
 
 
-from czsc import CZSC, home_path
+from czsc import CZSC, home_path, Direction
 from czsc.data import TsDataCache
 from czsc.data.ts import format_kline
 from database.history import query_all_buy_point
@@ -34,7 +34,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     bt_data = get_bt_data(df)
 
     c = CZSC(bars)
-    fxs = c.fx_list
+    fxs = [bi.fx_b for bi in c.bi_list if bi.direction == Direction.Up]
 
     # 传入数据
     cerebro.adddata(bt_data)
@@ -56,7 +56,6 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     results = cerebro.run()
     result = results[0]
     # print(f'Ending Portfolio Value for {ts_code}: %.2f' % cerebro.broker.getvalue())
-    print(result)
     # 获取分析器结果
     trade_analyzer = result.analyzers.trade_analyzer.get_analysis()
     sharpe_ratio = result.analyzers.sharpe_ratio.get_analysis()
