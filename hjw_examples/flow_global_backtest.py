@@ -2,8 +2,9 @@ import os
 import sys
 import argparse
 import datetime
+import concurrent
 from loguru import logger
-from collections import Counter
+from concurrent.futures import ProcessPoolExecutor
 
 
 sys.path.insert(0, '.')
@@ -22,14 +23,10 @@ logger.add("statics/logs/flow.log", rotation="10MB", encoding="utf-8", enqueue=T
 def check(target_day: str = datetime.datetime.now().strftime('%Y%m%d'), n_days: int = 365, head_n: int = 50,
           subj_lv1="自动盯盘", notify_empty=True):
     results = money_flow_global(target_day, n_days, head_n)
-    # # 统计每个industry出现的次数
-    # industry_counts = Counter(d['industry'] for d in results)
-    #
-    # # 过滤掉只出现一次的元素
-    # results = [d for d in results if industry_counts[d['industry']] > 1]
 
-    email_subject = f"[{subj_lv1}][头部资金流][A股]{target_day}发现{len(results)}个{n_days}天资金流处于头部{head_n}的买点"
-    notify_money_flow(results=results, email_subject=email_subject, notify_empty=notify_empty)
+
+    # email_subject = f"[{subj_lv1}][头部资金流][A股]{target_day}发现{len(results)}个{n_days}天资金流处于头部{head_n}的买点"
+    # notify_money_flow(results=results, email_subject=email_subject, notify_empty=notify_empty)
 
 
 if __name__ == '__main__':

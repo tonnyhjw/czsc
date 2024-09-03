@@ -82,3 +82,7 @@ def run_single_stock_backtest(ts_code='000001.SZ', edt: str = datetime.now().str
     gc.collect()
 
     return {"trade_analyzer": trade_analyzer, "sharpe_ratio": sharpe_ratio, "trade_detail": trade_detail}
+
+
+def run_buy_lists():
+    pass
