@@ -61,7 +61,7 @@ if __name__ == '__main__':
     parser.add_argument("--sdt", default=sdt, help="取值范围日期上限")
     parser.add_argument("--sd", default=ana_sdt, help="分析开始日期")
     parser.add_argument("--ed", default=today, help="分析结束日期")
-    parser.add_argument("-l", type=int, default=limit_fx, action="store_true", help="分型时效性限制")
+    parser.add_argument("--l", type=int, default=limit_fx, action="store_true", help="分型时效性限制")
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
     parser.add_argument("-r", "--refresh", action="store_true", help="更新缓存")
 
