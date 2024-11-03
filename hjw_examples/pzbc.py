@@ -22,7 +22,7 @@ logger.add("statics/logs/week_trend_bc_reverse.log", rotation="10MB", encoding="
 
 
 def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y%m%d'),
-          freq: str = 'W', notify_empty=True):
+          freq: str = 'W', fx_limit: int = 30, notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'
     tdc = TsDataCache(home_path)
 
@@ -37,7 +37,7 @@ def check(sdt: str = "20180501", edt: str = datetime.datetime.now().strftime('%Y
             _today = datetime.datetime.today()
             logger.info(f"共{total_stocks}个股票，正在分析第{index}只个股{_ts_code}在{edt}的走势，"
                         f"进度{round(float(index/total_stocks)*100)}%")
-            future = executor.submit(bottom_pzbc, row, sdt, edt, freq, 30)
+            future = executor.submit(bottom_pzbc, row, sdt, edt, freq, fx_limit)
             futures[future] = _ts_code  # 保存future和ts_code的映射
 
         for future in concurrent.futures.as_completed(futures):
@@ -53,6 +53,7 @@ if __name__ == '__main__':
     sdt = "20180501"
     ana_sdt = '20240322'
     today = datetime.datetime.now().strftime("%Y%m%d")
+    limit_fx = 30
 
     parser = argparse.ArgumentParser(description="这是一个示例程序")
     # 添加参数
@@ -60,6 +61,7 @@ if __name__ == '__main__':
     parser.add_argument("--sdt", default=sdt, help="取值范围日期上限")
     parser.add_argument("--sd", default=ana_sdt, help="分析开始日期")
     parser.add_argument("--ed", default=today, help="分析结束日期")
+    parser.add_argument("-l", type=int, default=limit_fx, action="store_true", help="分型时效性限制")
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
     parser.add_argument("-r", "--refresh", action="store_true", help="更新缓存")
 
@@ -80,7 +82,7 @@ if __name__ == '__main__':
             if args.f == "W" and not is_friday(business_date):
                 continue
             logger.info(f"测试日期:{business_date}")
-            check(sdt=args.sdt, edt=business_date, freq=args.f, notify_empty=False)
+            check(sdt=args.sdt, edt=business_date, freq=args.f, fx_limit=args.l, notify_empty=False)
     else:
         logger.info("正在运行默认模式")
-        check(sdt=args.sdt, freq=args.f)
+        check(sdt=args.sdt, freq=args.f, fx_limit=args.l,)
