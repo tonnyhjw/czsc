@@ -6,9 +6,9 @@ from database import history
 from src.decorate import *
 import czsc
 
-cache_path = os.getenv("TS_CACHE_PATH", os.path.expanduser("~/.ts_data_cache"))
-dc = czsc.DataClient(url="http://api.tushare.pro", cache_path=cache_path)
-os.environ['czsc_min_bi_len'] = '7'
+# cache_path = os.getenv("TS_CACHE_PATH", os.path.expanduser("~/.ts_data_cache"))
+# dc = czsc.DataClient(url="http://api.tushare.pro", cache_path=cache_path)
+# os.environ['czsc_min_bi_len'] = '7'
 
 
 def play_day_trend_reverse():
@@ -150,6 +150,28 @@ def elevate_dev():
     return
 
 
+def concept_dev():
+    import akshare as ak
+
+    # 获取所有概念板块名称
+    concept_df = ak.stock_board_concept_name_em()
+
+    # 查询所属概念板块 445
+    for _, row in concept_df.iterrows():
+        print(row)
+
+
+def concept_stock_dev():
+    import akshare as ak
+
+    # 获取概念板块内的“中字头”个股
+    concept_stocks = ak.stock_board_concept_cons_em(symbol="抖音小店")
+
+    # 逐行打印
+    for index, row in concept_stocks.iterrows():
+        print(row.to_dict())
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -166,4 +188,6 @@ if __name__ == '__main__':
     # get_hk_hold()
     # get_hsgt()
     # money_flow_global()
-    elevate_dev()
+    # elevate_dev()
+    concept_dev()
+    # concept_stock_dev()
