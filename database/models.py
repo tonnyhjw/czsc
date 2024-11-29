@@ -14,8 +14,7 @@ db_buy_point_ma250 = SqliteDatabase(configs.BUY_POINT_MA250_PATH)
 db_buy_point_bi_us = SqliteDatabase(configs.BUY_POINT_BI_US_PATH)
 db_buy_point_maus = SqliteDatabase(configs.BUY_POINT_MAUS_PATH)
 db_buy_point_temp = SqliteDatabase(configs.BUY_POINT_TEMP_PATH)
-db_concept_name_em = SqliteDatabase(configs.CONCEPT_NAME_EM_PATH)
-db_concept_cons_em = SqliteDatabase(configs.CONCEPT_CONS_EM_PATH)
+db_concept_em = SqliteDatabase(configs.CONCEPT_EM_PATH)
 
 # 创建一个数据库代理
 db_proxy = DatabaseProxy()
@@ -42,6 +41,22 @@ class BuyPoint(Model):
         database = db_proxy
 
 
+# 定义数据库模型
+class ConceptName(Model):
+    id = AutoField(primary_key=True)  # 自增主键
+    name = CharField(max_length=100)  # 板块名称
+    code = CharField(max_length=20)   # 板块代码
+    rank = IntegerField()             # 排名
+    rise_ratio = FloatField()         # 涨跌比
+    up_count = IntegerField()         # 上涨家数
+    down_count = IntegerField()       # 下跌家数
+    timestamp = DateTimeField()       # 数据插入时间
+
+    class Meta:
+        database = db_proxy
+        table_name = "concept_name"
+
+
 # 函数用于切换数据库
 def switch_database(db_choice: str):
     # logger.debug(f"Attempting to switch to database: {db_choice}")
@@ -58,7 +73,8 @@ def switch_database(db_choice: str):
     elif db_choice == "TEMP":
         db_proxy.initialize(db_buy_point_temp)
     elif db_choice == "CONCEPT":
-        db_proxy.initialize()
+        db_proxy.initialize(db_concept_em)
+
     else:
         raise ValueError(f"Invalid database choice: {db_choice}. Use BI, XD, MA250, MAUS, TEMP.")
     # logger.debug(f"Successfully switched to database: {db_proxy.obj.database}")
@@ -66,10 +82,10 @@ def switch_database(db_choice: str):
 
 def create_tables():
     # 连接数据库
-    switch_database("BI")
+    switch_database("CONCEPT")
 
     # 创建表格
-    db_proxy.create_tables([BuyPoint])
+    db_proxy.create_tables([ConceptName])
 
 
 def test_connection(db_choice):
@@ -82,7 +98,7 @@ def test_connection(db_choice):
 
 
 if __name__ == '__main__':
-    # create_tables()
+    create_tables()
     # test_connection("BI")  # 测试数据库1
     # test_connection("XD")  # 测试数据库2
-    test_connection("MA250")
+    # test_connection("MA250")

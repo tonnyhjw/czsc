@@ -11,7 +11,5 @@ BUY_POINT_MAUS_PATH = "/home/ubuntu/databases/buy_points_maus.db"
 BUY_POINT_TEMP_PATH = "/home/ubuntu/databases/buy_points_temp.db"
 
 # 概念板块名称
-CONCEPT_NAME_EM_PATH = "/home/ubuntu/databases/concept_name_em.db"
+CONCEPT_EM_PATH = "/home/ubuntu/databases/concept_em.db"
 
-# 概念板块内的个股
-CONCEPT_CONS_EM_PATH = "/home/ubuntu/databases/concept_cons_em.db"
