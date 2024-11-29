@@ -1,6 +1,6 @@
 import akshare as ak
 import pandas as pd
-from datetime import datetime
+import datetime
 
 from database.models import *
 
@@ -47,7 +47,7 @@ def fetch_and_store_concept_name():
                 rise_ratio=row['涨跌比'],
                 up_count=row['上涨家数'],
                 down_count=row['下跌家数'],
-                timestamp=datetime.now()
+                timestamp=datetime.datetime.now()
             )
     logger.info(f"{len(concept_df)} 条数据已成功插入数据库。")
 
