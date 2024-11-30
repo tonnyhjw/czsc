@@ -65,9 +65,9 @@ def fetch_and_store_concept_cons():
                             "stock_name": _stock_name
                         })
 
-            # 批量插入新的概念数据
-            if new_concept_cons:
-                ConceptCons.insert_many(new_concept_cons).execute()
+        # 批量插入新的概念数据
+        if new_concept_cons:
+            ConceptCons.insert_many(new_concept_cons).execute()
 
     # 打印结果
     logger.info(f"新增概念数量: {len(new_concept_name)}")
