@@ -189,5 +189,5 @@ if __name__ == '__main__':
     # get_hsgt()
     # money_flow_global()
     # elevate_dev()
-    concept_dev()
-    # concept_stock_dev()
+    # concept_dev()
+    concept_stock_dev()

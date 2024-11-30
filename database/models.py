@@ -67,7 +67,9 @@ class ConceptCons(Model):
     class Meta:
         database = db_concept_em
         table_name = "concept_cons"
-
+        indexes = (
+            (('code', 'symbol'), True),  # 唯一性索引
+        )
 
 # 函数用于切换数据库
 def switch_database(db_choice: str):
