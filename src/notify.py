@@ -113,7 +113,7 @@ def notify_money_flow(results: list, email_subject: str, notify_empty: bool = Tr
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
-def notify_new_concept(new_concept_name, new_concept_cons, email_subject):
+def notify_new_concept(new_concept_name=None, new_concept_cons=None, email_subject=None):
     concept_content = ""
     if new_concept_name:
         df_new_concept_name = pd.DataFrame(new_concept_name)

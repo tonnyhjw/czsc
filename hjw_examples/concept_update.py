@@ -15,6 +15,14 @@ def update_concept_cons_and_alarm(subj_lv1="自动盯盘"):
         notify_new_concept(new_concept_name, new_concept_cons, email_subject)
 
 
+def update_concept_new_stock(subj_lv1="自动盯盘"):
+    concept_new_stock = update.fetch_and_store_concept_new_stock()
+    edt: str = datetime.datetime.now().strftime('%Y%m%d')
+    if concept_new_stock:
+        email_subject = f"[{subj_lv1}][概念板块][A股]{edt}发现{len(concept_new_stock)}个个股有板块变动"
+        notify_new_concept(new_concept_cons=concept_new_stock, email_subject=email_subject)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="这是一个示例程序")
     # 添加参数
@@ -29,3 +37,5 @@ if __name__ == '__main__':
         update.fetch_and_store_concept_name()
     if args.cons:
         update_concept_cons_and_alarm()
+    if args.stocks:
+        update_concept_new_stock()

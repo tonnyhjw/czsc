@@ -44,7 +44,7 @@ def fetch_and_store_concept_cons():
 
             # 查重：检查概念代码是否已存在
             if not ConceptCons.select().where(ConceptCons.code == _concept_code).exists():
-                new_concept_name.append((_concept_name, _concept_code))
+                new_concept_name.append({"concept_name": _concept_name, "concept_code": _concept_code})
 
                 # 获取该概念的成分股
                 concept_cons_df = ak.stock_board_concept_cons_em(symbol=_concept_name)
