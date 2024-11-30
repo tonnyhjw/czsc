@@ -41,7 +41,7 @@ class BuyPoint(Model):
         database = db_proxy
 
 
-# 定义数据库模型
+# 定义概念模型
 class ConceptName(Model):
     id = AutoField(primary_key=True)  # 自增主键
     name = CharField(max_length=100)  # 板块名称
@@ -53,8 +53,20 @@ class ConceptName(Model):
     timestamp = DateTimeField()       # 数据插入时间
 
     class Meta:
-        database = db_proxy
+        database = db_concept_em
         table_name = "concept_name"
+
+
+class ConceptCons(Model):
+    id = AutoField(primary_key=True)            # 自增主键
+    name = CharField(max_length=100)            # 板块名称
+    code = CharField(max_length=20)             # 板块代码
+    symbol = CharField(max_length=20)           # 股票代码
+    stock_name = CharField(max_length=100)      # 股票名称
+
+    class Meta:
+        database = db_concept_em
+        table_name = "concept_cons"
 
 
 # 函数用于切换数据库
@@ -72,8 +84,6 @@ def switch_database(db_choice: str):
         db_proxy.initialize(db_buy_point_maus)
     elif db_choice == "TEMP":
         db_proxy.initialize(db_buy_point_temp)
-    elif db_choice == "CONCEPT":
-        db_proxy.initialize(db_concept_em)
 
     else:
         raise ValueError(f"Invalid database choice: {db_choice}. Use BI, XD, MA250, MAUS, TEMP.")
@@ -81,11 +91,11 @@ def switch_database(db_choice: str):
 
 
 def create_tables():
-    # 连接数据库
-    switch_database("CONCEPT")
+    # # 连接数据库
+    # switch_database("CONCEPT")
 
     # 创建表格
-    db_proxy.create_tables([ConceptName])
+    db_concept_em.create_tables([ConceptName, ConceptCons])
 
 
 def test_connection(db_choice):
