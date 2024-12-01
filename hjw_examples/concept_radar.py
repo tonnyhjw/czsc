@@ -33,11 +33,10 @@ def rise_ratio_top_n(top_n=10):
     return result_df
 
 
-def rank_improvement(days=3):
+def rank_improvement(days: int = 3, threshold: int = 5):
     now = datetime.now()
     start_time = now - timedelta(days=days)  # 查询过去 1 天的数据
     end_time = now
-    threshold = 5  # 排名提升阈值
 
     result = detect.detect_rank_improvement(start_time, end_time, threshold)
     # 将 result 转换为 DataFrame 并返回
@@ -51,7 +50,7 @@ def rank_top_n(top_n=10):
     result = detect.get_top_n_concepts_excluding(top_n, exclude_codes=exclude_codes)
     # 将 result 转换为 DataFrame 并返回
     result_df = pd.DataFrame(result)
-
+    result_df = embed_code_href(result_df)
     return result_df
 
 
@@ -76,6 +75,11 @@ def store_current_result_code(result, result_file: str):
     result_path = os.path.join('statics/cache_results', result_file)
     with open(result_path, 'wb') as f:
         pickle.dump(result, f)
+
+
+def embed_code_href(input_df: pd.DataFrame):
+    input_df['code'] = '<a href="https://quote.eastmoney.com/center/boardlist.html#boards-{}">{}</a>'.format(input_df['code'], input_df['code'])
+    return input_df
 
 
 def demo():
