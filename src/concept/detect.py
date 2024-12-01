@@ -158,10 +158,20 @@ def get_stocks_in_multiple_concepts(top_n: int = 10, min_concept_count: int = 2,
     # 过滤出出现在至少两个概念板块中的股票
     multiple_concept_stocks = [stock for stock, count in stock_counter.items() if count >= min_concept_count]
 
-    # 获取这些个股的详细信息
-    result = (ConceptCons
-              .select(ConceptCons.symbol, ConceptCons.stock_name, ConceptCons.code)
-              .where(ConceptCons.symbol.in_(multiple_concept_stocks)))
-    result = [model_to_dict(concept) for concept in result]
-
+    # # 获取这些个股的详细信息
+    # result = (ConceptCons
+    #           .select(ConceptCons.symbol, ConceptCons.stock_name, ConceptCons.name, ConceptCons.code)
+    #           .where(ConceptCons.symbol.in_(multiple_concept_stocks)))
+    # result = [model_to_dict(concept) for concept in result]
+    result = []
+    for symbol, count in stock_counter.items():
+        _concepts_of_stock = (stocks_in_concepts
+                              .select(ConceptCons.name, ConceptCons.stock_name)
+                              .where(ConceptCons.symbol == symbol))
+        result.append({
+            "symbol": symbol,
+            "stock_name": _concepts_of_stock.first().stock_name,
+            "count": count,
+            "concepts": [c.name for c in _concepts_of_stock],
+        })
     return result
