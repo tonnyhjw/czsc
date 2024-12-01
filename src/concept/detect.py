@@ -1,5 +1,6 @@
 from peewee import fn
 from loguru import logger
+from playhouse.shortcuts import model_to_dict
 
 from database.models import ConceptName
 
@@ -92,9 +93,9 @@ def get_latest_concepts_with_criteria(top_n: int = 10):
 
     for concept in latest_concepts:
         if concept.rise_ratio == 1:
-            equal_to_1.append(concept)
+            equal_to_1.append(model_to_dict(concept))
         elif concept.rise_ratio < 1 and len(less_than_1) < top_n:
-            less_than_1.append(concept)
+            less_than_1.append(model_to_dict(concept))
 
         # 当两个条件都满足时可以提前结束循环
         if len(less_than_1) >= top_n:
@@ -102,5 +103,34 @@ def get_latest_concepts_with_criteria(top_n: int = 10):
 
     # 合并结果
     result = equal_to_1 + less_than_1
+
+    return result
+
+
+def get_top_n_concepts_excluding(top_n=10, exclude_codes=None):
+    """
+    获取最新插入的数据，排除指定的概念，返回排名前10的概念。
+    """
+    # 获取最新一批插入的时间戳
+    latest_timestamp = (ConceptName
+                        .select(fn.MAX(ConceptName.timestamp))
+                        .scalar())
+
+    if not latest_timestamp:
+        logger.info("数据库中没有概念数据。")
+        return []
+
+    # 获取最新批次插入的数据，按排名升序（越小排名越靠前）
+    query = (ConceptName
+             .select()
+             .where(ConceptName.timestamp == latest_timestamp)
+             .order_by(ConceptName.rank.asc()))
+
+    if exclude_codes:
+        query = query.where(~ConceptName.code.in_(exclude_codes))
+
+    # 获取前10名（排序后前10）
+    top_10_concepts = query.limit(top_n)
+    result = [model_to_dict(concept) for concept in top_10_concepts]
 
     return result
