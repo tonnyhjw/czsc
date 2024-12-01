@@ -1,8 +1,9 @@
 from peewee import fn
 from loguru import logger
+from collections import Counter
 from playhouse.shortcuts import model_to_dict
 
-from database.models import ConceptName
+from database.models import ConceptName, ConceptCons
 
 
 logger.add("statics/logs/concept.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
@@ -132,5 +133,35 @@ def get_top_n_concepts_excluding(top_n=10, exclude_codes=None):
     # 获取前10名（排序后前10）
     top_10_concepts = query.limit(top_n)
     result = [model_to_dict(concept) for concept in top_10_concepts]
+
+    return result
+
+
+def get_stocks_in_multiple_concepts(top_n: int = 10, min_concept_count: int = 2, exclude_codes=None):
+    """
+    获取在前 N 名概念中出现至少两个概念板块的个股
+    """
+    # 获取前 N 名的概念
+    top_n_concepts = get_top_n_concepts_excluding(top_n, exclude_codes)
+
+    # 获取这些概念的代码
+    concept_codes = [concept.get("code") for concept in top_n_concepts]
+
+    # 从 ConceptCons 中选出这些概念板块下的所有个股
+    stocks_in_concepts = (ConceptCons
+                          .select(ConceptCons.stock_name, ConceptCons.symbol, ConceptCons.name, ConceptCons.code)
+                          .where(ConceptCons.code.in_(concept_codes)))
+
+    # 统计每个股票出现在多少个概念板块中
+    stock_counter = Counter(stock.symbol for stock in stocks_in_concepts)
+
+    # 过滤出出现在至少两个概念板块中的股票
+    multiple_concept_stocks = [stock for stock, count in stock_counter.items() if count >= min_concept_count]
+
+    # 获取这些个股的详细信息
+    result = (ConceptCons
+              .select(ConceptCons.symbol, ConceptCons.stock_name, ConceptCons.code)
+              .where(ConceptCons.symbol.in_(multiple_concept_stocks)))
+    result = [model_to_dict(concept) for concept in result]
 
     return result

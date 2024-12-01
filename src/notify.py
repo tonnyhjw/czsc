@@ -131,8 +131,13 @@ def notify_new_concept(new_concept_name=None, new_concept_cons=None, email_subje
         send_email(styled_table, email_subject)
 
 
-def notify_concept_new_stocks():
-    return
+def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None):
+    if result_df.empty:
+        logger.info(f"notify_concept_radar receive empty result_df, {email_subject}")
+    else:
+        result_table = result_df.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
+        styled_table = daily_email_style(result_table)
+        send_email(styled_table, email_subject)
 
 
 if __name__ == '__main__':
