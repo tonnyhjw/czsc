@@ -130,7 +130,7 @@ def run():
     # 监控新晋排名前排
     rank_top_n(top_n=10)
     # 监控新前排板块共振
-    multi_concepts(top_n=20)
+    multi_concepts(top_n=10)
 
 
 if __name__ == "__main__":
