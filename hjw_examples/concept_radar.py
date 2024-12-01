@@ -10,7 +10,7 @@ from src.concept import detect
 from src.decorate import timer
 from src.notify import notify_concept_radar
 
-EXCLUDE_CODES = ["BK0817", "BK1050", "BK1051"]
+EXCLUDE_CODES = ["BK0816", "BK0817", "BK1050", "BK1051"]
 SUBJ_LV1 = "自动盯盘"   # 或改为"测试"
 EDT: str = datetime.now().strftime('%Y%m%d')
 
