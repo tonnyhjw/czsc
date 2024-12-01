@@ -113,17 +113,15 @@ def notify_money_flow(results: list, email_subject: str, notify_empty: bool = Tr
         logger.error(f"发送结果出现报错，{e_msg}\nTraceback: {tb}")
 
 
-def notify_new_concept(new_concept_name=None, new_concept_cons=None, email_subject=None):
+def notify_new_concept(new_concept_name: pd.DataFrame = None, new_concept_cons: pd.DataFrame = None, email_subject=None):
     concept_content = ""
-    if new_concept_name:
-        df_new_concept_name = pd.DataFrame(new_concept_name)
-        new_concept_name_table = df_new_concept_name.to_html(classes='table table-striped table-hover', border=0,
-                                                             index=False, escape=False)
+    if not new_concept_name.empty:
+        new_concept_name_table = new_concept_name.to_html(classes='table table-striped table-hover', border=0,
+                                                          index=False, escape=False)
         concept_content += f"<h2>发现新的东方财富概念板块</h2>{new_concept_name_table}"
-    if new_concept_cons:
-        df_new_concept_cons = pd.DataFrame(new_concept_cons)
-        new_concept_cons_table = df_new_concept_cons.to_html(classes='table table-striped table-hover', border=0,
-                                                             index=False, escape=False)
+    if not new_concept_cons.empty:
+        new_concept_cons_table = new_concept_cons.to_html(classes='table table-striped table-hover', border=0,
+                                                          index=False, escape=False)
         concept_content += f"<h2>发现新的概念个股</h2>{new_concept_cons_table}"
 
     if concept_content:

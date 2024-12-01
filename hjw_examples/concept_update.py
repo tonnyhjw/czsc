@@ -1,7 +1,9 @@
 import datetime
 import argparse
+import pandas as pd
 
 from src.concept import update
+from src.concept.utils import embed_code_href
 from src.notify import notify_new_concept
 
 
@@ -11,7 +13,9 @@ def update_concept_cons_and_alarm(subj_lv1="自动盯盘"):
     if new_concept_name or new_concept_cons:
         email_subject = (f"[{subj_lv1}][概念板块][A股]{edt}发现{len(new_concept_name)}"
                          f"个新板块概念共{len(new_concept_cons)}个个股")
-
+        new_concept_name = pd.DataFrame(new_concept_name)
+        new_concept_cons = pd.DataFrame(new_concept_cons)
+        new_concept_name = embed_code_href(new_concept_name)
         notify_new_concept(new_concept_name, new_concept_cons, email_subject)
 
 
