@@ -75,7 +75,6 @@ def multi_concepts(top_n=10, min_concept_count=2):
     if new_element(store_field, previous_result_file, result):
         # 在此触发相关的警报操作，如发送邮件或消息等
         result_df = pd.DataFrame(result)
-        result_df = embed_code_href(result_df)
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}发现{len(result_df)}个前{top_n}概念板块共振"
 
         notify_concept_radar(result_df, email_subject)
