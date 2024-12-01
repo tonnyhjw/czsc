@@ -39,12 +39,13 @@ def rank_improvement(hours: int = 24, threshold: int = 5):
     end_time = now
 
     result = detect.detect_rank_improvement(start_time, end_time, threshold)
-    # 将 result 转换为 DataFrame 并返回
-    result_df = pd.DataFrame(result)
-    result_df = embed_code_href(result_df)
-    email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}发现{len(result_df)}个{hours}小时内排名提升超过{threshold}的概念"
+    if result:
+        # 将 result 转换为 DataFrame 并返回
+        result_df = pd.DataFrame(result)
+        result_df = embed_code_href(result_df)
+        email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}发现{len(result_df)}个{hours}小时内排名提升超过{threshold}的概念"
 
-    notify_concept_radar(result_df, email_subject)
+        notify_concept_radar(result_df, email_subject)
 
 
 def rank_top_n(top_n=10):
