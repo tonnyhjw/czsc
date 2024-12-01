@@ -167,7 +167,7 @@ def get_stocks_in_multiple_concepts(top_n: int = 10, min_concept_count: int = 2,
     for symbol, count in stock_counter.most_common():
         if count >= min_concept_count:
             _concepts_of_stock = (stocks_in_concepts
-                                  .select(ConceptCons.name, ConceptCons.stock_name)
+                                  .select()
                                   .where(ConceptCons.symbol == symbol))
             result.append({
                 "symbol": symbol,
