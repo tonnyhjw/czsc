@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 
 from src.concept import detect
+from src.decorate import timer
 from src.notify import notify_concept_radar
 
 EXCLUDE_CODES = ["BK0817", "BK1050", "BK1051"]
@@ -120,6 +121,7 @@ def embed_code_href(input_df: pd.DataFrame):
     return input_df
 
 
+@timer
 def run():
     # 监控涨跌比前排
     rise_ratio_top_n(top_n=10)
