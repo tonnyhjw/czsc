@@ -78,7 +78,8 @@ def store_current_result_code(result, result_file: str):
 
 
 def embed_code_href(input_df: pd.DataFrame):
-    input_df['code'] = '<a href="https://quote.eastmoney.com/center/boardlist.html#boards-{}">{}</a>'.format(input_df['code'], input_df['code'])
+    input_df['code'] = input_df['code'].apply(
+        lambda x: f'<a href="https://quote.eastmoney.com/center/boardlist.html#boards-{x}">{x}</a>')
     return input_df
 
 
