@@ -85,8 +85,8 @@ def run():
     # 监控涨跌比前排
     rise_ratio_top_n(top_n=10)
     # 监控排名提升
-    rank_improvement(hours=24, threshold=200)
-    rank_improvement(hours=1, threshold=10)
+    rank_improvement(hours=24, threshold=300)
+    rank_improvement(hours=1, threshold=5)
     # 监控新晋排名前排
     rank_top_n(top_n=10)
     # 监控新前排板块共振
