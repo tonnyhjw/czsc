@@ -38,6 +38,7 @@ def rank_improvement(hours: int = 24, threshold: int = 5):
         # 将 result 转换为 DataFrame 并返回
         result_df = pd.DataFrame(result)
         result_df = embed_code_href(result_df)
+        result_df.sort_values(by='rank_improvement', ascending=False, inplace=True)
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}发现{len(result_df)}个{hours}小时内排名提升超过{threshold}的概念"
 
         notify_concept_radar(result_df, email_subject)
@@ -84,7 +85,8 @@ def run():
     # 监控涨跌比前排
     rise_ratio_top_n(top_n=10)
     # 监控排名提升
-    rank_improvement(hours=24, threshold=5)
+    rank_improvement(hours=24, threshold=200)
+    rank_improvement(hours=1, threshold=10)
     # 监控新晋排名前排
     rank_top_n(top_n=10)
     # 监控新前排板块共振
