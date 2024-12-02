@@ -69,9 +69,11 @@ def multi_concepts(top_n=10, min_concept_count=2):
     result = detect.get_stocks_in_multiple_concepts(top_n, min_concept_count, EXCLUDE_CODES)
 
     # 如果有新增概念板块共振个股，触发警报
-    if new_element(store_field, previous_result_file, result):
+    new_elem = new_element(store_field, previous_result_file, result)
+    if new_elem:
         # 在此触发相关的警报操作，如发送邮件或消息等
         result_df = pd.DataFrame(result)
+        result_df = result_df[result_df['symbol'].isin(new_elem)]
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}发现{len(result_df)}个前{top_n}概念板块共振"
 
         notify_concept_radar(result_df, email_subject)
