@@ -31,7 +31,7 @@ def new_element(store_field, previous_result_file, cur_result):
     previous_result = load_previous_result(previous_result_file)
 
     # 返回新增的元素列表
-    return [result for result in cur_result if result.get(store_field) not in previous_result]
+    return [result.get(store_field) for result in cur_result if result.get(store_field) not in previous_result]
 
 
 def embed_code_href(input_df: pd.DataFrame):
