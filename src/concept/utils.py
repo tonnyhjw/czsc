@@ -38,3 +38,9 @@ def embed_code_href(input_df: pd.DataFrame):
     input_df['code'] = input_df['code'].apply(
         lambda x: f'<a href="https://quote.eastmoney.com/center/boardlist.html#boards-{x}">{x}</a>')
     return input_df
+
+
+def embed_symbol_href(input_df: pd.DataFrame):
+    input_df['symbol'] = input_df['symbol'].apply(
+        lambda x: f'<a href="https://quote.eastmoney.com/kcb/{x}.html">{x}</a>')
+    return input_df
