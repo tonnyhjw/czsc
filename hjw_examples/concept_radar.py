@@ -109,7 +109,7 @@ def run():
     # 监控排名提升
     rank_improvement(hours=24, threshold=300)
     rank_improvement(hours=1, threshold=50)
-    rank_drop(top_n=20, rank_threshold=400, avg_rank_window=3)
+    rank_drop(top_n=50, rank_threshold=400, avg_rank_window=3)
     # 监控新晋排名前排
     rank_top_n(top_n=10)
     # 监控新前排板块共振
