@@ -95,7 +95,7 @@ def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3):
         # 将 result 转换为 DataFrame 并返回
         result_df = pd.DataFrame(result)
         result_df = embed_code_href(result_df)
-        email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}近{avg_rank_window}天热门概念快速下跌至低于{rank_threshold}"
+        email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}近{avg_rank_window}天热门概念急跌至低于{rank_threshold}"
 
         notify_concept_radar(result_df, email_subject)
     # 存储当前的 result 以便下次对比
