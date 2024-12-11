@@ -83,6 +83,25 @@ def multi_concepts(top_n=10, min_concept_count=2):
     store_current_result_code(result, previous_result_file, store_field)
 
 
+def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3):
+    store_field = 'code'
+    previous_result_file = "concept_rank_drop_code.pkl"
+    result = detect.monitor_concept_rank_drop(top_n=top_n, rank_threshold=rank_threshold,
+                                              avg_rank_window=avg_rank_window)
+
+    # 如果有新增概念板块共振个股，触发警报
+    if new_element(store_field, previous_result_file, result):
+
+        # 将 result 转换为 DataFrame 并返回
+        result_df = pd.DataFrame(result)
+        result_df = embed_code_href(result_df)
+        email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}近{avg_rank_window}天热门概念快速下跌至低于{rank_threshold}"
+
+        notify_concept_radar(result_df, email_subject)
+    # 存储当前的 result 以便下次对比
+    store_current_result_code(result, previous_result_file, store_field)
+
+
 @timer
 def run():
     # 监控涨跌比前排
@@ -90,6 +109,7 @@ def run():
     # 监控排名提升
     rank_improvement(hours=24, threshold=300)
     rank_improvement(hours=1, threshold=50)
+    rank_drop(top_n=20, rank_threshold=400, avg_rank_window=3)
     # 监控新晋排名前排
     rank_top_n(top_n=10)
     # 监控新前排板块共振

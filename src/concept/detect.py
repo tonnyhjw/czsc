@@ -1,6 +1,8 @@
-from peewee import fn
+from peewee import fn, SQL
 from loguru import logger
+from typing import List, Dict
 from collections import Counter
+from datetime import datetime, timedelta
 from playhouse.shortcuts import model_to_dict
 
 from database.models import ConceptName, ConceptCons
@@ -169,4 +171,71 @@ def get_stocks_in_multiple_concepts(top_n: int = 10, min_concept_count: int = 2,
                 "count": count,
                 "concepts": _concepts,
             })
+    return result
+
+
+def monitor_concept_rank_drop(
+        top_n: int = 10,  # 头部强势板块的初始范围
+        rank_threshold: int = 50,  # 排名下降阈值
+        avg_rank_window: int = 3  # 计算平均排名的天数
+) -> List[Dict]:
+    """
+    监控概念板块排名变化，识别从强势板块快速下跌的概念
+
+    参数:
+    - top_n: 初始强势板块的数量
+    - rank_threshold: 排名下降的阈值
+    - avg_rank_window: 计算平均排名的窗口期
+
+    返回: 符合条件的概念板块列表
+    """
+    # 获取最新的插入时间
+    latest_timestamp = (
+        ConceptName
+        .select(fn.MAX(ConceptName.timestamp).alias('max_timestamp'))
+        .scalar()
+    )
+
+    # 计算平均排名窗口的起始时间
+    avg_start_time = datetime.now() - timedelta(days=avg_rank_window)
+
+    # 查询最新批次数据
+    latest_data = (
+        ConceptName
+        .select()
+        .where(ConceptName.timestamp == latest_timestamp)
+    )
+
+    # 计算每个概念板块在平均排名窗口期的平均排名
+    avg_ranks = (
+        ConceptName
+        .select(
+            ConceptName.name,
+            ConceptName.code,
+            fn.AVG(ConceptName.rank).alias('avg_rank')
+        )
+        .where(ConceptName.timestamp.between(avg_start_time, latest_timestamp))
+        .group_by(ConceptName.name, ConceptName.code)
+        .order_by(SQL('avg_rank').asc())  # 排名越小越靠前
+        .limit(top_n)
+    )
+
+    # 转换为字典以便快速查找
+    avg_rank_dict = {concept.code: concept.avg_rank for concept in avg_ranks}
+
+    # 筛选结果
+    result = []
+    for concept in latest_data:
+        # 判断是否从强势板块快速下跌
+        # 排名阈值改为大于avg_rank_threshold
+        # rank越小越靠前，所以排名变大意味着下跌
+        if concept.code in avg_rank_dict and concept.rank > rank_threshold:     # 排名低于阈值
+            result.append({
+                'name': concept.name,
+                'code': concept.code,
+                'current_rank': concept.rank,
+                'avg_rank': avg_rank_dict[concept.code],
+                'timestamp': concept.timestamp
+            })
+
     return result
