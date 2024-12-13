@@ -135,7 +135,7 @@ def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None, buy
     else:
         result_table = result_df.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
         result_table = "<h2>综合分析结果</h2>" + result_table
-        if buy_point_df:
+        if not buy_point_df.empty:
             buy_point_table = buy_point_df.to_html(classes='table table-striped table-hover', border=0, index=False,
                                                    escape=False)
             result_table = "<h2>关联买点</h2>" + buy_point_table
