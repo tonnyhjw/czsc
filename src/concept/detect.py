@@ -2,8 +2,7 @@ from peewee import fn, SQL
 from loguru import logger
 from typing import List, Dict, Optional
 from collections import Counter
-import datetime
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from playhouse.shortcuts import model_to_dict
 
 from database.models import ConceptName, ConceptCons, BuyPoint, switch_database
@@ -270,9 +269,9 @@ def find_concept_stocks_with_latest_buypoints(
 
     # 如果没有指定日期范围，默认查询最近1年
     if start_date is None:
-        start_date = datetime.date.today() - datetime.timedelta(days=5)
+        start_date = date.today() - timedelta(days=5)
     if end_date is None:
-        end_date = datetime.date.today()
+        end_date = date.today()
 
     # 存储结果的列表
     results = []
