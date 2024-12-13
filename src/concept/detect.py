@@ -1,11 +1,12 @@
 from peewee import fn, SQL
 from loguru import logger
-from typing import List, Dict
+from typing import List, Dict, Optional
 from collections import Counter
+import datetime
 from datetime import datetime, timedelta
 from playhouse.shortcuts import model_to_dict
 
-from database.models import ConceptName, ConceptCons
+from database.models import ConceptName, ConceptCons, BuyPoint, switch_database
 
 
 logger.add("statics/logs/concept.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
@@ -239,3 +240,67 @@ def monitor_concept_rank_drop(
             })
 
     return result
+
+
+def find_concept_stocks_with_latest_buypoints(
+        concept_code: str,
+        start_date: Optional[datetime.date] = None,
+        end_date: Optional[datetime.date] = None,
+        database_type: str = "BI"
+) -> List[Dict]:
+    """
+    查找特定概念板块的股票最新买点信息
+
+    Args:
+        concept_code (str): 概念板块代码
+        start_date (Optional[datetime.date]): 开始日期
+        end_date (Optional[datetime.date]): 结束日期
+        database_type (str): 数据库类型，默认为 "BI"
+
+    Returns:
+        List[Dict]: 带有最新买点信息的股票列表
+    """
+    # 切换数据库
+    switch_database(database_type)
+
+    # 找出该板块的所有成分股
+    concept_stocks = (ConceptCons
+                      .select(ConceptCons.symbol, ConceptCons.stock_name)
+                      .where(ConceptCons.code == concept_code))
+
+    # 如果没有指定日期范围，默认查询最近1年
+    if start_date is None:
+        start_date = datetime.date.today() - datetime.timedelta(days=365)
+    if end_date is None:
+        end_date = datetime.date.today()
+
+    # 存储结果的列表
+    results = []
+
+    # 遍历每个成分股
+    for stock in concept_stocks:
+        # 查找该股票在指定日期范围内的最新买点
+        latest_buypoint = (BuyPoint
+                           .select()
+                           .where(
+                                (BuyPoint.symbol == stock.symbol) &
+                                (BuyPoint.date >= start_date) &
+                                (BuyPoint.date <= end_date)
+                            )
+                           .order_by(BuyPoint.date.desc())
+                           .first())  # 只选择最新的买点
+
+        # 如果有买点，则加入结果列表
+        if latest_buypoint:
+            results.append({
+                'symbol': stock.symbol,
+                'name': stock.stock_name,
+                'date': latest_buypoint.date,
+                'signals': latest_buypoint.signals,
+                'fx_pwr': latest_buypoint.fx_pwr,
+                'expect_profit': latest_buypoint.expect_profit,
+                'mark': latest_buypoint.mark,
+                'reason': latest_buypoint.reason
+            })
+
+    return results

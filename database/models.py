@@ -41,8 +41,8 @@ class BuyPoint(Model):
         database = db_proxy
 
 
-# 定义概念模型
 class ConceptName(Model):
+    """定义概念模型"""
     id = AutoField(primary_key=True)  # 自增主键
     name = CharField(max_length=100)  # 板块名称
     code = CharField(max_length=20)   # 板块代码
@@ -58,6 +58,7 @@ class ConceptName(Model):
 
 
 class ConceptCons(Model):
+    """概念成分股模型"""
     id = AutoField(primary_key=True)            # 自增主键
     name = CharField(max_length=100)            # 板块名称
     code = CharField(max_length=20)             # 板块代码
@@ -70,6 +71,7 @@ class ConceptCons(Model):
         indexes = (
             (('code', 'symbol'), True),  # 唯一性索引
         )
+
 
 # 函数用于切换数据库
 def switch_database(db_choice: str):

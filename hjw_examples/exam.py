@@ -172,6 +172,40 @@ def concept_stock_dev():
         print(row.to_dict())
 
 
+def print_concept_latest_buypoints():
+    """
+    美化打印最新买点查询结果
+
+    Args:
+        results (List[Dict]): 最新买点查询结果
+    """
+    from src.concept.detect import find_concept_stocks_with_latest_buypoints
+    concept_code = "BK0923" # 替换为你想查询的板块代码
+    start_date = datetime.date(2024, 12, 9)
+    end_date = datetime.date(2024, 12, 13)
+
+    results = find_concept_stocks_with_latest_buypoints(
+        concept_code,
+        start_date,
+        end_date
+    )
+
+    if not results:
+        print("未找到任何买点信息。")
+        return
+
+    print(f"共找到 {len(results)} 只股票的最新买点：")
+    for stock in results:
+        print(f"\n股票代码: {stock['symbol']} - {stock['name']}")
+        bp = stock['buypoint']
+        print(f"  - 日期: {bp['date']}")
+        print(f"    信号: {bp['signals']}")
+        print(f"    分型强度: {bp['fx_pwr']}")
+        print(f"    预期收益: {bp['expect_profit']}%")
+        print(f"    分型类型: {bp['mark']}")
+        print(f"    原因: {bp['reason']}")
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -190,4 +224,4 @@ if __name__ == '__main__':
     # money_flow_global()
     # elevate_dev()
     # concept_dev()
-    concept_stock_dev()
+    print_concept_latest_buypoints()
