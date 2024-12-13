@@ -265,7 +265,7 @@ def find_concept_stocks_with_latest_buypoints(
 
     # 找出该板块的所有成分股
     concept_stocks = (ConceptCons
-                      .select(ConceptCons.symbol, ConceptCons.stock_name)
+                      .select(ConceptCons.symbol, ConceptCons.stock_name, ConceptCons.name)
                       .where(ConceptCons.code == concept_code))
 
     # 如果没有指定日期范围，默认查询最近1年
@@ -294,13 +294,11 @@ def find_concept_stocks_with_latest_buypoints(
         if latest_buypoint:
             results.append({
                 'symbol': stock.symbol,
-                'name': stock.stock_name,
-                'date': latest_buypoint.date,
+                'name': stock.name,
+                'stock_name': stock.stock_name,
                 'signals': latest_buypoint.signals,
                 'fx_pwr': latest_buypoint.fx_pwr,
-                'expect_profit': latest_buypoint.expect_profit,
-                'mark': latest_buypoint.mark,
-                'reason': latest_buypoint.reason
+                'bp_date': latest_buypoint.date,
             })
 
     return results
