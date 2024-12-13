@@ -138,7 +138,7 @@ def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None, buy
         if not buy_point_df.empty:
             buy_point_table = buy_point_df.to_html(classes='table table-striped table-hover', border=0, index=False,
                                                    escape=False)
-            result_table = "<h2>关联买点</h2>" + buy_point_table
+            result_table = result_table + "<h2>关联买点</h2>" + buy_point_table
         result_table += f'<a href="https://quote.eastmoney.com/center/boardlist.html#concept_board">东财板块概念</a>'
         styled_table = daily_email_style(result_table)
         send_email(styled_table, email_subject)
