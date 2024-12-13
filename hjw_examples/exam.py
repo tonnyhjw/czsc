@@ -196,13 +196,11 @@ def print_concept_latest_buypoints():
 
     print(f"共找到 {len(results)} 只股票的最新买点：")
     for stock in results:
-        print(f"\n股票代码: {stock['symbol']} - {stock['name']}")
+        print(f"\n股票代码: {stock['symbol']} - {stock['stock_name']}")
         print(f"  - 日期: {stock['date']}")
         print(f"    信号: {stock['signals']}")
         print(f"    分型强度: {stock['fx_pwr']}")
-        print(f"    预期收益: {stock['expect_profit']}%")
-        print(f"    分型类型: {stock['mark']}")
-        print(f"    原因: {stock['reason']}")
+
 
 
 if __name__ == '__main__':
