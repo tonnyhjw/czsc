@@ -270,7 +270,7 @@ def find_concept_stocks_with_latest_buypoints(
 
     # 如果没有指定日期范围，默认查询最近1年
     if start_date is None:
-        start_date = datetime.date.today() - datetime.timedelta(days=365)
+        start_date = datetime.date.today() - datetime.timedelta(days=5)
     if end_date is None:
         end_date = datetime.date.today()
 
@@ -302,3 +302,40 @@ def find_concept_stocks_with_latest_buypoints(
             })
 
     return results
+
+
+def get_buypoints_for_multiple_concepts(
+        concepts: List[Dict],
+        start_date: Optional[datetime.date] = None,
+        end_date: Optional[datetime.date] = None,
+        database_type: str = "BI"
+) -> List[Dict]:
+    """
+    获取多个概念板块的最新买点信息
+
+    Args:
+        concepts (List[Dict]): 概念板块列表，每个字典包含 'code' 字段
+        start_date (Optional[datetime.date]): 开始日期
+        end_date (Optional[datetime.date]): 结束日期
+        database_type (str): 数据库类型，默认为 "BI"
+
+    Returns:
+        List[Dict]: 所有概念板块的最新买点信息合并列表
+    """
+    # 存储最终结果的列表
+    all_buypoints = []
+
+    # 遍历每个概念板块
+    for concept in concepts:
+        # 获取当前概念板块的最新买点
+        concept_buypoints = find_concept_stocks_with_latest_buypoints(
+            concept_code=concept.get('code'),
+            start_date=start_date,
+            end_date=end_date,
+            database_type=database_type
+        )
+
+        # 将当前概念板块的买点加入总列表
+        all_buypoints.extend(concept_buypoints)
+
+    return all_buypoints

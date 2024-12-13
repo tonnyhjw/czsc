@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+import pandas as pd
+
 from src.concept import detect
 from src.decorate import timer
 from src.notify import notify_concept_radar
@@ -32,6 +34,7 @@ def rank_improvement(hours: int = 24, threshold: int = 5):
     now = datetime.now()
     start_time = now - timedelta(hours=hours)  # 查询过去 1 天的数据
     end_time = now
+    result_df, buy_points_df = None, None
 
     result = detect.detect_rank_improvement(start_time, end_time, threshold)
     if result:
@@ -41,7 +44,10 @@ def rank_improvement(hours: int = 24, threshold: int = 5):
         result_df.sort_values(by='rank_improvement', ascending=False, inplace=True)
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}发现{len(result_df)}个{hours}小时内排名提升超过{threshold}的概念"
 
-        notify_concept_radar(result_df, email_subject)
+        buy_points = detect.get_buypoints_for_multiple_concepts(result)
+        if buy_points:
+            buy_points_df = pd.DataFrame(buy_points)
+        notify_concept_radar(result_df, email_subject, buy_points_df)
 
 
 def rank_top_n(top_n=10):

@@ -129,11 +129,16 @@ def notify_new_concept(new_concept_name: pd.DataFrame = None, new_concept_cons: 
         send_email(styled_table, email_subject)
 
 
-def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None):
+def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None, buy_point_df: pd.DataFrame = None):
     if result_df.empty:
         logger.info(f"notify_concept_radar receive empty result_df, {email_subject}")
     else:
         result_table = result_df.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
+        result_table = "<h2>综合分析结果</h2>" + result_table
+        if buy_point_df:
+            buy_point_table = buy_point_df.to_html(classes='table table-striped table-hover', border=0, index=False,
+                                                   escape=False)
+            result_table = "<h2>关联买点</h2>" + buy_point_table
         result_table += f'<a href="https://quote.eastmoney.com/center/boardlist.html#concept_board">东财板块概念</a>'
         styled_table = daily_email_style(result_table)
         send_email(styled_table, email_subject)
