@@ -269,7 +269,7 @@ def find_concept_stocks_with_latest_buypoints(
 
     # 如果没有指定日期范围，默认查询最近1年
     if start_date is None:
-        start_date = date.today() - timedelta(days=5)
+        start_date = date.today() - timedelta(days=3)
     if end_date is None:
         end_date = date.today()
 
@@ -292,9 +292,9 @@ def find_concept_stocks_with_latest_buypoints(
         # 如果有买点，则加入结果列表
         if latest_buypoint:
             results.append({
-                'symbol': stock.symbol,
-                'name': stock.name,
+                'ts_code': latest_buypoint.ts_code,
                 'stock_name': stock.stock_name,
+                'name': stock.name,
                 'signals': latest_buypoint.signals,
                 'fx_pwr': latest_buypoint.fx_pwr,
                 'bp_date': latest_buypoint.date,
