@@ -31,6 +31,7 @@ def rise_ratio_top_n(top_n=10, bp_days_limit=3):
         buy_points = detect.get_buypoints_for_multiple_concepts(result, bp_sdt, bp_edt)
         if buy_points:
             buy_points_df = pd.DataFrame(buy_points)
+            buy_points_df = utils.embed_ts_code_href(buy_points_df)
 
         notify_concept_radar(result_df, email_subject, buy_points_df)
 
@@ -82,6 +83,7 @@ def rank_top_n(top_n=10, bp_days_limit=3):
         buy_points = detect.get_buypoints_for_multiple_concepts(result, bp_sdt, bp_edt)
         if buy_points:
             buy_points_df = pd.DataFrame(buy_points)
+            buy_points_df = utils.embed_ts_code_href(buy_points_df)
 
         notify_concept_radar(result_df, email_subject, buy_points_df)    # 存储当前的 result 以便下次对比
     utils.store_current_result_code(result, previous_result_file, store_field)
@@ -130,6 +132,7 @@ def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3, bp_days_limit=3):
         buy_points = detect.get_buypoints_for_multiple_concepts(result, bp_sdt, bp_edt)
         if buy_points:
             buy_points_df = pd.DataFrame(buy_points)
+            buy_points_df = utils.embed_ts_code_href(buy_points_df)
 
         notify_concept_radar(result_df, email_subject, buy_points_df)
         # 存储当前的 result 以便下次对比
