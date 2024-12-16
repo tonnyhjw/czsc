@@ -1,6 +1,9 @@
 import os
 import pickle
+import pprint
+
 import pandas as pd
+import datetime
 
 
 def load_previous_result(result_file: str):
@@ -44,3 +47,18 @@ def embed_symbol_href(input_df: pd.DataFrame):
     input_df['symbol'] = input_df['symbol'].apply(
         lambda x: f'<a href="https://quote.eastmoney.com/{x}.html">{x}</a>')
     return input_df
+
+
+def get_recent_n_trade_dates_boundary(n: int = 3):
+    from czsc import home_path
+    from czsc.data import TsDataCache
+
+    today = datetime.datetime.now()
+    sdt = (today - datetime.timedelta(days=n+10)).strftime("%Y%m%d")
+    edt = today.strftime("%Y%m%d")
+    trade_dates = TsDataCache(home_path).get_dates_span(sdt, edt, is_open=True)
+    return trade_dates[-n], trade_dates[-1]
+
+
+if __name__ == '__main__':
+    get_recent_n_trade_dates_boundary()
