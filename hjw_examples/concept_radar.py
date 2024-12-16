@@ -58,6 +58,7 @@ def rank_improvement(hours: int = 24, threshold: int = 5, bp_days_limit=3):
         buy_points = detect.get_buypoints_for_multiple_concepts(result, bp_sdt, bp_edt)
         if buy_points:
             buy_points_df = pd.DataFrame(buy_points)
+            buy_points_df = utils.embed_ts_code_href(buy_points_df)
         notify_concept_radar(result_df, email_subject, buy_points_df)
 
 
@@ -141,7 +142,7 @@ def run():
     rise_ratio_top_n(top_n=10)
     # 监控排名提升
     rank_improvement(hours=24, threshold=300)
-    rank_improvement(hours=1, threshold=50)
+    rank_improvement(hours=1, threshold=250)
     rank_drop(top_n=50, rank_threshold=400, avg_rank_window=3)
     # 监控新晋排名前排
     rank_top_n(top_n=10)
