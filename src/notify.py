@@ -129,7 +129,7 @@ def notify_new_concept(new_concept_name: pd.DataFrame = None, new_concept_cons: 
         send_email(styled_table, email_subject)
 
 
-def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None, buy_point_df: pd.DataFrame = None):
+def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None, buy_point_df: pd.DataFrame = pd.DataFrame()):
     if result_df.empty:
         logger.info(f"notify_concept_radar receive empty result_df, {email_subject}")
     else:
