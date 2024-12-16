@@ -16,6 +16,7 @@ def rise_ratio_top_n(top_n=10):
     store_field = 'code'
     previous_result_file = "rise_ratio_previous_code.pkl"
     result = detect.get_latest_concepts_with_criteria(top_n)
+    result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
 
     # 如果有新增概念，触发警报
     if new_element(store_field, previous_result_file, result):
@@ -24,7 +25,11 @@ def rise_ratio_top_n(top_n=10):
         result_df = embed_code_href(result_df)
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}发现{len(result_df)}个头部涨跌比概念(全涨+top{top_n})"
 
-        notify_concept_radar(result_df, email_subject)
+        buy_points = detect.get_buypoints_for_multiple_concepts(result)
+        if buy_points:
+            buy_points_df = pd.DataFrame(buy_points)
+
+        notify_concept_radar(result_df, email_subject, buy_points_df)
 
     # 存储当前的 result 以便下次对比
     store_current_result_code(result, previous_result_file, store_field)
@@ -34,7 +39,7 @@ def rank_improvement(hours: int = 24, threshold: int = 5):
     now = datetime.now()
     start_time = now - timedelta(hours=hours)  # 查询过去 1 天的数据
     end_time = now
-    result_df, buy_points_df = None, None
+    result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
 
     result = detect.detect_rank_improvement(start_time, end_time, threshold)
     if result:
@@ -54,6 +59,7 @@ def rank_top_n(top_n=10):
     store_field = 'code'
     previous_result_file = "rank_top_n_code.pkl"
     result = detect.get_top_n_concepts_excluding(top_n, exclude_codes=EXCLUDE_CODES)
+    result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
 
     # 如果有新增概念板块共振个股，触发警报
     if new_element(store_field, previous_result_file, result):
@@ -63,8 +69,11 @@ def rank_top_n(top_n=10):
         result_df = embed_code_href(result_df)
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}排名前{top_n}的概念"
 
-        notify_concept_radar(result_df, email_subject)
-    # 存储当前的 result 以便下次对比
+        buy_points = detect.get_buypoints_for_multiple_concepts(result)
+        if buy_points:
+            buy_points_df = pd.DataFrame(buy_points)
+
+        notify_concept_radar(result_df, email_subject, buy_points_df)    # 存储当前的 result 以便下次对比
     store_current_result_code(result, previous_result_file, store_field)
 
 
@@ -92,6 +101,7 @@ def multi_concepts(top_n=10, min_concept_count=2):
 def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3):
     store_field = 'code'
     previous_result_file = "concept_rank_drop_code.pkl"
+    result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
     result = detect.monitor_concept_rank_drop(top_n=top_n, rank_threshold=rank_threshold,
                                               avg_rank_window=avg_rank_window)
 
@@ -103,8 +113,12 @@ def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3):
         result_df = embed_code_href(result_df)
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}近{avg_rank_window}天热门概念急跌至低于{rank_threshold}"
 
-        notify_concept_radar(result_df, email_subject)
-    # 存储当前的 result 以便下次对比
+        buy_points = detect.get_buypoints_for_multiple_concepts(result)
+        if buy_points:
+            buy_points_df = pd.DataFrame(buy_points)
+
+        notify_concept_radar(result_df, email_subject, buy_points_df)
+        # 存储当前的 result 以便下次对比
     store_current_result_code(result, previous_result_file, store_field)
 
 
