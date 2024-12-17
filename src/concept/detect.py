@@ -110,31 +110,29 @@ def get_latest_concepts_with_criteria(top_n: int = 10):
     return result
 
 
-def get_top_n_concepts_excluding(top_n=10, exclude_codes=None):
+# 修改后的第一个函数
+def get_top_n_concepts_excluding(top_n=10, exclude_codes=None, latest_timestamp=None):
     """
-    获取最新插入的数据，排除指定的概念，返回排名前10的概念。
+    获取最新插入的数据，排除指定的概念，返回排名前n的概念。
     """
-    # 获取最新一批插入的时间戳
-    latest_timestamp = (ConceptName
-                        .select(fn.MAX(ConceptName.timestamp))
-                        .scalar())
+    # 获取精确时间戳
+    precise_timestamp = get_precise_latest_timestamp(ConceptName, latest_timestamp)
 
-    if not latest_timestamp:
+    if not precise_timestamp:
         logger.info("数据库中没有概念数据。")
         return []
 
-    # 获取最新批次插入的数据，按排名升序（越小排名越靠前）
-    query = (ConceptName
-             .select()
-             .where(ConceptName.timestamp == latest_timestamp)
-             .order_by(ConceptName.rank.asc()))
+    # 创建查询
+    query = query_by_precise_timestamp(ConceptName, precise_timestamp)
+    query = query.order_by(ConceptName.rank.asc())
 
+    # 如果有需要排除的概念代码，添加过滤条件
     if exclude_codes:
         query = query.where(~ConceptName.code.in_(exclude_codes))
 
-    # 获取前10名（排序后前10）
-    top_10_concepts = query.limit(top_n)
-    result = [model_to_dict(concept) for concept in top_10_concepts]
+    # 获取指定数量的概念
+    top_concepts = query.limit(top_n)
+    result = [model_to_dict(concept) for concept in top_concepts]
 
     return result
 
@@ -338,3 +336,46 @@ def get_buypoints_for_multiple_concepts(
         all_buypoints.extend(concept_buypoints)
 
     return all_buypoints
+
+
+def get_precise_latest_timestamp(model, timestamp=None):
+    """
+    获取精确到分钟的最新时间戳
+
+    :param model: Peewee模型类
+    :param timestamp: 可选的自定义时间戳（字符串或datetime对象）
+    :return: 精确到分钟的datetime对象，如果没有数据返回None
+    """
+    # 如果没有提供 timestamp，则获取数据库中最新的时间戳
+    if timestamp is None:
+        timestamp = (model
+                     .select(fn.MAX(model.timestamp))
+                     .scalar())
+
+    if not timestamp:
+        return None
+
+    # 如果提供的是字符串，转换为datetime对象
+    if isinstance(timestamp, str):
+        timestamp = datetime.strptime(timestamp, "%Y-%m-%d %H:%M")
+
+    return timestamp
+
+
+def query_by_precise_timestamp(model, timestamp):
+    """
+    根据精确到分钟的时间戳创建查询
+
+    :param model: Peewee模型类
+    :param timestamp: 精确到分钟的datetime对象
+    :return: Peewee查询对象
+    """
+    return (model
+    .select()
+    .where(
+        (model.timestamp.year == timestamp.year) &
+        (model.timestamp.month == timestamp.month) &
+        (model.timestamp.day == timestamp.day) &
+        (model.timestamp.hour == timestamp.hour) &
+        (model.timestamp.minute == timestamp.minute)
+    ))
