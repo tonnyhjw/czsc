@@ -69,25 +69,21 @@ def detect_rank_improvement(start_time, end_time, threshold):
     return result
 
 
-def get_latest_concepts_with_criteria(top_n: int = 10):
+def get_latest_concepts_with_criteria(top_n: int = 10, latest_timestamp=None):
     """
     从最新插入数据库的一批概念中筛选满足条件的板块：
     1. 涨跌比=1
     2. 涨跌比小于1的前n位，默认n=10
     """
-    # 获取最新一批插入的时间戳
-    latest_timestamp = (ConceptName
-                        .select(fn.MAX(ConceptName.timestamp))
-                        .scalar())
+    # 获取精确时间戳
+    precise_timestamp = get_precise_latest_timestamp(ConceptName, latest_timestamp)
 
-    if not latest_timestamp:
+    if not precise_timestamp:
         logger.info("数据库中没有概念数据。")
         return []
 
-    # 获取最新批次插入的数据，并按涨跌比降序排序
-    latest_concepts = (ConceptName
-                       .select()
-                       .where(ConceptName.timestamp == latest_timestamp)
+    # 创建查询
+    latest_concepts = (query_by_precise_timestamp(ConceptName, precise_timestamp)
                        .order_by(ConceptName.rise_ratio.desc()))
 
     # 合并筛选逻辑：记录涨跌比=1的和涨跌比<1的前10位
@@ -175,7 +171,8 @@ def get_stocks_in_multiple_concepts(top_n: int = 10, min_concept_count: int = 2,
 def monitor_concept_rank_drop(
         top_n: int = 10,  # 头部强势板块的初始范围
         rank_threshold: int = 50,  # 排名下降阈值
-        avg_rank_window: int = 3  # 计算平均排名的天数
+        avg_rank_window: int = 3,  # 计算平均排名的天数
+        latest_timestamp=None  # 可选的精确时间戳
 ) -> List[Dict]:
     """
     监控概念板块排名变化，识别从强势板块快速下跌的概念
@@ -184,24 +181,23 @@ def monitor_concept_rank_drop(
     - top_n: 初始强势板块的数量
     - rank_threshold: 排名下降的阈值
     - avg_rank_window: 计算平均排名的窗口期
+    - latest_timestamp: 可选的精确时间戳
 
     返回: 符合条件的概念板块列表
     """
-    # 获取最新的插入时间
-    latest_timestamp = (
-        ConceptName
-        .select(fn.MAX(ConceptName.timestamp).alias('max_timestamp'))
-        .scalar()
-    )
+    # 获取精确的最新时间戳
+    precise_timestamp = get_precise_latest_timestamp(ConceptName, latest_timestamp)
+
+    if not precise_timestamp:
+        logger.info("数据库中没有概念数据。")
+        return []
 
     # 计算平均排名窗口的起始时间
-    avg_start_time = datetime.now() - timedelta(days=avg_rank_window)
+    avg_start_time = precise_timestamp - timedelta(days=avg_rank_window)
 
-    # 查询最新批次数据
+    # 获取最新批次数据
     latest_data = (
-        ConceptName
-        .select()
-        .where(ConceptName.timestamp == latest_timestamp)
+        query_by_precise_timestamp(ConceptName, precise_timestamp)
     )
 
     # 计算每个概念板块在平均排名窗口期的平均排名
@@ -212,7 +208,7 @@ def monitor_concept_rank_drop(
             ConceptName.code,
             fn.AVG(ConceptName.rank).alias('avg_rank')
         )
-        .where(ConceptName.timestamp.between(avg_start_time, latest_timestamp))
+        .where(ConceptName.timestamp.between(avg_start_time, precise_timestamp))
         .group_by(ConceptName.name, ConceptName.code)
         .order_by(SQL('avg_rank').asc())  # 排名越小越靠前
         .limit(top_n)
@@ -227,7 +223,7 @@ def monitor_concept_rank_drop(
         # 判断是否从强势板块快速下跌
         # 排名阈值改为大于avg_rank_threshold
         # rank越小越靠前，所以排名变大意味着下跌
-        if concept.code in avg_rank_dict and concept.rank > rank_threshold:     # 排名低于阈值
+        if concept.code in avg_rank_dict and concept.rank > rank_threshold:
             result.append({
                 'name': concept.name,
                 'code': concept.code,
