@@ -1,3 +1,4 @@
+import datetime
 import os
 import pprint
 
@@ -202,6 +203,20 @@ def print_concept_latest_buypoints():
         print(f"    分型强度: {stock['fx_pwr']}")
 
 
+def concept_radar_examination(n=3):
+    from czsc import home_path
+    from czsc.data import TsDataCache
+    from hjw_examples import concept_radar
+
+    today = datetime.datetime.now()
+    sdt = (today - datetime.timedelta(days=n)).strftime("%Y%m%d")
+    edt = today.strftime("%Y%m%d")
+    trade_dates = TsDataCache(home_path).get_dates_span(sdt, edt, is_open=True)
+    for target_day in trade_dates:
+        target_day = datetime.datetime.strptime(target_day, "%Y%m%d").strftime("%Y-%m-%d")
+        target_day = f"{target_day} 11:30"
+        print(target_day)
+
 
 if __name__ == '__main__':
     # play_day_trend_reverse()
@@ -221,4 +236,4 @@ if __name__ == '__main__':
     # money_flow_global()
     # elevate_dev()
     # concept_dev()
-    print_concept_latest_buypoints()
+    concept_radar_examination(20)

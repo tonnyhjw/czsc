@@ -12,12 +12,12 @@ SUBJ_LV1 = "自动盯盘"   # 或改为"测试"
 EDT: str = datetime.now().strftime('%Y%m%d')
 
 
-def rise_ratio_top_n(top_n=10, bp_days_limit=3):
+def rise_ratio_top_n(top_n=10, bp_days_limit=3, latest_timestamp=None):
     store_field = 'code'
     previous_result_file = "rise_ratio_previous_code.pkl"
-    result = detect.get_latest_concepts_with_criteria(top_n)
+    result = detect.get_latest_concepts_with_criteria(top_n, latest_timestamp)
     result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
-    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit)
+    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
     bp_sdt = datetime.strptime(bp_sdt, '%Y%m%d').date()
     bp_edt = datetime.strptime(bp_edt, '%Y%m%d').date()
 
@@ -39,12 +39,15 @@ def rise_ratio_top_n(top_n=10, bp_days_limit=3):
     utils.store_current_result_code(result, previous_result_file, store_field)
 
 
-def rank_improvement(hours: int = 24, threshold: int = 5, bp_days_limit=3):
-    now = datetime.now()
+def rank_improvement(hours: int = 24, threshold: int = 5, bp_days_limit=3, latest_timestamp=None):
+    if latest_timestamp is not None:
+        now = datetime.strptime(latest_timestamp, "%Y-%m-%d %H:%M").date()
+    else:
+        now = datetime.now()
     start_time = now - timedelta(hours=hours)  # 查询过去 1 天的数据
     end_time = now
     result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
-    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit)
+    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
     bp_sdt = datetime.strptime(bp_sdt, '%Y%m%d').date()
     bp_edt = datetime.strptime(bp_edt, '%Y%m%d').date()
 
@@ -63,12 +66,12 @@ def rank_improvement(hours: int = 24, threshold: int = 5, bp_days_limit=3):
         notify_concept_radar(result_df, email_subject, buy_points_df)
 
 
-def rank_top_n(top_n=10, bp_days_limit=3):
+def rank_top_n(top_n=10, bp_days_limit=3, latest_timestamp=None):
     store_field = 'code'
     previous_result_file = "rank_top_n_code.pkl"
-    result = detect.get_top_n_concepts_excluding(top_n, exclude_codes=EXCLUDE_CODES)
+    result = detect.get_top_n_concepts_excluding(top_n, exclude_codes=EXCLUDE_CODES, latest_timestamp=latest_timestamp)
     result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
-    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit)
+    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
     bp_sdt = datetime.strptime(bp_sdt, '%Y%m%d').date()
     bp_edt = datetime.strptime(bp_edt, '%Y%m%d').date()
 
@@ -110,16 +113,16 @@ def multi_concepts(top_n=10, min_concept_count=2):
     utils.store_current_result_code(result, previous_result_file, store_field)
 
 
-def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3, bp_days_limit=3):
+def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3, bp_days_limit=3, latest_timestamp=None):
     store_field = 'code'
     previous_result_file = "concept_rank_drop_code.pkl"
     result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
-    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit)
+    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
     bp_sdt = datetime.strptime(bp_sdt, '%Y%m%d').date()
     bp_edt = datetime.strptime(bp_edt, '%Y%m%d').date()
 
     result = detect.monitor_concept_rank_drop(top_n=top_n, rank_threshold=rank_threshold,
-                                              avg_rank_window=avg_rank_window)
+                                              avg_rank_window=avg_rank_window, latest_timestamp=latest_timestamp)
 
     # 如果有新增概念板块共振个股，触发警报
     if utils.new_element(store_field, previous_result_file, result):

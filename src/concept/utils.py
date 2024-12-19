@@ -58,16 +58,16 @@ def embed_ts_code_href(input_df: pd.DataFrame):
     return input_df
 
 
-def get_recent_n_trade_dates_boundary(n: int = 3):
+def get_recent_n_trade_dates_boundary(n: int = 3, latest_timestamp=None):
     from czsc import home_path
     from czsc.data import TsDataCache
 
     today = datetime.datetime.now()
     sdt = (today - datetime.timedelta(days=n+10)).strftime("%Y%m%d")
-    edt = today.strftime("%Y%m%d")
+    edt = today.strftime("%Y%m%d") if latest_timestamp is None else latest_timestamp
     trade_dates = TsDataCache(home_path).get_dates_span(sdt, edt, is_open=True)
     return trade_dates[-n], trade_dates[-1]
 
 
 if __name__ == '__main__':
-    get_recent_n_trade_dates_boundary()
+    print(get_recent_n_trade_dates_boundary(latest_timestamp="2024-12-17 11:30"))
