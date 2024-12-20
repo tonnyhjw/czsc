@@ -62,12 +62,15 @@ def get_recent_n_trade_dates_boundary(n: int = 3, latest_timestamp=None):
     from czsc import home_path
     from czsc.data import TsDataCache
 
-    today = datetime.datetime.now()
+    if latest_timestamp is None:
+        today = datetime.datetime.now()
+    else:
+        today = datetime.datetime.strptime(latest_timestamp[:10], "%Y-%m-%d")
     sdt = (today - datetime.timedelta(days=n+10)).strftime("%Y%m%d")
-    edt = today.strftime("%Y%m%d") if latest_timestamp is None else latest_timestamp
+    edt = today.strftime("%Y%m%d")
     trade_dates = TsDataCache(home_path).get_dates_span(sdt, edt, is_open=True)
     return trade_dates[-n], trade_dates[-1]
 
 
 if __name__ == '__main__':
-    print(get_recent_n_trade_dates_boundary(latest_timestamp="2024-12-17 11:30"))
+    print(get_recent_n_trade_dates_boundary(latest_timestamp="2024-12-05 11:30"))
