@@ -239,4 +239,4 @@ if __name__ == '__main__':
     # money_flow_global()
     # elevate_dev()
     # concept_dev()
-    concept_radar_examination(13)
+    concept_radar_examination(15)
