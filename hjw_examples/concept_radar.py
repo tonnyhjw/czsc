@@ -143,6 +143,20 @@ def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3, bp_days_limit=3, l
 
 
 @timer
+def demo(latest_timestamp=None):
+    # 监控涨跌比前排
+    rise_ratio_top_n(top_n=10, latest_timestamp=latest_timestamp)
+    # 监控排名提升
+    rank_improvement(hours=24, threshold=300, latest_timestamp=latest_timestamp)
+    # rank_improvement(hours=1, threshold=250, latest_timestamp=latest_timestamp)
+    rank_drop(top_n=50, rank_threshold=400, avg_rank_window=3, latest_timestamp=latest_timestamp)
+    # 监控新晋排名前排
+    rank_top_n(top_n=10, latest_timestamp=latest_timestamp)
+    # 监控新前排板块共振
+    # multi_concepts(top_n=10)
+
+
+@timer
 def run():
     # 监控涨跌比前排
     rise_ratio_top_n(top_n=10)
