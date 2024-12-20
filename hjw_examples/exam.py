@@ -217,6 +217,7 @@ def concept_radar_examination(n=3):
         target_day = f"{target_day} 11:30"
         print(f"测试日期{target_day}")
         concept_radar.SUBJ_LV1 = "测试"
+        concept_radar.EDT = target_day
         concept_radar.demo(latest_timestamp=target_day)
 
 
@@ -238,4 +239,4 @@ if __name__ == '__main__':
     # money_flow_global()
     # elevate_dev()
     # concept_dev()
-    concept_radar_examination(15)
+    concept_radar_examination(13)
