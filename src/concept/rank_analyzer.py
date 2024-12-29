@@ -8,7 +8,9 @@ from plotly.subplots import make_subplots
 from typing import List, Dict, Optional
 import matplotlib.font_manager as fm
 import platform
-
+import os
+import subprocess
+from pathlib import Path
 
 from database.models import ConceptName
 
@@ -16,41 +18,58 @@ from database.models import ConceptName
 class ChartConfig:
     """图表配置类"""
 
-    @staticmethod
-    def setup_chinese_font():
-        """配置中文字体支持"""
-        system = platform.system()
-        if system == 'Linux':
-            # Linux系统字体配置
-            plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'SimHei', 'Arial Unicode MS']
-        elif system == 'Windows':
-            # Windows系统字体配置
-            plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei']
-        elif system == 'Darwin':  # MacOS
-            # MacOS系统字体配置
-            plt.rcParams['font.sans-serif'] = ['PingFang HK', 'Arial Unicode MS']
-
-        plt.rcParams['axes.unicode_minus'] = False  # 正确显示负号
-
-    @staticmethod
-    def verify_font_support():
-        """验证中文字体支持"""
-        fonts = [f.name for f in fm.fontManager.ttflist]
-        available_chinese_fonts = []
-
-        # 检查常见中文字体
-        chinese_fonts = ['SimHei', 'Microsoft YaHei', 'WenQuanYi Micro Hei',
-                         'PingFang HK', 'Arial Unicode MS']
-
-        for font in chinese_fonts:
-            if font in fonts:
-                available_chinese_fonts.append(font)
-
-        if not available_chinese_fonts:
-            print("警告：未找到中文字体，可能需要安装中文字体包")
-            print("Linux可以运行：sudo apt-get install fonts-wqy-microhei")
+    @classmethod
+    def install_font(cls):
+        """安装所需的字体"""
+        try:
+            if platform.system() == 'Linux':
+                # 检查是否已安装字体
+                result = subprocess.run(['fc-list', ':', 'family'],
+                                        capture_output=True,
+                                        text=True)
+                if 'WenQuanYi' not in result.stdout:
+                    print("正在安装中文字体...")
+                    subprocess.run(['sudo', 'apt-get', 'update'], check=True)
+                    subprocess.run(['sudo', 'apt-get', 'install', '-y',
+                                    'fonts-wqy-microhei', 'fonts-wqy-zenhei'],
+                                   check=True)
+                    # 清除字体缓存
+                    subprocess.run(['fc-cache', '-fv'], check=True)
+                    print("字体安装完成")
+                return True
+        except Exception as e:
+            print(f"字体安装失败: {e}")
             return False
 
+    @classmethod
+    def setup_font(cls):
+        """设置字体配置"""
+        # 首先尝试安装字体
+        cls.install_font()
+
+        # 重新扫描字体目录
+        fm.fontManager.addfont('/usr/share/fonts/truetype/wqy/wqy-microhei.ttc')
+        fm.fontManager._rebuild()
+
+        # 设置默认字体
+        plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'SimHei',
+                                           'Microsoft YaHei', 'Arial Unicode MS',
+                                           'DejaVu Sans']
+        plt.rcParams['axes.unicode_minus'] = False
+
+        # 验证字体是否可用
+        font_set = False
+        for font in plt.rcParams['font.sans-serif']:
+            try:
+                fm.findfont(font)
+                font_set = True
+                break
+            except:
+                continue
+
+        if not font_set:
+            # 如果所有中文字体都不可用，使用英文标签
+            return False
         return True
 
 
@@ -58,18 +77,11 @@ class ChartGenerator(ABC):
     """图表生成器的抽象基类"""
 
     def __init__(self):
-        ChartConfig.setup_chinese_font()
-        self.font_supported = ChartConfig.verify_font_support()
+        self.use_chinese = ChartConfig.setup_font()
 
-    @abstractmethod
-    def generate(self, concept_data: Dict[str, pd.DataFrame]) -> any:
-        """生成图表"""
-        pass
-
-    @abstractmethod
-    def save(self, chart: any, filename: str):
-        """保存图表"""
-        pass
+    def get_label(self, chinese: str, english: str) -> str:
+        """根据字体支持情况返回适当的标签"""
+        return chinese if self.use_chinese else english
 
 
 class PlotlyChartGenerator(ChartGenerator):
@@ -87,8 +99,8 @@ class PlotlyChartGenerator(ChartGenerator):
                 line=dict(color=colors[i]),
                 hovertemplate=
                 '<b>%{text}</b><br>' +
-                '时间: %{x}<br>' +
-                '排名: %{y}<br>',
+                'Time: %{x}<br>' +
+                'Rank: %{y}<br>',
                 text=[name] * len(df)
             ))
 
@@ -99,17 +111,18 @@ class PlotlyChartGenerator(ChartGenerator):
         chart.write_html(filename)
 
     def _get_color_palette(self, n_colors: int) -> List[str]:
-        """获取颜色列表"""
         import plotly.express as px
         return px.colors.qualitative.Set3[:n_colors]
 
     def _update_layout(self, fig: go.Figure):
-        """更新图表布局"""
+        title = self.get_label('概念板块排名变化趋势', 'Concept Sector Rank Changes')
+        x_label = self.get_label('日期', 'Date')
+        y_label = self.get_label('排名', 'Rank')
+
         fig.update_layout(
-            title={'text': '概念板块排名变化趋势',
-                   'font': {'size': 20}},
-            xaxis_title='日期',
-            yaxis_title='排名',
+            title={'text': title, 'font': {'size': 20}},
+            xaxis_title=x_label,
+            yaxis_title=y_label,
             yaxis_autorange="reversed",
             hovermode='x unified',
             showlegend=True,
@@ -123,9 +136,6 @@ class MatplotlibChartGenerator(ChartGenerator):
     """Matplotlib静态图表生成器"""
 
     def generate(self, concept_data: Dict[str, pd.DataFrame]) -> plt.Figure:
-        if not self.font_supported:
-            print("警告：未找到合适的中文字体，图表中的中文可能无法正确显示")
-
         fig = plt.figure(figsize=(12, 8))
         colors = self._get_color_palette(len(concept_data))
 
@@ -142,14 +152,16 @@ class MatplotlibChartGenerator(ChartGenerator):
         plt.close()
 
     def _get_color_palette(self, n_colors: int) -> List[str]:
-        """获取颜色列表"""
         return sns.color_palette("husl", n_colors)
 
     def _update_layout(self):
-        """更新图表布局"""
-        plt.title('概念板块排名变化趋势', fontsize=14, pad=20)
-        plt.xlabel('日期', fontsize=12)
-        plt.ylabel('排名', fontsize=12)
+        title = self.get_label('概念板块排名变化趋势', 'Concept Sector Rank Changes')
+        x_label = self.get_label('日期', 'Date')
+        y_label = self.get_label('排名', 'Rank')
+
+        plt.title(title, fontsize=14, pad=20)
+        plt.xlabel(x_label, fontsize=12)
+        plt.ylabel(y_label, fontsize=12)
         plt.gca().invert_yaxis()
         plt.legend(bbox_to_anchor=(1.05, 1),
                    loc='upper left',
@@ -157,6 +169,7 @@ class MatplotlibChartGenerator(ChartGenerator):
         plt.tight_layout()
 
 
+# ConceptRankAnalyzer类保持不变
 class ConceptRankAnalyzer:
     """概念股排名分析器"""
 
@@ -168,7 +181,6 @@ class ConceptRankAnalyzer:
         self.concept_data = {}
 
     def analyze(self, concept_codes: List[str], days: int = 30) -> Dict[str, pd.DataFrame]:
-        """分析指定概念板块的排名数据"""
         end_date = datetime.now()
         start_date = end_date - timedelta(days=days)
 
@@ -191,32 +203,25 @@ class ConceptRankAnalyzer:
         return self.concept_data
 
     def generate_chart(self, output_type: str) -> any:
-        """生成指定类型的图表"""
         if output_type not in self.chart_generators:
-            raise ValueError(f"不支持的输出类型: {output_type}")
+            raise ValueError(f"Unsupported output type: {output_type}")
 
         generator = self.chart_generators[output_type]
         return generator.generate(self.concept_data)
 
     def save_chart(self, chart: any, filename: str, output_type: str):
-        """保存图表"""
         generator = self.chart_generators[output_type]
         generator.save(chart, filename)
 
 
 def main():
-    # 使用示例
     analyzer = ConceptRankAnalyzer()
-
-    # 分析数据
     concept_codes = ['BK0493', 'BK0891', 'BK0628']
     analyzer.analyze(concept_codes)
 
-    # 生成并保存HTML图表
     html_chart = analyzer.generate_chart('html')
     analyzer.save_chart(html_chart, 'concept_ranks.html', 'html')
 
-    # 生成并保存PNG图表
     png_chart = analyzer.generate_chart('png')
     analyzer.save_chart(png_chart, 'concept_ranks.png', 'png')
 
