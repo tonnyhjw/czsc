@@ -156,7 +156,9 @@ class MatplotlibChartGenerator(ChartGenerator):
     """Matplotlib静态图表生成器"""
 
     def generate(self, concept_data: Dict[str, pd.DataFrame]) -> plt.Figure:
-        fig = plt.figure(figsize=(12, 8))
+        fig_width = len(concept_data) * 0.2  # 根据数据点的数量设置宽度
+        fig = plt.figure(figsize=(fig_width, 8))  # 高度固定
+
         colors = self._get_color_palette(len(concept_data))
 
         for (name, df), color in zip(concept_data.items(), colors):
@@ -167,9 +169,10 @@ class MatplotlibChartGenerator(ChartGenerator):
                      marker='o', markersize=4)
 
             # 设置x轴刻度和标签
-            plt.xticks(x_indices,
-                       [ts.strftime('%m-%d %H:%M') for ts in df['timestamp']],
-                       rotation=45, ha='right')
+            xticks_interval = max(1, len(df) // 10)  # 每10个点显示一个日期
+            plt.xticks(x_indices[::xticks_interval],
+                       [ts.strftime('%m-%d %H:%M') for ts in df['timestamp'][::xticks_interval]], rotation=45,
+                       ha='right')
 
         self._update_layout()
         return fig
