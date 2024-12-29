@@ -221,6 +221,24 @@ def concept_radar_examination(n=3):
         concept_radar.demo(latest_timestamp=target_day)
 
 
+def rank_graph():
+    from src.concept.rank_analyzer import ConceptRankAnalyzer
+    # 使用示例
+    analyzer = ConceptRankAnalyzer()
+
+    # 分析数据
+    concept_codes = ['BK0907', 'BK1168', 'BK1138']
+    analyzer.analyze(concept_codes)
+
+    # 生成并保存HTML图表
+    html_chart = analyzer.generate_chart('html')
+    analyzer.save_chart(html_chart, 'concept_ranks.html', 'html')
+
+    # 生成并保存PNG图表
+    png_chart = analyzer.generate_chart('png')
+    analyzer.save_chart(png_chart, 'concept_ranks.png', 'png')
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -239,4 +257,5 @@ if __name__ == '__main__':
     # money_flow_global()
     # elevate_dev()
     # concept_dev()
-    concept_radar_examination(15)
+    # concept_radar_examination(15)
+    rank_graph()
