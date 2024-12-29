@@ -23,7 +23,6 @@ class ChartConfig:
         """安装所需的字体"""
         try:
             if platform.system() == 'Linux':
-                # 检查是否已安装字体
                 result = subprocess.run(['fc-list', ':', 'family'],
                                         capture_output=True,
                                         text=True)
@@ -33,7 +32,6 @@ class ChartConfig:
                     subprocess.run(['sudo', 'apt-get', 'install', '-y',
                                     'fonts-wqy-microhei', 'fonts-wqy-zenhei'],
                                    check=True)
-                    # 清除字体缓存
                     subprocess.run(['fc-cache', '-fv'], check=True)
                     print("字体安装完成")
                 return True
@@ -47,9 +45,17 @@ class ChartConfig:
         # 首先尝试安装字体
         cls.install_font()
 
-        # 重新扫描字体目录
+        # 刷新字体缓存
         fm.fontManager.addfont('/usr/share/fonts/truetype/wqy/wqy-microhei.ttc')
-        fm.fontManager._rebuild()
+        try:
+            # 尝试使用新版本的方法
+            fm.fontManager.rebuild()
+        except:
+            try:
+                # 尝试使用旧版本的方法
+                fm._rebuild()
+            except:
+                print("警告：无法重建字体缓存")
 
         # 设置默认字体
         plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'SimHei',
@@ -61,14 +67,14 @@ class ChartConfig:
         font_set = False
         for font in plt.rcParams['font.sans-serif']:
             try:
-                fm.findfont(font)
-                font_set = True
-                break
+                if fm.findfont(font) is not None:
+                    font_set = True
+                    break
             except:
                 continue
 
         if not font_set:
-            # 如果所有中文字体都不可用，使用英文标签
+            print("警告：未找到可用的中文字体，将使用英文标签")
             return False
         return True
 
@@ -169,7 +175,6 @@ class MatplotlibChartGenerator(ChartGenerator):
         plt.tight_layout()
 
 
-# ConceptRankAnalyzer类保持不变
 class ConceptRankAnalyzer:
     """概念股排名分析器"""
 
