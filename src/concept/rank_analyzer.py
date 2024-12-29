@@ -98,29 +98,28 @@ class PlotlyChartGenerator(ChartGenerator):
         colors = self._get_color_palette(len(concept_data))
 
         for i, (name, df) in enumerate(concept_data.items()):
+            # 使用数据点的索引作为x轴
+            x_indices = list(range(len(df)))
+            # 选择部分时间戳作为刻度标签
+            tick_values = x_indices
+            tick_texts = [ts.strftime('%m-%d %H:%M') for ts in df['timestamp']]
+
             fig.add_trace(go.Scatter(
-                x=df['timestamp'],
+                x=x_indices,  # 使用索引作为x轴值
                 y=df['rank'],
                 name=name,
                 line=dict(color=colors[i]),
                 hovertemplate=
                 '<b>%{text}</b><br>' +
-                'Time: %{x}<br>' +
+                'Time: ' + df['timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S').iloc[0] + '<br>' +
                 'Rank: %{y}<br>',
                 text=[name] * len(df)
             ))
 
-        self._update_layout(fig)
+        self._update_layout(fig, tick_values, tick_texts)
         return fig
 
-    def save(self, chart: go.Figure, filename: str):
-        chart.write_html(filename)
-
-    def _get_color_palette(self, n_colors: int) -> List[str]:
-        import plotly.express as px
-        return px.colors.qualitative.Set3[:n_colors]
-
-    def _update_layout(self, fig: go.Figure):
+    def _update_layout(self, fig: go.Figure, tick_values, tick_texts):
         title = self.get_label('概念板块排名变化趋势', 'Concept Sector Rank Changes')
         x_label = self.get_label('日期', 'Date')
         y_label = self.get_label('排名', 'Rank')
@@ -137,6 +136,14 @@ class PlotlyChartGenerator(ChartGenerator):
             font=dict(size=14)
         )
 
+        # 设置等距的x轴刻度
+        fig.update_xaxes(
+            tickmode='array',
+            tickvals=tick_values,
+            ticktext=tick_texts,
+            tickangle=45
+        )
+
 
 class MatplotlibChartGenerator(ChartGenerator):
     """Matplotlib静态图表生成器"""
@@ -146,19 +153,19 @@ class MatplotlibChartGenerator(ChartGenerator):
         colors = self._get_color_palette(len(concept_data))
 
         for (name, df), color in zip(concept_data.items(), colors):
-            plt.plot(df['timestamp'], df['rank'],
+            # 使用数据点的索引作为x轴
+            x_indices = range(len(df))
+            plt.plot(x_indices, df['rank'],
                      label=name, color=color,
                      marker='o', markersize=4)
 
+            # 设置x轴刻度和标签
+            plt.xticks(x_indices,
+                       [ts.strftime('%m-%d %H:%M') for ts in df['timestamp']],
+                       rotation=45, ha='right')
+
         self._update_layout()
         return fig
-
-    def save(self, chart: plt.Figure, filename: str):
-        chart.savefig(filename, dpi=300, bbox_inches='tight')
-        plt.close()
-
-    def _get_color_palette(self, n_colors: int) -> List[str]:
-        return sns.color_palette("husl", n_colors)
 
     def _update_layout(self):
         title = self.get_label('概念板块排名变化趋势', 'Concept Sector Rank Changes')
