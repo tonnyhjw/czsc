@@ -156,8 +156,10 @@ class MatplotlibChartGenerator(ChartGenerator):
     """Matplotlib静态图表生成器"""
 
     def generate(self, concept_data: Dict[str, pd.DataFrame]) -> plt.Figure:
-        fig_width = len(concept_data) * 0.2  # 根据数据点的数量设置宽度
-        fig = plt.figure(figsize=(fig_width, 8))  # 高度固定
+        # 计算最大数据点数，动态调整图表宽度
+        max_points = max(len(df) for df in concept_data.values())
+        fig_width = max(12, int(max_points * 0.2 + 1))  # 每个点占0.2宽度，最小宽度为12
+        fig = plt.figure(figsize=(fig_width, 8))
 
         colors = self._get_color_palette(len(concept_data))
 
@@ -168,11 +170,13 @@ class MatplotlibChartGenerator(ChartGenerator):
                      label=name, color=color,
                      marker='o', markersize=4)
 
-            # 设置x轴刻度和标签
+            # 设置x轴刻度和标签，优化间隔
             xticks_interval = max(1, len(df) // 10)  # 每10个点显示一个日期
-            plt.xticks(x_indices[::xticks_interval],
-                       [ts.strftime('%m-%d %H:%M') for ts in df['timestamp'][::xticks_interval]], rotation=45,
-                       ha='right')
+            plt.xticks(
+                x_indices[::xticks_interval],
+                [ts.strftime('%m-%d %H:%M') for ts in df['timestamp'][::xticks_interval]],
+                rotation=45, ha='right'
+            )
 
         self._update_layout()
         return fig
