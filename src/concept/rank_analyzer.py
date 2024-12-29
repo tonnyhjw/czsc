@@ -119,6 +119,13 @@ class PlotlyChartGenerator(ChartGenerator):
         self._update_layout(fig, tick_values, tick_texts)
         return fig
 
+    def save(self, chart: go.Figure, filename: str):
+        chart.write_html(filename)
+
+    def _get_color_palette(self, n_colors: int) -> List[str]:
+        import plotly.express as px
+        return px.colors.qualitative.Set3[:n_colors]
+
     def _update_layout(self, fig: go.Figure, tick_values, tick_texts):
         title = self.get_label('概念板块排名变化趋势', 'Concept Sector Rank Changes')
         x_label = self.get_label('日期', 'Date')
@@ -166,6 +173,13 @@ class MatplotlibChartGenerator(ChartGenerator):
 
         self._update_layout()
         return fig
+
+    def save(self, chart: plt.Figure, filename: str):
+        chart.savefig(filename, dpi=300, bbox_inches='tight')
+        plt.close()
+
+    def _get_color_palette(self, n_colors: int) -> List[str]:
+        return sns.color_palette("husl", n_colors)
 
     def _update_layout(self):
         title = self.get_label('概念板块排名变化趋势', 'Concept Sector Rank Changes')
