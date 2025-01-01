@@ -72,5 +72,35 @@ def get_recent_n_trade_dates_boundary(n: int = 3, latest_timestamp=None):
     return trade_dates[-n], trade_dates[-1]
 
 
+def merge_concept_stocks(stock_list):
+    """
+    合并相同股票买点但不同概念名的股票信息
+
+    Args:
+        stock_list: List[dict] 包含股票买点和概念信息的字典列表
+
+    Returns:
+        List[dict] 合并后的字典列表，相同股票的概念名会被合并到name字段中
+    """
+    # 用于存储合并结果的字典
+    merged = {}
+
+    # 遍历所有股票信息
+    for stock in stock_list:
+        ts_code = stock['ts_code']
+
+        # 如果股票代码已存在，则合并概念名
+        if ts_code in merged:
+            # 确保不重复添加相同的概念名
+            if stock['name'] not in merged[ts_code]['name']:
+                merged[ts_code]['name'] = merged[ts_code]['name'] + ',' + stock['name']
+        # 如果是新的股票代码，直接添加
+        else:
+            merged[ts_code] = stock.copy()
+
+    # 将字典转换回列表
+    return list(merged.values())
+
+
 if __name__ == '__main__':
     print(get_recent_n_trade_dates_boundary(latest_timestamp="2024-12-05 11:30"))

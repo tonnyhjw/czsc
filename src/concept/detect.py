@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, date
 from playhouse.shortcuts import model_to_dict
 
 from database.models import ConceptName, ConceptCons, BuyPoint, switch_database
+from src.concept.utils import merge_concept_stocks
 
 
 logger.add("statics/logs/concept.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
@@ -330,7 +331,7 @@ def get_buypoints_for_multiple_concepts(
 
         # 将当前概念板块的买点加入总列表
         all_buypoints.extend(concept_buypoints)
-
+    all_buypoints = merge_concept_stocks(all_buypoints)
     return all_buypoints
 
 
