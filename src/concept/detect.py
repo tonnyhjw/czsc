@@ -293,6 +293,7 @@ def find_concept_stocks_with_latest_buypoints(
                 'signals': latest_buypoint.signals,
                 'fx_pwr': latest_buypoint.fx_pwr,
                 'bp_date': latest_buypoint.date,
+                'freq': latest_buypoint.freq
             })
 
     return results
