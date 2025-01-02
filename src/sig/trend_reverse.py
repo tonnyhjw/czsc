@@ -130,9 +130,11 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
             if (
                     latest_fx.low < zs1_after_1st_buy.zg
                     and len(zs_seq_after_1st_buy) == 1
-                    and len(zs1_after_1st_buy.bis) > 2
+                    and len(zs1_after_1st_buy.bis) >= 2
             ):
                 v1 = '二买'
+                if len(zs1_after_1st_buy.bis) > 2:
+                    v1 = '类二买'
                 # 插入数据库
                 history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                          industry, latest_fx.dt,  latest_fx.high, latest_fx.low,
