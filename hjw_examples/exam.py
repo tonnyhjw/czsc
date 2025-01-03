@@ -241,16 +241,19 @@ def rank_graph():
 
 def peek_concept_buy_points():
     from src.concept import detect, utils
-    bp_days_limit = 3
+    bp_days_limit = 5
     latest_timestamp = None
     concepts = [
         {"code": "BK0552"},
-        {"code": "BK0588"},
+        #{"code": "BK0588"},
+        #{"code": "BK0511"},
     ]
     bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
-
+    bp_sdt = datetime.datetime.strptime(bp_sdt, '%Y%m%d').date()
+    bp_edt = datetime.datetime.strptime(bp_edt, '%Y%m%d').date()
+    print(bp_sdt, bp_edt)
     results = detect.get_buypoints_for_multiple_concepts(concepts, bp_sdt, bp_edt)
-    print(results)
+    pprint.pp(results)
 
 
 if __name__ == '__main__':
