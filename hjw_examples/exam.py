@@ -239,6 +239,20 @@ def rank_graph():
     analyzer.save_chart(png_chart, 'concept_ranks.png', 'png')
 
 
+def peek_concept_buy_points():
+    from src.concept import detect, utils
+    bp_days_limit = 3
+    latest_timestamp = None
+    concepts = [
+        {"code": "BK0552"},
+        {"code": "BK0588"},
+    ]
+    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
+
+    results = detect.get_buypoints_for_multiple_concepts(concepts, bp_sdt, bp_edt)
+    print(results)
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -258,4 +272,5 @@ if __name__ == '__main__':
     # elevate_dev()
     # concept_dev()
     # concept_radar_examination(15)
-    rank_graph()
+    # rank_graph()
+    peek_concept_buy_points()
