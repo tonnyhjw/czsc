@@ -84,7 +84,7 @@ class ConceptHotRank:
 
         for result in results:
             print(
-                f"{result['rank']:<6}"
+                f"{result['sequence_number']:<6}"
                 f"{result['name']:<20}"
                 f"{result['code']:<10}"
                 f"{result['count']:<8}"
