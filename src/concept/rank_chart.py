@@ -203,7 +203,7 @@ class MatplotlibChartGenerator(ChartGenerator):
         plt.tight_layout()
 
 
-class ConceptRankAnalyzer:
+class ConceptRankChart:
     """概念股排名分析器"""
 
     def __init__(self):
@@ -248,7 +248,7 @@ class ConceptRankAnalyzer:
 
 
 def main():
-    analyzer = ConceptRankAnalyzer()
+    analyzer = ConceptRankChart()
     concept_codes = ['BK0493', 'BK0891', 'BK0628']
     analyzer.analyze(concept_codes)
 

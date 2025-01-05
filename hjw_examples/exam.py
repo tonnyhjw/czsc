@@ -221,10 +221,10 @@ def concept_radar_examination(n=3):
         concept_radar.demo(latest_timestamp=target_day)
 
 
-def rank_graph():
-    from src.concept.rank_analyzer import ConceptRankAnalyzer
+def rank_chart():
+    from src.concept.rank_chart import ConceptRankChart
     # 使用示例
-    analyzer = ConceptRankAnalyzer()
+    analyzer = ConceptRankChart()
 
     # 分析数据
     concept_codes = ['BK0907', 'BK1168', 'BK1138']
@@ -256,6 +256,28 @@ def peek_concept_buy_points():
     pprint.pp(results)
 
 
+def hot_rank_demo():
+    from src.concept.hot_rank import ConceptHotRank
+    start_date = datetime.datetime(2024, 12, 15)
+    end_date = datetime.datetime(2024, 12, 20)
+    rank_threshold = 10
+    top_n = 5
+
+    # 创建分析器实例
+    analyzer = ConceptHotRank()
+
+    # 执行分析
+    results = analyzer.analyze_top_concepts(
+        start_date=start_date,
+        end_date=end_date,
+        rank_threshold=rank_threshold,
+        top_n=top_n
+    )
+
+    # 打印结果
+    analyzer.print_results(results)
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -275,5 +297,6 @@ if __name__ == '__main__':
     # elevate_dev()
     # concept_dev()
     # concept_radar_examination(15)
-    # rank_graph()
-    peek_concept_buy_points()
+    # rank_chart()
+    # peek_concept_buy_points()
+    hot_rank_demo()
