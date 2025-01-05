@@ -257,25 +257,36 @@ def peek_concept_buy_points():
 
 
 def hot_rank_demo():
-    from src.concept.hot_rank import ConceptHotRank
-    start_date = datetime.datetime(2024, 12, 15)
-    end_date = datetime.datetime(2024, 12, 20)
-    rank_threshold = 10
-    top_n = 5
+    from src.concept.hot_rank import ConceptHotRank, RankType
+    START_DATE = datetime.datetime(2024, 12, 10)
+    END_DATE = datetime.datetime(2024, 12, 19)
+    RANK_THRESHOLD = 10
+    N = 5
 
     # 创建分析器实例
     analyzer = ConceptHotRank()
 
-    # 执行分析
-    results = analyzer.analyze_top_concepts(
-        start_date=start_date,
-        end_date=end_date,
-        rank_threshold=rank_threshold,
-        top_n=top_n
+    # 分析排名靠前的概念
+    top_results = analyzer.analyze_concepts(
+        start_date=START_DATE,
+        end_date=END_DATE,
+        rank_threshold=RANK_THRESHOLD,
+        limit_n=N,
+        rank_type=RankType.TOP
     )
 
-    # 打印结果
-    analyzer.print_results(results)
+    # 分析排名靠后的概念（假设总共有100个概念）
+    bottom_results = analyzer.analyze_concepts(
+        start_date=START_DATE,
+        end_date=END_DATE,
+        rank_threshold=90,  # 假设排名90以后算落后
+        limit_n=N,
+        rank_type=RankType.BOTTOM
+    )
+
+    # 打印两种结果
+    analyzer.print_results(top_results, RankType.TOP)
+    analyzer.print_results(bottom_results, RankType.BOTTOM)
 
 
 if __name__ == '__main__':
