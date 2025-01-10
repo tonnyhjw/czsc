@@ -131,7 +131,7 @@ def notify_new_concept(new_concept_name: pd.DataFrame = None, new_concept_cons: 
 
 def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None, buy_point_df: pd.DataFrame = pd.DataFrame()):
     if result_df.empty:
-        logger.info(f"notify_concept_radar receive empty result_df, {email_subject}")
+        logger.info(f"result_df为空，notify_concept_radar不发送相关推送, {email_subject}")
     else:
         result_table = result_df.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
         result_table = "<h2>综合分析结果</h2>" + result_table

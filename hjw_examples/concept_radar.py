@@ -158,6 +158,9 @@ def liked(bp_days_limit = 5, latest_timestamp = None):
         return
     # 如果有新增概念板块共振个股，触发警报
     if utils.new_element(store_field, previous_result_file, buy_points):
+        # 将 result 转换为 DataFrame 并返回
+        result_df = pd.DataFrame(concepts)
+        result_df = utils.embed_code_href(result_df)
         email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}被关注概念从{bp_sdt}到{bp_edt}存在的个股买点"
 
         buy_points_df = pd.DataFrame(buy_points)
