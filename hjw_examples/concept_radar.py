@@ -142,6 +142,32 @@ def rank_drop(top_n=10, rank_threshold=50, avg_rank_window=3, bp_days_limit=3, l
     utils.store_current_result_code(result, previous_result_file, store_field)
 
 
+def liked(bp_days_limit = 5, latest_timestamp = None):
+    store_field = 'ts_code'
+    previous_result_file = "liked_concept_by_ts_code.pkl"
+    result_df, buy_points_df = pd.DataFrame(), pd.DataFrame()
+    # 从配置文件加载concepts
+    concepts = utils.load_concepts_from_json(LIKED_CONCEPTS)
+
+    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
+    bp_sdt = datetime.strptime(bp_sdt, '%Y%m%d').date()
+    bp_edt = datetime.strptime(bp_edt, '%Y%m%d').date()
+    # print(bp_sdt, bp_edt)
+    buy_points = detect.get_buypoints_for_multiple_concepts(concepts, bp_sdt, bp_edt)
+    if not buy_points:
+        return
+    # 如果有新增概念板块共振个股，触发警报
+    if utils.new_element(store_field, previous_result_file, buy_points):
+        email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}被关注概念从{bp_sdt}到{bp_edt}存在的个股买点"
+
+        buy_points_df = pd.DataFrame(buy_points)
+        buy_points_df = utils.embed_ts_code_href(buy_points_df)
+
+        notify_concept_radar(result_df, email_subject, buy_points_df)
+        # 存储当前的 result 以便下次对比
+    utils.store_current_result_code(buy_points, previous_result_file, store_field)
+
+
 @timer
 def demo(latest_timestamp=None):
     # 监控涨跌比前排

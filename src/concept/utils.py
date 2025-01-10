@@ -1,6 +1,7 @@
 import os
 import pickle
 import pprint
+import json
 
 import pandas as pd
 import datetime
@@ -100,6 +101,13 @@ def merge_concept_stocks(stock_list):
 
     # 将字典转换回列表
     return list(merged.values())
+
+
+def load_concepts_from_json(config_path):
+    """从JSON文件加载concepts配置"""
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+    return config['concepts']
 
 
 if __name__ == '__main__':

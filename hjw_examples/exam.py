@@ -227,7 +227,7 @@ def rank_chart():
     analyzer = ConceptRankChart()
 
     # 分析数据
-    concept_codes = ['BK0907', 'BK1168', 'BK1138']
+    concept_codes = ['BK1168', 'BK1168', 'BK0948', 'BK1088', 'BK0611']
     analyzer.analyze(concept_codes)
 
     # 生成并保存HTML图表
@@ -308,6 +308,6 @@ if __name__ == '__main__':
     # elevate_dev()
     # concept_dev()
     # concept_radar_examination(15)
-    # rank_chart()
+    rank_chart()
     # peek_concept_buy_points()
-    hot_rank_demo()
+    # hot_rank_demo()
