@@ -40,7 +40,7 @@ def new_element(store_field, previous_result_file, cur_result):
 
 def embed_code_href(input_df: pd.DataFrame):
     input_df['code'] = input_df['code'].apply(
-        lambda x: f'<a href="https://quote.eastmoney.com/center/boardlist.html#boards-{x}">{x}</a>')
+        lambda x: f'<a href="https://quote.eastmoney.com/center/gridlist.html#boards2-90.{x}">{x}</a>')
     return input_df
 
 
