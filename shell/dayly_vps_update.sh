@@ -12,3 +12,5 @@ python -m hjw_examples.day_trend_bc_reverse --f D
 python -m hjw_examples.elevate --t bi
 
 python -m hjw_examples.flow_global --n 7 --h 100
+
+python -m hjw_examples.concept_liked
