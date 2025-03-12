@@ -227,7 +227,7 @@ def rank_chart():
     analyzer = ConceptRankChart()
 
     # 分析数据
-    concept_codes = ['BK1168', 'BK1168', 'BK0948', 'BK1088', 'BK0611']
+    concept_codes = ['BK1173', 'BK0695', 'BK0519']
     analyzer.analyze(concept_codes)
 
     # 生成并保存HTML图表
@@ -244,9 +244,9 @@ def peek_concept_buy_points():
     bp_days_limit = 5
     latest_timestamp = None
     concepts = [
-        {"code": "BK0552"},
-        #{"code": "BK0588"},
-        #{"code": "BK0511"},
+        {"code": "BK1184"},
+        {"code": "BK1100"},
+        {"code": "BK1145"},
     ]
     bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
     bp_sdt = datetime.datetime.strptime(bp_sdt, '%Y%m%d').date()
@@ -258,8 +258,8 @@ def peek_concept_buy_points():
 
 def hot_rank_demo():
     from src.concept.hot_rank import ConceptHotRank, RankType
-    START_DATE = datetime.datetime(2024, 12, 10)
-    END_DATE = datetime.datetime(2024, 12, 19)
+    START_DATE = datetime.datetime(2025, 1, 13)
+    END_DATE = datetime.datetime(2025, 2, 27)
     RANK_THRESHOLD = 10
     N = 5
 
@@ -283,7 +283,9 @@ def hot_rank_demo():
         limit_n=N,
         rank_type=RankType.BOTTOM
     )
-
+    
+    # 打印日期
+    print(f"{START_DATE=}, {END_DATE=}")
     # 打印两种结果
     analyzer.print_results(top_results, RankType.TOP)
     analyzer.print_results(bottom_results, RankType.BOTTOM)
@@ -308,6 +310,6 @@ if __name__ == '__main__':
     # elevate_dev()
     # concept_dev()
     # concept_radar_examination(15)
-    rank_chart()
+    # rank_chart()
     # peek_concept_buy_points()
-    # hot_rank_demo()
+    hot_rank_demo()
