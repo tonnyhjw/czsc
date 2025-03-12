@@ -377,3 +377,28 @@ def query_by_precise_timestamp(model, timestamp):
         (model.timestamp.hour == timestamp.hour) &
         (model.timestamp.minute == timestamp.minute)
     ))
+
+
+def get_stock_top_concepts(symbol, top_concepts_codes):
+    """
+    查询指定股票在热门概念列表中的概念名称。
+
+    参数:
+        symbol (str): 股票代码
+        top_concepts_codes (List[str]): 热门概念代码列表
+
+    返回:
+        List[str]: 股票所属的热门概念名称列表
+    """
+    # 查询该股票在top_concepts_codes中的概念
+    concepts = (ConceptCons
+                .select(ConceptCons.name)
+                .where(
+        (ConceptCons.symbol == symbol) &
+        (ConceptCons.code.in_(top_concepts_codes))
+    )
+                .order_by(ConceptCons.name))
+
+    # 提取概念名称
+    concept_names = [concept.name for concept in concepts]
+    return concept_names
