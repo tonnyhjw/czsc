@@ -168,7 +168,7 @@ if __name__ == "__main__":
         # print("市值低且分红高的股票:")
         # print(selected_stocks)
 
-        concepts_end_date = datetime.datetime.strptime(trade_dates, '%Y%m%d')
+        concepts_end_date = datetime.datetime.strptime(trade_date, '%Y%m%d')
         concepts_start_date = concepts_end_date - datetime.timedelta(days=15)
 
         # 创建分析器实例
