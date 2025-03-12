@@ -185,7 +185,7 @@ if __name__ == "__main__":
         top_concepts_codes = [c.get('code') for c in top_concepts]
 
         # 与主题结合的示例
-        combined_results = selector.add_top_concepts_to_stocks(selected_stocks, )
+        combined_results = selector.add_top_concepts_to_stocks(selected_stocks, top_concepts_codes)
 
         print("\n与主题结合的股票:")
         print(combined_results)
