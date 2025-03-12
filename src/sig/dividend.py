@@ -5,7 +5,7 @@ from tushare import trade_cal
 
 import czsc
 from src.concept.hot_rank import ConceptHotRank, RankType
-from src.concept.detect import get_stock_top_concepts
+from src.concept.detect import get_stock_top_concepts, get_stock_name_by_symbol
 
 cache_path = os.getenv("TS_CACHE_PATH", os.path.expanduser("~/.ts_data_cache"))
 dc = czsc.DataClient(url="http://api.tushare.pro", cache_path=cache_path)
@@ -119,7 +119,7 @@ class DividendStockSelector:
             top_concepts_codes (List[str]): 热门概念代码列表
 
         返回:
-            pd.DataFrame: 添加了'top_concepts'列的dividend_stocks
+            pd.DataFrame: 添加了'top_concepts'列和'stock_name'列的dividend_stocks
         """
         # 创建输入DataFrame的副本，避免修改原始数据
         output_stocks = dividend_stocks.copy()
@@ -127,15 +127,30 @@ class DividendStockSelector:
         # 添加新列'top_concepts'，用于存储拼接的概念名称
         output_stocks['top_concepts'] = ''
 
-        for _index, _row in output_stocks.iterrows():
+        # 如果DataFrame中没有stock_name列，添加该列
+        if 'stock_name' not in output_stocks.columns:
+            output_stocks['stock_name'] = ''
+
+        for index, row in output_stocks.iterrows():
             # 从ts_code中提取股票代码（去掉交易所后缀）
-            symbol = _row['ts_code'].split('.')[0]
+            symbol_format = row['ts_code'].split('.')[0]
 
             # 调用独立模块获取该股票的热门概念
-            concept_names = get_stock_top_concepts(symbol, top_concepts_codes)
+            concept_names = get_stock_top_concepts(symbol_format, top_concepts_codes)
 
             # 用逗号连接概念名称
-            output_stocks.at[_index, 'top_concepts'] = ','.join(concept_names)
+            output_stocks.at[index, 'top_concepts'] = ','.join(concept_names)
+
+            # 如果stock_name为空，调用独立模块获取股票名称
+            if not output_stocks.at[index, 'stock_name']:
+                output_stocks.at[index, 'stock_name'] = get_stock_name_by_symbol(symbol_format)
+
+        # 确定列的顺序，将stock_name放在第二列
+        columns = list(output_stocks.columns)
+        if 'stock_name' in columns:
+            columns.remove('stock_name')
+            columns.insert(1, 'stock_name')
+            output_stocks = output_stocks[columns]
 
         return output_stocks
 

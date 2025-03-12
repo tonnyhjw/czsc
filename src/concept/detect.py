@@ -402,3 +402,22 @@ def get_stock_top_concepts(symbol, top_concepts_codes):
     # 提取概念名称
     concept_names = [concept.name for concept in concepts]
     return concept_names
+
+
+def get_stock_name_by_symbol(symbol):
+    """
+    根据股票代码查询股票名称。
+
+    参数:
+        symbol (str): 股票代码
+
+    返回:
+        str: 股票名称，如果未找到则返回空字符串
+    """
+    # 根据股票代码查询股票名称
+    stock_info = ConceptCons.select(ConceptCons.stock_name).where(ConceptCons.symbol == symbol).first()
+
+    if stock_info:
+        return stock_info.stock_name
+    else:
+        return ''
