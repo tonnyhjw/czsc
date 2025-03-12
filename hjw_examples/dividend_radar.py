@@ -40,7 +40,7 @@ def run(concept_top_n: int = 30, concept_rank_threshold: int = 10):
     # 与主题结合的示例
     results_df = selector.add_top_concepts_to_stocks(selected_stocks, top_concepts_codes)
 
-    if not results_df.empty():
+    if not results_df.empty:
         email_subject = f"[{SUBJ_LV1}][分红][A股]{EDT}发现{len(results_df)}个个股今天分红除权"
         results_df = utils.embed_ts_code_href(results_df)
         notify_concept_radar(results_df, email_subject)
