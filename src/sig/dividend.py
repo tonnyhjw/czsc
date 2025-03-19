@@ -162,7 +162,7 @@ class DividendStockSelector:
         # 将total_dividend放在第四列
         if 'total_div' in columns in columns:
             columns.remove('total_div')
-            columns.insert(2, 'total_div')
+            columns.insert(3, 'total_div')
         output_stocks = output_stocks[columns]
 
         return output_stocks
