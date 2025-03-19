@@ -56,7 +56,7 @@ class DividendStockSelector:
         # 获取每日基本数据
         market_data = self.pro.daily_basic(
             trade_date=trade_date,
-            fields='ts_code,trade_date,close,dv_ratio,dv_ttm,total_mv,circ_mv'
+            fields='ts_code,trade_date,close,dv_ratio,dv_ttm,total_share,float_share,total_mv,circ_mv'
         )
         
         return market_data
@@ -104,7 +104,7 @@ class DividendStockSelector:
         
         # 准备最终输出
         result = top_stocks[['ts_code', 'close', 'total_mv', 'circ_mv', 'dv_ttm',
-                             'cash_div', 'cash_div_tax', 'ann_date', 'ex_date']]
+                             'total_share', 'cash_div', 'ann_date', 'ex_date']]
         result = result.reset_index(drop=True)
         
         return result
@@ -141,6 +141,9 @@ class DividendStockSelector:
             # 用逗号连接概念名称
             output_stocks.at[index, 'top_concepts'] = ','.join(concept_names)
 
+            # 计算分红总额
+            output_stocks.at[index, 'total_div'] = row['cash_div'] * row['total_share']
+
             # 如果stock_name为空，调用独立模块获取股票名称
             if not output_stocks.at[index, 'stock_name']:
                 output_stocks.at[index, 'stock_name'] = get_stock_name_by_symbol(symbol_format)
@@ -151,6 +154,12 @@ class DividendStockSelector:
             columns.remove('stock_name')
             columns.insert(1, 'stock_name')
             output_stocks = output_stocks[columns]
+
+        # 将total_dividend放在合适的位置（在cash_div之后）
+        if 'total_div' in columns and 'cash_div' in columns:
+            columns.remove('total_div')
+            cash_div_index = columns.index('cash_div')
+            columns.insert(cash_div_index + 1, 'total_div')
 
         return output_stocks
 
