@@ -155,12 +155,12 @@ class DividendStockSelector:
             columns.insert(1, 'stock_name')
 
         # 将top_concepts放在第三列
-        if 'top_concepts' in columns in columns:
+        if 'top_concepts' in columns:
             columns.remove('top_concepts')
             columns.insert(2, 'top_concepts')
 
         # 将total_dividend放在第四列
-        if 'total_div' in columns in columns:
+        if 'total_div' in columns:
             columns.remove('total_div')
             columns.insert(3, 'total_div')
         output_stocks = output_stocks[columns]
