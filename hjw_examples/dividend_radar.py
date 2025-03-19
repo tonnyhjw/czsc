@@ -24,7 +24,7 @@ mapping = {
     'stk_co_rate': '每股转增比例',
     'cash_div': '每股分红（税后）',
     'cash_div_tax': '每股分红（税前）',
-    'total_div': '总分红（税后，亿元）',
+    'total_div': '总分红（万元，税后）',
     'record_date': '股权登记日',
     'ex_date': '除权除息日',
     'pay_date': '派息日',
