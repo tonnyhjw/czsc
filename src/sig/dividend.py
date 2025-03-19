@@ -103,8 +103,8 @@ class DividendStockSelector:
         top_stocks = merged_data.head(top_n)
         
         # 准备最终输出
-        result = top_stocks[['ts_code', 'close', 'total_mv', 'circ_mv', 'dv_ttm',
-                             'total_share', 'cash_div', 'ann_date', 'ex_date']]
+        result = top_stocks[['ts_code', 'cash_div', 'total_share', 'close', 'total_mv',
+                             'circ_mv', 'dv_ttm', 'ann_date', 'ex_date']]
         result = result.reset_index(drop=True)
         
         return result
@@ -153,13 +153,17 @@ class DividendStockSelector:
         if 'stock_name' in columns:
             columns.remove('stock_name')
             columns.insert(1, 'stock_name')
-            output_stocks = output_stocks[columns]
 
-        # 将total_dividend放在合适的位置（在cash_div之后）
-        if 'total_div' in columns and 'cash_div' in columns:
+        # 将top_concepts放在第三列
+        if 'top_concepts' in columns in columns:
+            columns.remove('top_concepts')
+            columns.insert(2, 'top_concepts')
+
+        # 将total_dividend放在第四列
+        if 'total_div' in columns in columns:
             columns.remove('total_div')
-            cash_div_index = columns.index('cash_div')
-            columns.insert(cash_div_index + 1, 'total_div')
+            columns.insert(2, 'total_div')
+        output_stocks = output_stocks[columns]
 
         return output_stocks
 
