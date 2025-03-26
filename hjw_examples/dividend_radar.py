@@ -8,6 +8,8 @@ from src.sig import dividend
 from src.concept import utils
 from src.concept.hot_rank import ConceptHotRank, RankType
 from src.notify import notify_concept_radar
+from src.concept.configs import *
+
 
 logger.add("statics/logs/dividend.log", rotation="5MB", encoding="utf-8", enqueue=True, retention="10 days")
 
@@ -85,6 +87,10 @@ def run(trade_date: str=datetime.datetime.now().strftime('%Y%m%d'),
         rank_type=RankType.TOP
     )
     top_concepts_codes = [c.get('code') for c in top_concepts]
+
+    # 叠加关注概念列表
+    liked_concepts = utils.load_concepts_from_json(LIKED_CONCEPTS)
+    top_concepts_codes += [_c.get('code') for _c in liked_concepts]
 
     # 与主题结合的示例
     results_df = selector.add_top_concepts_to_stocks(selected_stocks, top_concepts_codes)
