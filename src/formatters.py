@@ -76,5 +76,9 @@ TITLE_MAPPING = {
     'top_concepts': '头部概念',
     'concepts': '概念',
     'sequence_number': '序号',
-    'count': '出现次数'
+    'count': '出现次数',
+    'signals': '买点类型',
+    'fx_pwr': '分型强度',
+    'bp_date': '买点日期',
+    'freq': '级别'
 }
