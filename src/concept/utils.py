@@ -54,8 +54,8 @@ def embed_ts_code_href(input_df: pd.DataFrame):
     def create_link(ts_code):
         _symbol, _hs = ts_code.split('.')
         return f'<a href="https://xueqiu.com/S/{_hs}{_symbol}">{_symbol}</a>'
-
-    input_df['ts_code'] = input_df['ts_code'].map(create_link)
+    if not input_df.empty:
+        input_df['ts_code'] = input_df['ts_code'].map(create_link)
     return input_df
 
 
