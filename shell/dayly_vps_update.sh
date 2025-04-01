@@ -16,3 +16,5 @@ python -m hjw_examples.flow_global --n 7 --h 100
 python -m hjw_examples.dividend_radar
 
 python -m hjw_examples.concept_liked
+
+python -m hjw_examples.concept_hot_rank
