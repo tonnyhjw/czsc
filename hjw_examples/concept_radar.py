@@ -171,6 +171,38 @@ def liked(bp_days_limit = 5, latest_timestamp = None):
     utils.store_current_result_code(buy_points, previous_result_file, store_field)
 
 
+def hot_rank_notify(rank_threshold: int = 10, limit_n: int = 5, bp_days_limit = 5, latest_timestamp = None):
+    from src.concept.hot_rank import ConceptHotRank, RankType
+    bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
+    start_date = datetime.strptime(bp_sdt, '%Y%m%d')
+    end_date = datetime.strptime(bp_edt, '%Y%m%d')
+    bp_sdt = datetime.strptime(bp_sdt, '%Y%m%d').date()
+    bp_edt = datetime.strptime(bp_edt, '%Y%m%d').date()
+
+    # 创建分析器实例
+    analyzer = ConceptHotRank()
+
+    # 分析排名靠前的概念
+    top_concepts = analyzer.analyze_concepts(
+        start_date=start_date,
+        end_date=end_date,
+        rank_threshold=rank_threshold,
+        limit_n=limit_n,
+        rank_type=RankType.TOP
+    )
+    if top_concepts:
+        email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}近{bp_days_limit}交易日热度榜前{rank_threshold}最高频题材概念"
+
+        buy_points = detect.get_buypoints_for_multiple_concepts(top_concepts, bp_sdt, bp_edt)
+
+        top_concepts_df = pd.DataFrame(top_concepts)
+        top_concepts_df = utils.embed_code_href(top_concepts_df)
+
+        buy_points_df = pd.DataFrame(buy_points)
+        buy_points_df = utils.embed_ts_code_href(buy_points_df)
+        notify_concept_radar(top_concepts_df, email_subject, buy_points_df)
+
+
 @timer
 def demo(latest_timestamp=None):
     # 监控涨跌比前排
