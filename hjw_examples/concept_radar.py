@@ -171,7 +171,8 @@ def liked(bp_days_limit = 5, latest_timestamp = None):
     utils.store_current_result_code(buy_points, previous_result_file, store_field)
 
 
-def hot_rank_notify(rank_threshold: int = 10, limit_n: int = 5, bp_days_limit = 5, latest_timestamp = None):
+def hot_rank_notify(rank_threshold: int = 10, limit_n: int = 5, bp_days_limit = 5, latest_timestamp = None,
+                    subj_lv1 = SUBJ_LV1):
     from src.concept.hot_rank import ConceptHotRank, RankType
     bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
     start_date = datetime.strptime(bp_sdt, '%Y%m%d')
@@ -191,7 +192,7 @@ def hot_rank_notify(rank_threshold: int = 10, limit_n: int = 5, bp_days_limit = 
         rank_type=RankType.TOP
     )
     if top_concepts:
-        email_subject = f"[{SUBJ_LV1}][概念板块][A股]{EDT}近{bp_days_limit}交易日热度榜前{rank_threshold}最高频题材概念"
+        email_subject = f"[{subj_lv1}][概念板块][A股]{EDT}近{bp_days_limit}交易日热度榜前{rank_threshold}最高频题材概念"
 
         buy_points = detect.get_buypoints_for_multiple_concepts(top_concepts, bp_sdt, bp_edt)
 

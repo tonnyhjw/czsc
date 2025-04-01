@@ -66,7 +66,7 @@ def get_recent_n_trade_dates_boundary(n: int = 3, latest_timestamp=None):
     if latest_timestamp is None:
         today = datetime.datetime.now()
     else:
-        today = datetime.datetime.strptime(latest_timestamp[:10], "%Y-%m-%d")
+        today = datetime.datetime.strptime(latest_timestamp[:10], "%Y%m%d")
     sdt = (today - datetime.timedelta(days=n+10)).strftime("%Y%m%d")
     edt = today.strftime("%Y%m%d")
     trade_dates = TsDataCache(home_path).get_dates_span(sdt, edt, is_open=True)
