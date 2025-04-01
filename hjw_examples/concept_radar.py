@@ -198,6 +198,11 @@ def hot_rank_notify(rank_threshold: int = 10, limit_n: int = 5, bp_days_limit = 
         buy_points = detect.get_buypoints_for_multiple_concepts(top_concepts, bp_sdt, bp_edt)
 
         top_concepts_df = pd.DataFrame(top_concepts)
+        columns = list(top_concepts_df.columns)
+        if 'sequence_number' in columns:
+            columns.remove('sequence_number')
+            columns.insert(1, 'sequence_number')
+        top_concepts_df = top_concepts_df[columns]
         top_concepts_df = utils.embed_code_href(top_concepts_df)
 
         buy_points_df = pd.DataFrame(buy_points)
