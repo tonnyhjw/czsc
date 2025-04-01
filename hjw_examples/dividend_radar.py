@@ -68,8 +68,6 @@ if __name__ == '__main__':
     parser.add_argument("--sd", default="20250301", help="开发模式调试起始日")
     parser.add_argument("--ed", default=today, help="开发模式调试结束日")
 
-    run()
-
     # 解析参数
     args = parser.parse_args()
 
