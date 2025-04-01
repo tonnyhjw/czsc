@@ -133,11 +133,11 @@ def notify_concept_radar(result_df: pd.DataFrame = None, email_subject=None, buy
     if result_df.empty:
         logger.info(f"result_df为空，notify_concept_radar不发送相关推送, {email_subject}")
     else:
-        result_df.rename(TITLE_MAPPING)
+        result_df.rename(columns=TITLE_MAPPING, inplace=True)
         result_table = result_df.to_html(classes='table table-striped table-hover', border=0, index=False, escape=False)
         result_table = "<h2>综合分析结果</h2>" + result_table
         if not buy_point_df.empty:
-            buy_point_df = buy_point_df.rename(TITLE_MAPPING)
+            buy_point_df = buy_point_df.rename(columns=TITLE_MAPPING, inplace=True)
             buy_point_table = buy_point_df.to_html(classes='table table-striped table-hover', border=0, index=False,
                                                    escape=False)
             result_table = result_table + "<h2>关联买点</h2>" + buy_point_table
