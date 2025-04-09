@@ -132,9 +132,10 @@ class YfDataCache:
 
     def get_us_stock_list(self):
         sp500 = self.wiki_snp500_member()
-        nd100 = self.nsdq_100_member()
-        us_stock_list = pd.concat([nd100, sp500], axis=0, ignore_index=True)
-        return us_stock_list
+        return sp500
+        #nd100 = self.nsdq_100_member()
+        #us_stock_list = pd.concat([nd100, sp500], axis=0, ignore_index=True)
+        #return us_stock_list
 
     def history(self, symbol, start_date=None, end_date=None, freq="D", raw_bar=True):
         """获取日线以上数据

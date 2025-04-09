@@ -244,9 +244,9 @@ def peek_concept_buy_points():
     bp_days_limit = 5
     latest_timestamp = None
     concepts = [
-        {"code": "BK1184"},
-        {"code": "BK1100"},
-        {"code": "BK1145"},
+        {"code": "BK0907"},
+        {"code": "BK0578"},
+        #{"code": "BK1145"},
     ]
     bp_sdt, bp_edt = utils.get_recent_n_trade_dates_boundary(bp_days_limit, latest_timestamp)
     bp_sdt = datetime.datetime.strptime(bp_sdt, '%Y%m%d').date()
@@ -311,5 +311,5 @@ if __name__ == '__main__':
     # concept_dev()
     # concept_radar_examination(15)
     # rank_chart()
-    # peek_concept_buy_points()
-    hot_rank_demo()
+    peek_concept_buy_points()
+    # hot_rank_demo()
