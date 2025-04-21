@@ -13,6 +13,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--dev", action="store_true", help="运行开发模式")
     parser.add_argument("--sd", default="20250301", help="开发模式调试起始日")
     parser.add_argument("--ed", default=today, help="开发模式调试结束日")
+    parser.add_argument("--bp", type=int, default=5, help="买卖点统计范围（天）")
 
     # 解析参数
     args = parser.parse_args()
@@ -26,7 +27,7 @@ if __name__ == '__main__':
         for business_date in trade_dates:
             logger.info(f"调试日期:{business_date}")
 
-            hot_rank_notify(latest_timestamp=business_date, subj_lv1="测试")
+            hot_rank_notify(latest_timestamp=business_date, bp_days_limit=args.bp, subj_lv1="测试")
     else:
         logger.info("正在运行默认模式")
-        hot_rank_notify()
+        hot_rank_notify(bp_days_limit=args.bp)
