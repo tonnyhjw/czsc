@@ -421,3 +421,31 @@ def get_stock_name_by_symbol(symbol):
         return stock_info.stock_name
     else:
         return ''
+
+
+def get_concepts_by_symbol(symbol, exclude_codes=None):
+    """
+    查询个股的所有概念。
+
+    参数:
+        symbol (str): 股票代码
+        top_concepts_codes (List[str]): 热门概念代码列表
+
+    返回:
+        List[str]: 股票所属的热门概念名称列表
+    """
+    # 查询该股票在top_concepts_codes中的概念
+    concepts = (ConceptCons
+                .select(ConceptCons.name)
+                .where(
+        (ConceptCons.symbol == symbol)
+    )
+                .order_by(ConceptCons.name))
+
+    # 如果有需要排除的概念代码，添加过滤条件
+    if exclude_codes:
+        concepts = concepts.where(~ConceptName.code.in_(exclude_codes))
+
+    # 提取概念名称
+    concept_names = [concept.name for concept in concepts]
+    return concept_names

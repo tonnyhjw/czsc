@@ -166,7 +166,7 @@ def concept_stock_dev():
     import akshare as ak
 
     # 获取概念板块内的“中字头”个股
-    concept_stocks = ak.stock_board_concept_cons_em(symbol="抖音小店")
+    concept_stocks = ak.stock_board_concept_cons_em(symbol="300083")
 
     # 逐行打印
     for index, row in concept_stocks.iterrows():
@@ -291,6 +291,14 @@ def hot_rank_demo():
     analyzer.print_results(bottom_results, RankType.BOTTOM)
 
 
+def obsidian_concept_links(symbol: str):
+    from src.concept.detect import get_concepts_by_symbol
+    from src.concept.configs import EXCLUDE_CODES
+    concept_list = get_concepts_by_symbol(symbol, exclude_codes=EXCLUDE_CODES)
+    if concept_list:
+        print(", ".split([f"[[{_c}]]" for _c in concept_list]))
+
+
 if __name__ == '__main__':
     # play_day_trend_reverse()
     # play_pzbc()
@@ -309,7 +317,9 @@ if __name__ == '__main__':
     # money_flow_global()
     # elevate_dev()
     # concept_dev()
+    # concept_stock_dev()
     # concept_radar_examination(15)
     # rank_chart()
-    peek_concept_buy_points()
+    # peek_concept_buy_points()
     # hot_rank_demo()
+    obsidian_concept_links(symbol="688981")
