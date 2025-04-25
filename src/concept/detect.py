@@ -444,7 +444,7 @@ def get_concepts_by_symbol(symbol, exclude_codes=None):
 
     # 如果有需要排除的概念代码，添加过滤条件
     if exclude_codes:
-        concepts = concepts.where(~ConceptName.code.in_(exclude_codes))
+        concepts = concepts.where(~ConceptCons.code.in_(exclude_codes))
 
     # 提取概念名称
     concept_names = [concept.name for concept in concepts]
