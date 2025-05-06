@@ -155,6 +155,39 @@ def get_xd_zs_seq(xds: List[XD]) -> List[XDZS]:
     return zs_list
 
 
+def get_zs_seq_change_limited(bis: List[BI], change_limit: float=0.1) -> List[ZS]:
+    """获取连续笔中的中枢序列
+
+    :param bis: 连续笔对象列表
+    :param change_limit: 笔幅度限制
+    :return: 中枢序列
+    """
+    zs_list = []
+    if not bis:
+        return []
+
+    for bi in bis:
+        if not zs_list:
+            zs_list.append(ZS(bis=[bi]))
+            continue
+
+        zs = zs_list[-1]
+        if not zs.bis:
+            zs.bis.append(bi)
+            zs_list[-1] = zs
+        else:
+            if (bi.direction == Direction.Up and bi.high < zs.zd) or (
+                bi.direction == Direction.Down and bi.low > zs.zg) or (
+                bi.direction == Direction.Up and len(zs.bis) >= 3 and abs(bi.low - zs.zd)/zs.zd > change_limit) or (
+                bi.direction == Direction.Down and len(zs.bis) >= 3 and abs(bi.high - zs.zg)/zs.zg > change_limit
+            ):
+                zs_list.append(ZS(bis=[bi]))
+            else:
+                zs.bis.append(bi)
+                zs_list[-1] = zs
+    return zs_list
+
+
 MONEY_FLOW_SORT_KEYS_AMOUNT = dict(
     # （万元）
     net_mf_amount="净额",

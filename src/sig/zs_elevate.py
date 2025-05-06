@@ -10,7 +10,7 @@ from czsc.utils import create_single_signal
 from czsc.utils.sig import get_zs_seq
 from czsc.enum import Mark
 from database import history
-from src.sig.utils import select_failed_conditions, date_exceed_rawbars, get_xd_zs_seq
+from src.sig.utils import select_failed_conditions, date_exceed_rawbars, get_xd_zs_seq, get_zs_seq_change_limited
 from src.xd.analyze_by_break import analyze_xd
 
 
@@ -59,7 +59,7 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     else:
         v2 = latest_fx.power_str
 
-    zs_seq = get_zs_seq(bis)
+    zs_seq = get_zs_seq_change_limited(bis)
     if len(zs_seq) < 2:
         v1 = '中枢不够'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
