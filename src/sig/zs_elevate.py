@@ -78,15 +78,23 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     def triple_bi_pzbc():
         return len(zs2.bis) == 3 and zs2.bis[-1].low == zs2.dd
 
+    def zg1_within_limit(limit: float = 0.2):
+        _last_bi = zs1.bis[-1]
+        if _last_bi.direction == Direction.Up:
+            change_of_up_bi = abs(_last_bi.high - zs1.zg) / zs1.zg
+            return change_of_up_bi < limit
+
     is_single_bi_pzbc = single_bi_pzbc()
     is_triple_bi_pzbc = triple_bi_pzbc()
+    zg1_is_within_limit = zg1_within_limit()
 
     third_buy_conditions = (
         (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
         (len(ubi['fxs']) < 2, f"{len(ubi['fxs'])=} < 2"),
         (zs2_bi_a.direction == Direction.Down, "zs2_bi_a == Direction.Down"),
-        (is_single_bi_pzbc or is_triple_bi_pzbc, f"{is_triple_bi_pzbc=}, {is_triple_bi_pzbc=}"),
+        (is_single_bi_pzbc or is_triple_bi_pzbc, f"{is_single_bi_pzbc=}, {is_triple_bi_pzbc=}"),
         (zs1.zg < latest_fx.low, f"{zs1.zg=} < {latest_fx.low=}"),
+        (zg1_is_within_limit, f"{zg1_is_within_limit=}")
     )
     failed_third_buy_conditions = select_failed_conditions(third_buy_conditions)
 
