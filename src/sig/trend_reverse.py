@@ -9,7 +9,6 @@ from czsc import CZSC
 from czsc.objects import Direction, FX, BI, ZS
 from czsc.utils import get_sub_elements, create_single_signal
 from czsc.signals.tas import update_macd_cache
-from czsc.utils.sig import get_zs_seq
 from czsc.enum import Mark
 from database import history
 from src.sig.utils import *
@@ -62,7 +61,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
     else:
         v2 = latest_fx.power_str
 
-    zs_seq = get_zs_seq(bis)
+    zs_seq = get_zs_seq_change_limited(bis)
     if len(zs_seq) < 3:
         v1 = '中枢<3'
         return create_single_signal(k1=k1, k2=k2, k3=k3, v1=v1)
@@ -109,7 +108,7 @@ def trend_reverse_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
         # 提取一买后的bi_list
         bis_after_1st_buy = [bi for bi in bis if bi.sdt.date() >= latest_1st_buy_point.date.date()]
-        zs_seq_after_1st_buy = get_zs_seq(bis_after_1st_buy)
+        zs_seq_after_1st_buy = get_zs_seq_change_limited(bis_after_1st_buy)
         is_lower_freq_pzbc = detect_lower_freq_pzbc(bis_after_1st_buy, cache_key)
         _has_uncover_gap = has_uncover_gap(bis_after_1st_buy, kind_is_up=True)
         _ma_is_up = ma_is_up(c, last_n=3, ma_type="SMA", timeperiod=60)
