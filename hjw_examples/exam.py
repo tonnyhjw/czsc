@@ -296,6 +296,7 @@ def obsidian_concept_links(symbol: str):
     from src.concept.configs import EXCLUDE_CODES
     concept_list = get_concepts_by_symbol(symbol, exclude_codes=EXCLUDE_CODES)
     if concept_list:
+        print(f"{symbol=}")
         print("# 关联概念")
         print(", ".join([f"[[{_c}]]" for _c in concept_list]))
 
@@ -323,4 +324,4 @@ if __name__ == '__main__':
     # rank_chart()
     # peek_concept_buy_points()
     # hot_rank_demo()
-    obsidian_concept_links(symbol="000099")
+    obsidian_concept_links(symbol="688023")

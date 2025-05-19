@@ -86,7 +86,7 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
 
     is_single_bi_pzbc = single_bi_pzbc()
     is_triple_bi_pzbc = triple_bi_pzbc()
-    zg1_is_within_limit = zg1_within_limit()
+    zg1_is_within_limit = zg1_within_limit(limit=0.6)
 
     third_buy_conditions = (
         (ubi['direction'] == Direction.Up, "ubi['direction'] == Direction.Up"),
