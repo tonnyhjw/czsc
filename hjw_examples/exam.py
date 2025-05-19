@@ -324,4 +324,4 @@ if __name__ == '__main__':
     # rank_chart()
     # peek_concept_buy_points()
     # hot_rank_demo()
-    obsidian_concept_links(symbol="688023")
+    obsidian_concept_links(symbol="603330")

@@ -10,7 +10,8 @@ source venv/bin/activate
 #python -m hjw_examples.ma_support --sd 20240521 --ed 20240716 -d
 #python -m hjw_examples.day_trend_bc_reverse_us --sd 20240111 --ed 20240724 -d
 #python -m hjw_examples.ma_support_us --sd 20240111 --ed 20240724 -d
-python -m hjw_examples.elevate --t bi -d --sd 20250415
+#python -m hjw_examples.elevate --t bi -d --sd 20250415
+python -m hjw_examples.fake_xd_2nd_buy -d --sd 20241126 --ed 20250414
 
 # 执行回测
 #python -m hjw_examples.all_stocks_backtest

@@ -13,6 +13,8 @@ python -m hjw_examples.elevate --t bi
 
 python -m hjw_examples.flow_global --n 7 --h 100
 
+python -m hjw_examples.fake_xd_2nd_buy
+
 python -m hjw_examples.dividend_radar
 
 python -m hjw_examples.concept_liked
