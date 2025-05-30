@@ -103,14 +103,14 @@ class DividendStockSelector:
         top_stocks = merged_data.head(top_n)
         
         # 准备最终输出
-        result = top_stocks[['ts_code', 'cash_div', 'total_share', 'close', 'total_mv',
+        result = top_stocks[['ts_code', 'stk_bo_rate', 'stk_co_rate', 'cash_div', 'total_share', 'close', 'total_mv',
                              'circ_mv', 'dv_ttm', 'ann_date', 'ex_date']]
         result = result.reset_index(drop=True)
         
         return result
 
     @staticmethod
-    def add_top_concepts_to_stocks(dividend_stocks, top_concepts_codes):
+    def email_format(dividend_stocks, top_concepts_codes):
         """
         将热门概念添加到股息股票DataFrame中。
 
@@ -163,7 +163,14 @@ class DividendStockSelector:
         if 'total_div' in columns:
             columns.remove('total_div')
             columns.insert(3, 'total_div')
+
+        # 移除 每股分红（税后）；总股本（万股）；流通市值（万元）
+        columns.remove('cash_div')
+        columns.remove('total_share')
+        columns.remove('circ_mv')
         output_stocks = output_stocks[columns]
+        # 按分红总额排序
+        output_stocks = output_stocks.sort_values(by='total_div', ascending=False)
 
         return output_stocks
 
@@ -210,10 +217,10 @@ if __name__ == "__main__":
             limit_n=concept_top_n,
             rank_type=RankType.TOP
         )
-        top_concepts_codes = [c.get('code') for c in top_concepts]
+        top_concepts_codes_ = [c.get('code') for c in top_concepts]
 
         # 与主题结合的示例
-        combined_results = selector.add_top_concepts_to_stocks(selected_stocks, top_concepts_codes)
+        combined_results = selector.email_format(selected_stocks, top_concepts_codes_)
 
         print("\n与主题结合的股票:")
         print(combined_results)

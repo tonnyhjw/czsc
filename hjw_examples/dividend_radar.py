@@ -50,7 +50,7 @@ def run(trade_date: str=datetime.datetime.now().strftime('%Y%m%d'),
     top_concepts_codes += [_c.get('code') for _c in liked_concepts]
 
     # 与主题结合的示例
-    results_df = selector.add_top_concepts_to_stocks(selected_stocks, top_concepts_codes)
+    results_df = selector.email_format(selected_stocks, top_concepts_codes)
 
     if results_df.empty:
        print("没有符合条件的分红个股")
