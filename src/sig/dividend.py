@@ -31,7 +31,7 @@ class DividendStockSelector:
         # 获取分红数据
         dividend_data = self.pro.dividend(
             ex_date=ex_date,
-            fields='ts_code,end_date,ann_date,div_proc,cash_div,cash_div_tax,ex_date'
+            fields='ts_code,end_date,ann_date,div_proc,stk_bo_rate,stk_co_rate,cash_div,cash_div_tax,ex_date'
         )
 
         # 仅筛选已实施的分红

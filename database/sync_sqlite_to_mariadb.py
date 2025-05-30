@@ -5,17 +5,16 @@ from peewee import *
 # from playhouse.migrate import migrate, SqliteMigrator, MySQLMigrator
 from playhouse.shortcuts import model_to_dict
 
-# SQLite数据库连接设置
-sqlite_db = SqliteDatabase('your_sqlite_database.db')  # 替换为您的SQLite数据库文件路径
-db_concept_em = SqliteDatabase('your_concept_em.db')  # 替换为您的概念数据库文件路径
+from database.models import db_buy_point_bi, db_concept_em
+
 
 # MariaDB连接设置
 mariadb = MySQLDatabase(
-    'your_mariadb_database',  # 替换为您的MariaDB数据库名称
-    user='your_username',      # 替换为您的用户名
-    password='your_password',  # 替换为您的密码
-    host='your_host',          # 替换为您的MariaDB主机地址
-    port=3306                  # 替换为您的MariaDB端口号
+    os.getenv("STATION_DB"),  # 替换为您的MariaDB数据库名称
+    user=os.getenv("STATION_DB_USER"),      # 替换为您的用户名
+    password=os.getenv("STATION_DB_PWD"),  # 替换为您的密码
+    host=os.getenv("STATION_DB_IP"),          # 替换为您的MariaDB主机地址
+    port=os.getenv("STATION_DB_PORT")                  # 替换为您的MariaDB端口号
 )
 
 # ========== SQLite模型定义 ==========
@@ -36,7 +35,7 @@ class SQLiteBuyPoint(Model):
     reason = TextField(null=True)  # 买点原因
     
     class Meta:
-        database = sqlite_db
+        database = db_buy_point_bi
         table_name = 'buypoint'  # 确保表名与SQLite中的表名一致
 
 class SQLiteConceptName(Model):
@@ -139,7 +138,7 @@ def sync_buypoint_data():
     print("同步买点数据...")
     
     # 连接数据库
-    sqlite_db.connect()
+    db_buy_point_bi.connect()
     mariadb.connect()
     
     # 获取所有SQLite数据
@@ -169,7 +168,7 @@ def sync_buypoint_data():
             print(f"已同步 {min(i + batch_size, total_records)}/{total_records} 条买点数据")
     
     # 关闭连接
-    sqlite_db.close()
+    db_buy_point_bi.close()
     mariadb.close()
     print("买点数据同步完成！")
 
