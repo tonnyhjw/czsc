@@ -171,6 +171,7 @@ class DividendStockSelector:
         output_stocks = output_stocks[columns]
         # 按分红总额排序
         output_stocks = output_stocks.sort_values(by='total_div', ascending=False)
+        output_stocks = output_stocks.fillna('')
 
         return output_stocks
 
