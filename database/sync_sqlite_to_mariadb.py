@@ -14,7 +14,7 @@ mariadb = MySQLDatabase(
     user=os.getenv("STATION_DB_USER"),      # 替换为您的用户名
     password=os.getenv("STATION_DB_PWD"),  # 替换为您的密码
     host=os.getenv("STATION_DB_IP"),          # 替换为您的MariaDB主机地址
-    port=os.getenv("STATION_DB_PORT")                  # 替换为您的MariaDB端口号
+    port=int(os.getenv("STATION_DB_PORT"))                  # 替换为您的MariaDB端口号
 )
 
 # ========== SQLite模型定义 ==========
