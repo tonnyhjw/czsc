@@ -20,3 +20,5 @@ python -m hjw_examples.dividend_radar
 python -m hjw_examples.concept_liked
 
 python -m hjw_examples.concept_hot_rank
+
+python -m database.sync_script
