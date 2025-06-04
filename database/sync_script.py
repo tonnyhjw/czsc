@@ -8,7 +8,7 @@ from typing import Tuple
 import traceback
 
 # 导入你的原始SQLite模型
-from database.models import BuyPoint, ConceptName, ConceptCons
+from database.models import BuyPoint, ConceptName, ConceptCons, switch_database
 
 # 导入MariaDB模型
 from database.mariadb_models import (
@@ -88,7 +88,7 @@ class DataSyncManager:
         
         try:
             mariadb.connect()
-            
+
             if full_sync:
                 # 全量同步：清空目标表
                 BuyPointMariaDB.delete().execute()
@@ -100,6 +100,7 @@ class DataSyncManager:
                 logger.info(f"执行增量同步，从ID {last_id} 开始")
             
             # 查询SQLite中的新数据
+            switch_database(db_choice="BI")
             query = BuyPoint.select().where(BuyPoint.id > last_id).order_by(BuyPoint.id)
             total_count = query.count()
             
