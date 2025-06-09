@@ -9,6 +9,7 @@ from czsc.utils.sig import get_zs_seq, check_gap_info
 from czsc import CZSC
 from czsc.enum import Mark
 from czsc.objects import Direction, FX, BI, ZS
+from czsc.signals.tas import update_ma_cache
 from src.objects import XD, XDZS
 
 
@@ -217,3 +218,32 @@ def get_relative_str_date(date_str: str, n_day=30):
     # 将日期对象转换回字符串格式
     relative_date = relative_date.strftime("%Y%m%d")
     return relative_date
+
+
+def ma_aligned_bullish(c: CZSC,
+                       ma_type: str = "SMA",
+                       timeperiod_short: int=120,
+                       timeperiod_long: int=250,
+                       close_above_long_term_ma: bool= False):
+    """均线多头排列
+    **信号逻辑：**
+
+    1. 最后时刻短期均线位置“高于”长期均线
+    2. 最后底分型至少要高于
+
+    :param c: CZSC对象
+    :param ma_type: MA类型
+    :param timeperiod_short: 短期均线周期
+    :param timeperiod_long: 长期均线周期
+    :param close_above_long_term_ma: 收盘价高于长期均线
+    :return: 信号识别结果
+    """
+    close_above_long_term_ma_flag = True
+    bars_raw = c.bars_raw
+    ma120 = update_ma_cache(c, ma_type=ma_type, timeperiod=timeperiod_short)
+    ma250 = update_ma_cache(c, ma_type=ma_type, timeperiod=timeperiod_long)
+    zs3_last_raw_bar = bars_raw[-1]
+    if close_above_long_term_ma:
+        close_above_long_term_ma_flag = zs3_last_raw_bar.close > zs3_last_raw_bar.cache[ma250]
+
+    return zs3_last_raw_bar.cache[ma120] > zs3_last_raw_bar.cache[ma250] and close_above_long_term_ma_flag

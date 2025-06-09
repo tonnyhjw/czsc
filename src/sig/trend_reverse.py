@@ -8,7 +8,7 @@ from collections import OrderedDict
 from czsc import CZSC
 from czsc.objects import Direction, FX, BI, ZS
 from czsc.utils import get_sub_elements, create_single_signal
-from czsc.signals.tas import update_macd_cache, update_ma_cache
+from czsc.signals.tas import update_macd_cache
 from czsc.enum import Mark
 from database import history
 from src.sig.utils import *
@@ -386,13 +386,7 @@ def fake_xd_2nd_buy_point(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
 
     if not failed_fake_xd_2nd_buy_conditions:
         v1 = '二买FXD'
-        bars_raw = c.bars_raw
-        ma120 = update_ma_cache(c, ma_type="SMA", timeperiod=120)
-        ma250 = update_ma_cache(c, ma_type="SMA", timeperiod=250)
-        zs3_last_raw_bar = bars_raw[-1]
-        if (zs3_last_raw_bar.close > zs3_last_raw_bar.cache[ma250]
-                and zs3_last_raw_bar.cache[ma120] > zs3_last_raw_bar.cache[ma250]) \
-                and v2 != '弱':
+        if ma_aligned_bullish(c, close_above_long_term_ma=True) and v2 != '弱':
 
             # 插入数据库
             history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit, industry,
