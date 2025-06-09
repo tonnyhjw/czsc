@@ -369,7 +369,7 @@ def fake_xd_2nd_buy_point(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     zs1_direction_down = _zs_direction(Direction.Down, zs1)
     zs2_direction_up = _zs_direction(Direction.Up, zs2)
     zs3_direction_down = _zs_direction(Direction.Down, zs3)
-    zs1_ending_has_min_dd = _zs1_ending_has_min_dd()
+    # zs1_ending_has_min_dd = _zs1_ending_has_min_dd()
 
 
     fake_xd_2nd_buy_conditions = (
@@ -378,7 +378,7 @@ def fake_xd_2nd_buy_point(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         (zs1_direction_down, f"{zs1_direction_down=}"),
         (zs2_direction_up, f"{zs2_direction_up=}"),
         (zs3_direction_down, f"{zs3_direction_down=}"),
-        (zs1_ending_has_min_dd, f"{zs1_ending_has_min_dd=}"),
+        # (zs1_ending_has_min_dd, f"{zs1_ending_has_min_dd=}"),
         (zs2.bis[0].high > zs1.zd, f"{zs2.bis[0].high=} > {zs1.zd=} fail"),
 
     )
