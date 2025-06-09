@@ -14,12 +14,14 @@ from czsc.data import TsDataCache
 from src.notify import notify_buy_points
 from src.stock_process import fake_xd_2nd_buy
 from src import is_friday
+from src.decorate import timer
 
 idx = 1000
 script_name = os.path.basename(__file__)
 logger.add("statics/logs/fake_xd.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
+@timer
 def check(sdt: str = "20220101", edt: str = datetime.datetime.now().strftime('%Y%m%d'),
           freq: str = 'D', subj_lv1="自动盯盘", notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'

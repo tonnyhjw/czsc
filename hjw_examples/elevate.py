@@ -14,12 +14,15 @@ from czsc.data import TsDataCache
 from src.notify import notify_buy_points
 from src.stock_process import zs_elevate_3rd_buy_bi
 from src import is_friday
+from src.decorate import timer
+
 
 idx = 1000
 script_name = os.path.basename(__file__)
 logger.add("statics/logs/elevate.log", rotation="10MB", encoding="utf-8", enqueue=True, retention="10 days")
 
 
+@timer
 def check(sdt: str = "20180101", edt: str = datetime.datetime.now().strftime('%Y%m%d'), elem_type: str = "bi",
           freq: str = 'D', subj_lv1="自动盯盘", notify_empty=True):
     os.environ['czsc_min_bi_len'] = '7'
