@@ -3,6 +3,8 @@ import sys
 import argparse
 import datetime
 import concurrent
+import time
+
 import pandas as pd
 from loguru import logger
 from concurrent.futures import ProcessPoolExecutor
@@ -32,18 +34,13 @@ def check(sdt: str = "20240101", edt: str = datetime.datetime.now().strftime('%Y
     total_stocks = len(ggt_components)
     results = []  # 用于存储所有股票的结果
     logger.info(f"共{total_stocks}个股票待分析")
-    with ProcessPoolExecutor(max_workers=2) as executor:
-        futures = {}
-        for index, row in ggt_components.iterrows():
-            _ts_code = row.get('ts_code')
-            _today = datetime.datetime.today()
-            future = executor.submit(fake_xd_2nd_buy_hk, row, sdt, edt, freq, 3)
-            futures[future] = _ts_code  # 保存future和ts_code的映射
-
-        for future in concurrent.futures.as_completed(futures):
-            result = future.result()
-            if result:
-                results.append(result)
+    for index, row in ggt_components.iterrows():
+        _ts_code = row.get('ts_code')
+        _today = datetime.datetime.today()
+        result = fake_xd_2nd_buy_hk(row, sdt, edt, freq, 3)
+        if result:
+            results.append(result)
+        time.sleep(1)
 
     email_subject = f"[{subj_lv1}][{hkdc.freq_map.get(freq)}模拟线段二买][港股]{edt}发现{len(results)}个买点"
     notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
