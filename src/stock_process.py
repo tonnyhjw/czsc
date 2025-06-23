@@ -352,7 +352,6 @@ def fake_xd_2nd_buy(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
                     'ts_code': _ts_code,
                     'signals': s_value_detail[0],
                     'fx_pwr': s_value_detail[1],
-                    'expect_profit(%)': round(float(s_value_detail[2]) * 100, 2),
                     'industry': _industry
                 }
     except Exception as e_msg:
@@ -386,7 +385,6 @@ def fake_xd_2nd_buy_hk(row, sdt, edt, freq: str, fx_dt_limit: int = 5):
                     'symbol': symbol_link,
                     'signals': s_value_detail[0],
                     'fx_pwr': s_value_detail[1],
-                    'expect_profit(%)': round(float(s_value_detail[2]) * 100, 2),
                 }
     except Exception as e_msg:
         tb = traceback.format_exc()  # 获取 traceback 信息
