@@ -26,7 +26,7 @@ logger.add("statics/logs/fake_xd.log", rotation="10MB", encoding="utf-8", enqueu
 
 @timer
 def check(sdt: str = "20240101", edt: str = datetime.datetime.now().strftime('%Y%m%d'),
-          freq: str = 'D', subj_lv1="自动盯盘", notify_empty=True):
+          freq: str = 'D', subj_lv1="自动盯盘", notify_empty=True, slow=False):
     os.environ['czsc_min_bi_len'] = '7'
     hkdc = HKDataCache(home_path)
 
@@ -40,7 +40,8 @@ def check(sdt: str = "20240101", edt: str = datetime.datetime.now().strftime('%Y
         result = fake_xd_2nd_buy_hk(row, sdt, edt, freq, 3)
         if result:
             results.append(result)
-        time.sleep(3)
+        if slow:
+            time.sleep(3)
 
     email_subject = f"[{subj_lv1}][{hkdc.freq_map.get(freq)}模拟线段二买][港股]{edt}发现{len(results)}个买点"
     notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
@@ -48,6 +49,7 @@ def check(sdt: str = "20240101", edt: str = datetime.datetime.now().strftime('%Y
 
 if __name__ == '__main__':
     ana_sdt = '20240901'
+    slow = False
     today = datetime.datetime.now().strftime("%Y%m%d")
 
     parser = argparse.ArgumentParser(description="模拟线段二买")
@@ -64,6 +66,7 @@ if __name__ == '__main__':
     # 判断是否更新缓存
     if args.refresh:
         HKDataCache(home_path).clear()
+        slow = True
 
     # 根据参数决定运行模式
     if args.dev:
@@ -77,8 +80,8 @@ if __name__ == '__main__':
             if args.f == "W" and not is_friday(business_date):
                 continue
             logger.info(f"测试日期:{business_date}")
-            check(edt=business_date, freq=args.f, subj_lv1="测试", notify_empty=False)
+            check(edt=business_date, freq=args.f, subj_lv1="测试", notify_empty=False, slow=slow)
     else:
         logger.info("正在运行默认模式")
-        check(freq=args.f)
+        check(freq=args.f, slow=slow)
 
