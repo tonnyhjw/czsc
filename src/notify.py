@@ -40,9 +40,7 @@ def notify_buy_points(results: list, email_subject: str, notify_empty: bool = Tr
     try:
         if results:
             # 将结果转换为 DataFrame
-            sorted_results = sorted(results, key=sort_by_profit, reverse=True)
-            sorted_results = sorted(sorted_results, key=sort_by_industry, reverse=True)
-            sorted_results = sorted(sorted_results, key=sort_by_fx_pwr, reverse=True)
+            sorted_results = sorted(results, key=sort_by_fx_pwr, reverse=True)
             sorted_results = sorted(sorted_results, key=sort_by_signals)
             df_results = pd.DataFrame(sorted_results)
             # 生成 HTML 表格
