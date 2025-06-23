@@ -40,7 +40,7 @@ def check(sdt: str = "20240101", edt: str = datetime.datetime.now().strftime('%Y
         result = fake_xd_2nd_buy_hk(row, sdt, edt, freq, 3)
         if result:
             results.append(result)
-        time.sleep(1)
+        time.sleep(3)
 
     email_subject = f"[{subj_lv1}][{hkdc.freq_map.get(freq)}模拟线段二买][港股]{edt}发现{len(results)}个买点"
     notify_buy_points(results=results, email_subject=email_subject, notify_empty=notify_empty)
