@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from abc import ABC, abstractmethod
 
 from czsc.data.ts_cache import *
@@ -147,8 +148,8 @@ class BaseDataCache(ABC):
         针对墙内服务器限制境外访问场景，添加境内代理
         """
         # ZeroTier内网代理服务器IP和端口
-        zerotier_proxy_ip = "172.30.222.180"  # 替换为你的代理服务器ZeroTier IP
-        proxy_port = 3128
+        zerotier_proxy_ip = os.getenv("ZEROTIER_PROXY_IP")  # 替换为你的代理服务器ZeroTier IP
+        proxy_port = os.getenv("ZEROTIER_PROXY_PORT")
 
         # 构建代理URL
         proxy_url = f"http://{zerotier_proxy_ip}:{proxy_port}"
