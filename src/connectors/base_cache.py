@@ -154,6 +154,6 @@ class BaseDataCache(ABC):
         # 构建代理URL
         proxy_url = f"http://{zerotier_proxy_ip}:{proxy_port}"
 
-        print(f"使用代理: {proxy_url}")
+        # print(f"使用代理: {proxy_url}")
         os.environ['HTTP_PROXY'] = proxy_url
         os.environ['HTTPS_PROXY'] = proxy_url
