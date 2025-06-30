@@ -21,4 +21,6 @@ python -m hjw_examples.concept_liked
 
 python -m hjw_examples.concept_hot_rank
 
+python -m hjw_examples.fake_xd_2nd_buy_hk -r
+
 python -m database.sync_script
