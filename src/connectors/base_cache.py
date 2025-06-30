@@ -141,4 +141,18 @@ class BaseDataCache(ABC):
             bars.append(bar)
         return bars
 
+    @staticmethod
+    def set_zerotier_proxy():
+        """
+        针对墙内服务器限制境外访问场景，添加境内代理
+        """
+        # ZeroTier内网代理服务器IP和端口
+        zerotier_proxy_ip = "172.30.222.180"  # 替换为你的代理服务器ZeroTier IP
+        proxy_port = 3128
 
+        # 构建代理URL
+        proxy_url = f"http://{zerotier_proxy_ip}:{proxy_port}"
+
+        print(f"使用代理: {proxy_url}")
+        os.environ['HTTP_PROXY'] = proxy_url
+        os.environ['HTTPS_PROXY'] = proxy_url

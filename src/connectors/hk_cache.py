@@ -38,6 +38,7 @@ class HKDataCache(BaseDataCache):
         :param raw_bar:
         :return:
         """
+        self.set_zerotier_proxy()
         cache_path = self.api_path_map["stock_hk_hist"]
         file_cache = os.path.join(cache_path, f"stock_hk_hist_{symbol}#{self.sdt}_{freq}.feather")
 
@@ -73,6 +74,7 @@ class HKDataCache(BaseDataCache):
 
         :return:
         """
+        self.set_zerotier_proxy()
         cache_path = self.api_path_map["stock_hk_ggt_components_em"]
         file_cache = os.path.join(cache_path, f"stock_hk_ggt_components_em.feather")
         if not self.refresh and os.path.exists(file_cache):
