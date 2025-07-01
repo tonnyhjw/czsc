@@ -332,7 +332,7 @@ def fake_xd_2nd_buy_point(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
     ubi = c.ubi
     bis = c.bi_list
     cur_price = c.bars_raw[-1].close
-    latest_fx = bis[-1].fx_b  # 最近一个分型
+    latest_fx = c.ubi_fxs[-1]   # 最近一个分型
     fx_is_exceed = date_exceed_rawbars(c.bars_raw, latest_fx.dt, fx_dt_limit)
 
     if len(bis) < 5 or not ubi or len(ubi['raw_bars']) < 3:
