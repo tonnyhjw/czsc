@@ -242,7 +242,7 @@ def ma_aligned_bullish(c: CZSC,
     ma250 = update_ma_cache(c, ma_type=ma_type, timeperiod=250)
 
     def ma_rise(ma_cache, days: int):
-        return bars_raw[-1].cache[ma_cache] - bars_raw[-days].cache[ma_cache] > 0
+        return bars_raw[-1].cache[ma_cache] > bars_raw[-days].cache[ma_cache]
 
     def short_tern_above_long_term(short_cache, long_cache, target_day=-1):
         return bars_raw[target_day].cache[short_cache] > bars_raw[target_day].cache[long_cache]
