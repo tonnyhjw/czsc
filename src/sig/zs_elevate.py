@@ -94,13 +94,14 @@ def third_buy_bi(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDict:
         (zs2_bi_a.direction == Direction.Down, "zs2_bi_a == Direction.Down"),
         (is_single_bi_pzbc or is_triple_bi_pzbc, f"{is_single_bi_pzbc=}, {is_triple_bi_pzbc=}"),
         (zs1.zg < latest_fx.low, f"{zs1.zg=} < {latest_fx.low=}"),
-        (zg1_is_within_limit, f"{zg1_is_within_limit=}")
+        (zg1_is_within_limit, f"{zg1_is_within_limit=}"),
+        (ma_aligned_bullish(c, close_above_long_term_ma=True), "MA is bullish")
     )
     failed_third_buy_conditions = select_failed_conditions(third_buy_conditions)
 
     if not failed_third_buy_conditions:
-        v1 = '三买ZE'
-        if ma_aligned_bullish(c, close_above_long_term_ma=True) and v2 != '弱':
+        if v2 != '弱':
+            v1 = '三买ZE'
             # 插入数据库
             history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit,
                                      industry, latest_fx.dt, latest_fx.high, latest_fx.low, reason="zs_elevate", db=db)

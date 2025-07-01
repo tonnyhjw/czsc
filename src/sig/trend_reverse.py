@@ -380,14 +380,13 @@ def fake_xd_2nd_buy_point(c: CZSC, fx_dt_limit: int = 5, **kwargs) -> OrderedDic
         (zs3_direction_down, f"{zs3_direction_down=}"),
         # (zs1_ending_has_min_dd, f"{zs1_ending_has_min_dd=}"),
         (zs2.bis[0].high > zs1.zd, f"{zs2.bis[0].high=} > {zs1.zd=} fail"),
-
+        (ma_aligned_bullish(c, close_above_long_term_ma=True), "MA is bullish")
     )
     failed_fake_xd_2nd_buy_conditions = select_failed_conditions(fake_xd_2nd_buy_conditions)
 
     if not failed_fake_xd_2nd_buy_conditions:
-        v1 = '二买FXD'
-        if ma_aligned_bullish(c, close_above_long_term_ma=True) and v2 != '弱':
-
+        if v2 != '弱':
+            v1 = '二买FXD'
             # 插入数据库
             history.insert_buy_point(name, symbol, ts_code, freq, v1, latest_fx.power_str, estimated_profit, industry,
                                      latest_fx.dt, latest_fx.high, latest_fx.low, reason="fake_xd_2nd_buy", db=db)
