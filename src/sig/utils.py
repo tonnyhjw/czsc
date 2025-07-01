@@ -222,8 +222,6 @@ def get_relative_str_date(date_str: str, n_day=30):
 
 def ma_aligned_bullish(c: CZSC,
                        ma_type: str = "SMA",
-                       timeperiod_short: int=120,
-                       timeperiod_long: int=250,
                        close_above_long_term_ma: bool= False):
     """均线多头排列
     **信号逻辑：**
@@ -233,17 +231,26 @@ def ma_aligned_bullish(c: CZSC,
 
     :param c: CZSC对象
     :param ma_type: MA类型
-    :param timeperiod_short: 短期均线周期
-    :param timeperiod_long: 长期均线周期
     :param close_above_long_term_ma: 收盘价高于长期均线
     :return: 信号识别结果
     """
     close_above_long_term_ma_flag = True
     bars_raw = c.bars_raw
-    ma120 = update_ma_cache(c, ma_type=ma_type, timeperiod=timeperiod_short)
-    ma250 = update_ma_cache(c, ma_type=ma_type, timeperiod=timeperiod_long)
-    zs3_last_raw_bar = bars_raw[-1]
-    if close_above_long_term_ma:
-        close_above_long_term_ma_flag = zs3_last_raw_bar.close > zs3_last_raw_bar.cache[ma250]
+    ma5 = update_ma_cache(c, ma_type=ma_type, timeperiod=5)
+    ma30 = update_ma_cache(c, ma_type=ma_type, timeperiod=30)
+    ma120 = update_ma_cache(c, ma_type=ma_type, timeperiod=120)
+    ma250 = update_ma_cache(c, ma_type=ma_type, timeperiod=250)
 
-    return zs3_last_raw_bar.cache[ma120] > zs3_last_raw_bar.cache[ma250] and close_above_long_term_ma_flag
+    def ma_rise(ma_cache, days: int):
+        return bars_raw[-1].cache[ma_cache] - bars_raw[-days].cache[ma_cache] > 0
+
+    def short_tern_above_long_term(short_cache, long_cache, target_day=-1):
+        return bars_raw[target_day].cache[short_cache] > bars_raw[target_day].cache[long_cache]
+
+    if close_above_long_term_ma:
+        close_above_long_term_ma_flag = bars_raw[-1].close > bars_raw[-1].cache[ma250]
+
+    return (short_tern_above_long_term(ma120, ma250) and
+            close_above_long_term_ma_flag and
+            ma_rise(ma5, 2) and
+            ma_rise(ma30, 2))
