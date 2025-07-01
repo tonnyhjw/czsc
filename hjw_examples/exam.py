@@ -13,10 +13,10 @@ import czsc
 
 
 def play_day_trend_reverse():
-    row = dict(ts_code="TSLA", symbol="TSLA", name="Tesla, Inc.", industry="Automobile Manufacturers")
+    row = dict(ts_code="000520.SZ", symbol="000520", name="凤凰航运", industry="水运")
     sdt, edt = "20180501", "20240612"
     # result = trend_reverse_ubi_entry(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
-    result = trend_reverse_ubi_entry_us(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
+    result = fake_xd_2nd_buy(row=row, sdt=sdt, edt=edt, freq="D", fx_dt_limit=5)
     pprint.pprint(result)
 
 
@@ -302,7 +302,7 @@ def obsidian_concept_links(symbol: str):
 
 
 if __name__ == '__main__':
-    # play_day_trend_reverse()
+    play_day_trend_reverse()
     # play_pzbc()
     # result = run_single_stock_backtest(ts_code='000415.SZ', edt='20240614', freq="D")
     # pprint.pprint(result.get("sharpe_ratio"))
@@ -324,4 +324,4 @@ if __name__ == '__main__':
     # rank_chart()
     # peek_concept_buy_points()
     # hot_rank_demo()
-    obsidian_concept_links(symbol="603330")
+    # obsidian_concept_links(symbol="603330")
