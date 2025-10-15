@@ -47,9 +47,9 @@ class ConceptName(Model):
     name = CharField(max_length=100)  # 板块名称
     code = CharField(max_length=20)   # 板块代码
     rank = IntegerField()             # 排名
-    rise_ratio = FloatField()         # 涨跌比
-    up_count = IntegerField()         # 上涨家数
-    down_count = IntegerField()       # 下跌家数
+    rise_ratio = FloatField(null=True)         # 涨跌比
+    up_count = IntegerField(null=True)         # 上涨家数
+    down_count = IntegerField(null=True)       # 下跌家数
     timestamp = DateTimeField()       # 数据插入时间
 
     class Meta:
@@ -101,6 +101,17 @@ def create_tables():
     # 创建表格
     db_concept_em.create_tables([ConceptName, ConceptCons])
 
+def migrate():
+    from playhouse.migrate import *
+    migrator = SqliteMigrator(db_concept_em)
+
+    with db_concept_em.atomic():
+        migrate(
+            migrator.drop_not_null(ConceptName, 'rise_ratio'),
+            migrator.drop_not_null(ConceptName, 'up_count'),
+            migrator.drop_not_null(ConceptName, 'down_count'),
+        )
+
 
 def test_connection(db_choice):
     switch_database(db_choice)
@@ -112,7 +123,8 @@ def test_connection(db_choice):
 
 
 if __name__ == '__main__':
-    create_tables()
+    migrate()
+    # create_tables()
     # test_connection("BI")  # 测试数据库1
     # test_connection("XD")  # 测试数据库2
     # test_connection("MA250")
