@@ -108,9 +108,9 @@ def drop_not_null_col():
     # 执行迁移
     try:
         migrate(
-            migrator.drop_not_null('conceptname', 'rise_ratio'),
-            migrator.drop_not_null('conceptname', 'up_count'),
-            migrator.drop_not_null('conceptname', 'down_count'),
+            migrator.drop_not_null('concept_name', 'rise_ratio'),
+            migrator.drop_not_null('concept_name', 'up_count'),
+            migrator.drop_not_null('concept_name', 'down_count'),
         )
         print("迁移成功！")
     except Exception as e:
