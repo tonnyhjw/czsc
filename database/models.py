@@ -101,7 +101,7 @@ def create_tables():
     # 创建表格
     db_concept_em.create_tables([ConceptName, ConceptCons])
 
-def migrate():
+def drop_not_null_col():
     from playhouse.migrate import SqliteMigrator
     migrator = SqliteMigrator(db_concept_em)
 
@@ -123,7 +123,7 @@ def test_connection(db_choice):
 
 
 if __name__ == '__main__':
-    migrate()
+    drop_not_null_col()
     # create_tables()
     # test_connection("BI")  # 测试数据库1
     # test_connection("XD")  # 测试数据库2
