@@ -105,12 +105,16 @@ def drop_not_null_col():
     from playhouse.migrate import SqliteMigrator, migrate
     migrator = SqliteMigrator(db_concept_em)
 
-    with db_concept_em.atomic():
+    # 执行迁移
+    try:
         migrate(
-            migrator.drop_not_null(ConceptName, 'rise_ratio'),
-            migrator.drop_not_null(ConceptName, 'up_count'),
-            migrator.drop_not_null(ConceptName, 'down_count'),
+            migrator.drop_not_null('conceptname', 'rise_ratio'),
+            migrator.drop_not_null('conceptname', 'up_count'),
+            migrator.drop_not_null('conceptname', 'down_count'),
         )
+        print("迁移成功！")
+    except Exception as e:
+        print(f"迁移失败: {e}")
 
 
 def test_connection(db_choice):
