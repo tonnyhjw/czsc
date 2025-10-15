@@ -102,7 +102,7 @@ def create_tables():
     db_concept_em.create_tables([ConceptName, ConceptCons])
 
 def migrate():
-    from playhouse.migrate import *
+    from playhouse.migrate import SqliteMigrator
     migrator = SqliteMigrator(db_concept_em)
 
     with db_concept_em.atomic():
