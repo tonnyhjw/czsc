@@ -102,7 +102,7 @@ def create_tables():
     db_concept_em.create_tables([ConceptName, ConceptCons])
 
 def drop_not_null_col():
-    from playhouse.migrate import SqliteMigrator
+    from playhouse.migrate import SqliteMigrator, migrate
     migrator = SqliteMigrator(db_concept_em)
 
     with db_concept_em.atomic():
