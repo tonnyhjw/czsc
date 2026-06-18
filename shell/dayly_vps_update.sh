@@ -7,6 +7,8 @@ source venv/bin/activate
 # 以最新数据分析当天走势
 # python -m hjw_examples.ma_support -r
 
+python hjw_examples/market_mood.py
+
 python -m hjw_examples.fake_xd_2nd_buy -r
 
 python -m hjw_examples.day_trend_bc_reverse --f D
