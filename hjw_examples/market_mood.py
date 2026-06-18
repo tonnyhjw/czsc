@@ -863,7 +863,7 @@ def html_list(items):
 
 
 def make_email_subject(trade_date, money, sentiment):
-    return "A股赚钱效应与情绪日报 {0} {1}/{2}".format(
+    return "[自动盯盘][A股]赚钱效应与情绪日报 {0} {1}/{2}".format(
         yyyymmdd_to_display(trade_date),
         money["grade"],
         sentiment["stage"],
